@@ -1,0 +1,25 @@
+{
+    "arbitrage": {
+        "checkInterval": 5,
+        "openOpportunity": 2.0,
+        "closeOpportunity": 1.0,
+        "filter": {
+            "exchanges": true,
+            "tickets": true,
+            "only_listed_tickets": true
+        },
+        "exchanges": [
+            "binance",
+            "okex",
+            "bitforex",
+            "cex",
+            "kraken",
+            "bitfinex",
+            "bittrex",
+            "kucoin",
+            "poloniex",
+            "coinbasepro"
+        ],
+        "tickets": ["BTC", "ETH", "LTC", "BNB", "USD", "USDT"]
+    }
+}

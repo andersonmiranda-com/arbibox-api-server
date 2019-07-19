@@ -1,12 +1,10 @@
-'use strict';
+"use strict";
 
-const market = require('./core/market');
+const market = require("./core/market");
 
-(async function () {
+(async function() {
+    console.log("Trading Bot - Follow the money!");
+    console.log("=======================================");
 
-  console.log('Axelrod Trading Bot - Follow the money!');
-  console.log('=======================================');
-  
-  market.initialize();
-
+    market.initialize();
 })();

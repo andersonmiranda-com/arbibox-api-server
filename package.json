@@ -1,26 +1,30 @@
 {
-  "name": "axelrod-trading-bot",
-  "description": "Trading bot for cryptocurrency",
-  "version": "1.0.1",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
-  },
-  "author": {
-    "name": "Gabriel Barbosa",
-    "email": "gabriel@versallini.com.br"
-  },
-  "engines": {
-    "node": "10.x"
-  },
-  "dependencies": {
-    "ccxt": "^1.10.713",
-    "colors": "^1.1.2",
-    "json2csv": "^3.11.5",
-    "lodash": "^4.17.13"
-  },
-  "devDependencies": {
-    "nodemon": "^1.18.3",
-    "prompt": "^1.0.0"
-  }
+    "name": "axelrod-trading-bot",
+    "description": "Trading bot for cryptocurrency",
+    "version": "1.0.1",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js"
+    },
+    "author": {
+        "name": "Gabriel Barbosa",
+        "email": "gabriel@versallini.com.br"
+    },
+    "engines": {
+        "node": "10.x"
+    },
+    "dependencies": {
+        "bignumber.js": "^9.0.0",
+        "ccxt": "^1.18.961",
+        "colors": "^1.3.3",
+        "ethereumjs-abi": "^0.6.7",
+        "ethereumjs-util": "^6.1.0",
+        "json2csv": "^4.5.2",
+        "lodash": "^4.17.15",
+        "web3": "^1.0.0-beta.55"
+    },
+    "devDependencies": {
+        "nodemon": "^1.18.3",
+        "prompt": "^1.0.0"
+    }
 }
