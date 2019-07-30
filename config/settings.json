@@ -1,14 +1,19 @@
 {
     "arbitrage": {
-        "checkInterval": 1,
+        "checkInterval": 5,
         "openOpportunity": 0.5,
-        "closeOpportunity": 0.1,
+        "closeOpportunity": 0.2,
+        "api_timeout": 10,
         "filter": {
             "exchanges": true,
+            "exchanges_blacklist": true,
             "tickets": true,
             "only_listed_tickets": true
         },
-        "exchanges": ["binance", "okex"],
+        "exchanges": ["binance", "poloniex"],
+
+        "exchanges_blacklist": ["coinmarketcap", "lbank", "dx"],
+
         "tickets": [
             "BTC",
             "ETH",
@@ -34,7 +39,23 @@
             "XEM",
             "MKR",
             "ZEC",
-            "ONT"
-        ]
+            "ONT",
+            "CRO",
+            "BTG",
+            "USDC",
+            "VSYS",
+            "EGT",
+            "VET",
+            "BAT",
+            "DCR",
+            "QTUM",
+            "HT",
+            "OMG",
+            "TUSD",
+            "BTT",
+            "HEDG"
+        ],
+
+        "tickets_blacklist": ["VIA"]
     }
 }

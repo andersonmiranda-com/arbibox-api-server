@@ -1,16 +1,16 @@
 {
     "arbitrage": {
-        "checkInterval": 1,
+        "checkInterval": 5,
         "openOpportunity": 2.0,
         "closeOpportunity": 0.5,
         "filter": {
-            "exchanges": false,
-            "exchanges_blacklist": true,
-            "tickets": false,
-            "only_listed_tickets": false
+            "exchanges": true,
+            "tickets": true,
+            "only_listed_tickets": true
         },
         "exchanges": [
             "binance",
+            "okex",
             "huobipro",
             "bitz",
             "coinegg",
@@ -19,6 +19,7 @@
             "cointiger",
             "bitforex",
             "bibox",
+            "okex",
             "zb",
             "cex",
             "kraken",
@@ -31,8 +32,6 @@
             "coinexchange",
             "exx"
         ],
-        "exchanges_blacklist": ["coinmarketcap", "lbank", "dx"],
-
         "tickets": [
             "BTC",
             "ETH",
@@ -76,3 +75,9 @@
         ]
     }
 }
+
+
+
+------------
+
+

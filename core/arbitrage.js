@@ -18,12 +18,10 @@ exports.checkOpportunity = async function(prices) {
         return item.ask;
     });
 
-    if (bestBid.bid > bestAsk.ask) {
-        console.log("\n\n--------------------------------- !!!!!!! ");
-        console.log(prices);
-        console.log(bestBid.bid);
-        console.log(bestAsk.ask);
+    // console.log("\n\nbestBid:", bestBid);
+    // console.log("bestAsk:", bestAsk);
 
+    if (bestBid.bid > bestAsk.ask) {
         let funds = getFunds();
         let amount = funds / bestAsk.ask;
 
@@ -32,7 +30,7 @@ exports.checkOpportunity = async function(prices) {
 
         let cost = bought * bestAsk.cost + sould * bestBid.cost;
 
-        let estimatedGain = (sould - (bought + cost)).toFixed(2);
+        let estimatedGain = sould - (bought + cost);
         let percentage = (estimatedGain / funds) * 100;
 
         let opportunity = {
@@ -51,12 +49,7 @@ exports.checkOpportunity = async function(prices) {
         if (index == -1 && percentage >= configs.arbitrage.openOpportunity) {
             console.log("");
             console.info("✔ Opportunity found:".green);
-            console.info(
-                "  Estimated gain:",
-                colors.green(percentage),
-                "% |",
-                colors.green(estimatedGain)
-            );
+            console.info("  Estimated gain:", colors.green(percentage.toFixed(4)), "%");
             console.info(
                 "\n",
                 util.inspect(opportunity, {

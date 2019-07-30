@@ -1,6 +1,7 @@
 "use strict";
 
 const ccxt = require("ccxt");
+const lodash = require("lodash");
 const configs = require("../config/settings");
 const arbitrage = require("./arbitrage");
 const colors = require("colors");
@@ -15,9 +16,9 @@ exports.initialize = async function() {
                 startArbitrageByTicket(ticket);
             }, (configs.arbitrage.checkInterval > 0 ? configs.arbitrage.checkInterval : 1) * 60000);
         }
-        console.info("Bot started.");
+        console.info("Bot started at", new Date());
     } catch (error) {
-        console.error(colors.red("Error:"), error.message);
+        console.error(colors.red("Error1:"), error.message);
     }
 };
 
@@ -32,10 +33,10 @@ async function startArbitrageByTicket(ticket) {
                 arbitrage.checkOpportunity(response);
             })
             .catch(error => {
-                console.error(colors.red("Error:"), error.message);
+                console.error(colors.red("Error2:"), error.message);
             });
     } catch (error) {
-        console.error(colors.red("Error:"), error.message);
+        console.error(colors.red("Error3:"), error.message);
     }
 }
 
@@ -49,28 +50,35 @@ async function fetchDataByTicketAndExchange(ticket, exchangeName) {
     };
 
     try {
-        const exchange = new ccxt[exchangeName]();
+        const exchange = new ccxt[exchangeName]({
+            //apiKey: "YOUR_API_KEY",
+            //secret: "YOUR_SECRET",
+            timeout: configs.arbitrage.api_timeout * 1000,
+            enableRateLimit: true
+        });
         const market = await exchange.fetchTicker(ticket);
         if (market != undefined && market != null) {
             result.bid = market.bid;
             result.ask = market.ask;
+            //result.date = new Date();
 
             //console.log("");
             //console.log(market);
 
-            // console.info(
-            //     exchangeName,
-            //     ":",
-            //     ticket,
-            //     ":",
-            //     "bid:",
-            //     colors.green(result.bid),
-            //     "|",
-            //     "ask:",
-            //     colors.green(result.ask)
-            // );
+            console.log(
+                exchangeName,
+                ":",
+                ticket,
+                ":",
+                "bid:",
+                colors.green(result.bid),
+                "|",
+                "ask:",
+                colors.green(result.ask)
+            );
         }
     } catch (error) {
+        //    console.error(colors.red("Error:"), error.message);
     } finally {
         return result;
     }
@@ -86,18 +94,30 @@ async function prepareTickets() {
         exchanges = ccxt.exchanges;
     }
 
-    for (let i = exchanges.length - 1; i >= 0; i--) {
+    if (configs.arbitrage.filter.exchanges_blacklist) {
+        exchanges = lodash.difference(exchanges, configs.arbitrage.exchanges_blacklist);
+    }
+
+    let checkedExchanges = [...exchanges];
+
+    for (let i = 0; i < exchanges.length; i++) {
         let name = exchanges[i];
-        console.log(name);
+        console.log("Loading markets for", colors.green(name));
         try {
-            let _instance = new ccxt[name]();
+            let _instance = new ccxt[name]({
+                timeout: configs.arbitrage.api_timeout * 1000,
+                enableRateLimit: true
+            });
             await _instance.loadMarkets();
             api[name] = _instance;
         } catch (error) {
-            console.error(colors.red("Error:"), error.message);
-            exchanges.splice(exchanges.indexOf(name), 1);
+            //console.error(colors.red("Error:"), error.message);
+            console.error(colors.red("Error (cannot open API):"), name);
+            checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
         }
     }
+
+    exchanges = [...checkedExchanges];
 
     let symbols = [];
     ccxt.unique(
@@ -108,20 +128,13 @@ async function prepareTickets() {
         )
     ).filter(symbol => {
         if (configs.arbitrage.filter.only_listed_tickets) {
-            //console.info("symbol", symbol);
-
-            if (_find)
-                configs.arbitrage.tickets.map(tn => {
-                    var coins = symbol.split("/");
-                    if (coins[0] === tn) {
-                        configs.arbitrage.tickets.map(tn1 => {
-                            if (coins[1] === tn1) {
-                                console.log(symbol);
-                                symbols.push(symbol);
-                            }
-                        });
-                    }
-                });
+            var coins = symbol.split("/");
+            if (
+                lodash.includes(configs.arbitrage.tickets, coins[0]) &&
+                lodash.includes(configs.arbitrage.tickets, coins[1])
+            ) {
+                symbols.push(symbol);
+            }
         } else {
             return configs.arbitrage.filter.tickets
                 ? configs.arbitrage.tickets.map(tn =>
@@ -137,6 +150,9 @@ async function prepareTickets() {
         )
         .sort((id1, id2) => (id1 > id2 ? 1 : id2 > id1 ? -1 : 0));
 
+    //console.log(symbols);
+    //console.log(symbols.length);
+
     let tickets = arbitrables.map(symbol => {
         //console.log(symbol);
         let row = {
@@ -147,6 +163,8 @@ async function prepareTickets() {
             if (api[name].symbols.indexOf(symbol) >= 0) row.exchanges.push(name);
         return row;
     });
+
+    //console.log(tickets);
 
     console.info(
         "Exchanges:",

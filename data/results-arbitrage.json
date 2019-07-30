@@ -1,2 +1,0 @@
-{"id":"etc/eth-coinexchange-kraken","created_at":"2019-07-19T14:57:42.897Z","ticket":"ETC/ETH","amount":40,"buy_at":"coinexchange","ask":0.025,"sale_at":"kraken","bid":0.027551,"gain":10},
-{"id":"etc/btc-poloniex-kraken","created_at":"2019-07-19T14:57:43.417Z","ticket":"ETC/BTC","amount":1805.41262706,"buy_at":"poloniex","ask":0.00055389,"sale_at":"kraken","bid":0.000579,"gain":4},
