@@ -8,37 +8,27 @@ const colors = require("colors");
 const z = require("zero-fill");
 const n = require("numbro");
 
+var prices = [];
+
 exports.initialize = async function() {
     try {
         console.info("\nLoading exchanges and tickets...");
         const tickets = await prepareTickets();
-        for (let ticket of tickets) {
-            startArbitrageByTicket(ticket);
-            setInterval(function() {
-                startArbitrageByTicket(ticket);
-            }, (configs.checkInterval > 0 ? configs.checkInterval : 1) * 60000);
-        }
         console.info("Bot started at", new Date());
+        for (let ticket of tickets) {
+            prices = [];
+            await startArbitrageByTicket(ticket);
+        }
     } catch (error) {
         console.error(colors.red("Error1:"), error.message);
     }
 };
 
 async function startArbitrageByTicket(ticket) {
-    try {
-        let promises = ticket.exchanges.map(async exchange =>
-            Promise.resolve(await fetchDataByTicketAndExchange(ticket.symbol, exchange))
-        );
-
-        Promise.all(promises)
-            .then(response => {
-                arbitrage.checkOpportunity(response);
-            })
-            .catch(error => {
-                console.error(colors.red("Error2:"), error.message);
-            });
-    } catch (error) {
-        console.error(colors.red("Error3:"), error.message);
+    for (let exchange of ticket.exchanges) {
+        let response = await fetchDataByTicketAndExchange(ticket.symbol, exchange);
+        prices.push(response);
+        arbitrage.checkOpportunity(prices);
     }
 }
 
@@ -50,6 +40,8 @@ async function fetchDataByTicketAndExchange(ticket, exchangeName) {
         bid: 0,
         ask: 0
     };
+
+    var exchange;
 
     try {
         var exchange;

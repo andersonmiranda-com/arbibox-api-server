@@ -6,44 +6,16 @@
   "filter": {
     "exchanges": true,
     "exchanges_blacklist": true,
-    "base_currencies": false,
-    "quote_currencies": false
+    "base_currencies": true,
+    "quote_currencies": true
   },
   "exchanges": [
-    "bittrex",
-    "binance",
-    "bitfinex",
-    "bleutrade",
-    "cex",
-    "coinexchange",
-    "coss",
-    "exmo",
-    "kucoin",
-    "bitbay",
-    "hitbtc",
-    "kraken",
-    "poloniex",
-    "gateio",
-    "livecoin",
-    "okex",
-    "cobinhood",
-    "crex24",
-    "bitz",
-    "coinegg",
-    "lbank",
-    "cointiger",
-    "bitforex",
-    "bibox",
-    "zb",
-    "coss",
-    "coinbasepro",
-    "exx"
+    "bittrex", "binance"
   ],
   "exchanges_blacklist": [
     "coinmarketcap", "lbank", "dx"
   ],
   "base_currencies": [
-    "BTC",
     "ETH",
     "XPR",
     "LTC",
