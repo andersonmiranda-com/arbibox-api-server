@@ -5,6 +5,8 @@ const lodash = require("lodash");
 const configs = require("../config/settings");
 const arbitrage = require("./arbitrage");
 const colors = require("colors");
+const z = require("zero-fill");
+const n = require("numbro");
 
 exports.initialize = async function() {
     try {
@@ -14,7 +16,7 @@ exports.initialize = async function() {
             startArbitrageByTicket(ticket);
             setInterval(function() {
                 startArbitrageByTicket(ticket);
-            }, (configs.arbitrage.checkInterval > 0 ? configs.arbitrage.checkInterval : 1) * 60000);
+            }, (configs.checkInterval > 0 ? configs.checkInterval : 1) * 60000);
         }
         console.info("Bot started at", new Date());
     } catch (error) {
@@ -50,32 +52,56 @@ async function fetchDataByTicketAndExchange(ticket, exchangeName) {
     };
 
     try {
-        const exchange = new ccxt[exchangeName]({
-            //apiKey: "YOUR_API_KEY",
-            //secret: "YOUR_SECRET",
-            timeout: configs.arbitrage.api_timeout * 1000,
-            enableRateLimit: true
-        });
+        var exchange;
+
+        if (configs.keys[exchangeName]) {
+            exchange = new ccxt[exchangeName]({
+                apiKey: configs.keys[exchangeName].apiKey,
+                secret: configs.keys[exchangeName].secret,
+                timeout: configs.api_timeout * 1000,
+                enableRateLimit: true
+            });
+        } else {
+            exchange = new ccxt[exchangeName]({
+                timeout: configs.api_timeout * 1000,
+                enableRateLimit: true
+            });
+        }
+
+        //console.log("---- get market ----", exchangeName, ticket);
+
         const market = await exchange.fetchTicker(ticket);
+
         if (market != undefined && market != null) {
             result.bid = market.bid;
             result.ask = market.ask;
+            result.baseVolume = market.baseVolume || 0;
+            result.quoteVolume = market.quoteVolume || 0;
+
             //result.date = new Date();
 
             //console.log("");
-            //console.log(market);
+            //console.log("----market----", market);
 
             console.log(
-                exchangeName,
+                z(13, exchangeName, " "),
                 ":",
-                ticket,
+                z(9, ticket, " "),
                 ":",
                 "bid:",
-                colors.green(result.bid),
+                colors.green(z(16, n(result.bid).format("0.00000000"), " ")),
                 "|",
                 "ask:",
-                colors.green(result.ask)
+                colors.red(z(16, n(result.ask).format("0.00000000"), " ")),
+                "|",
+                "baseVolume:",
+                z(16, n(result.baseVolume).format("0.0000"), " "),
+                "|",
+                "quoteVolume:",
+                z(16, n(result.quoteVolume).format("0.0000"), " ")
             );
+        } else {
+            console.log("---- market NULL ----", exchangeName, ticket);
         }
     } catch (error) {
         //    console.error(colors.red("Error:"), error.message);
@@ -88,14 +114,14 @@ async function prepareTickets() {
     let api = {};
     let exchanges = [];
 
-    if (configs.arbitrage.filter.exchanges) {
-        exchanges = configs.arbitrage.exchanges;
+    if (configs.filter.exchanges) {
+        exchanges = configs.exchanges;
     } else {
         exchanges = ccxt.exchanges;
     }
 
-    if (configs.arbitrage.filter.exchanges_blacklist) {
-        exchanges = lodash.difference(exchanges, configs.arbitrage.exchanges_blacklist);
+    if (configs.filter.exchanges_blacklist) {
+        exchanges = lodash.difference(exchanges, configs.exchanges_blacklist);
     }
 
     let checkedExchanges = [...exchanges];
@@ -104,10 +130,22 @@ async function prepareTickets() {
         let name = exchanges[i];
         console.log("Loading markets for", colors.green(name));
         try {
-            let _instance = new ccxt[name]({
-                timeout: configs.arbitrage.api_timeout * 1000,
-                enableRateLimit: true
-            });
+            var _instance;
+
+            if (configs.keys[name]) {
+                _instance = new ccxt[name]({
+                    apiKey: configs.keys[name].apiKey,
+                    secret: configs.keys[name].secret,
+                    timeout: configs.api_timeout * 1000,
+                    enableRateLimit: true
+                });
+            } else {
+                _instance = new ccxt[name]({
+                    timeout: configs.api_timeout * 1000,
+                    enableRateLimit: true
+                });
+            }
+
             await _instance.loadMarkets();
             api[name] = _instance;
         } catch (error) {
@@ -119,6 +157,7 @@ async function prepareTickets() {
 
     exchanges = [...checkedExchanges];
 
+    let symbols0 = [];
     let symbols = [];
     ccxt.unique(
         ccxt.flatten(
@@ -127,20 +166,27 @@ async function prepareTickets() {
             })
         )
     ).filter(symbol => {
-        if (configs.arbitrage.filter.only_listed_tickets) {
-            var coins = symbol.split("/");
-            if (
-                lodash.includes(configs.arbitrage.tickets, coins[0]) &&
-                lodash.includes(configs.arbitrage.tickets, coins[1])
-            ) {
+        var coins = symbol.split("/");
+        var is_base = false;
+        var is_quote = false;
+
+        is_base = lodash.includes(configs.base_currencies, coins[0]);
+        is_quote = lodash.includes(configs.quote_currencies, coins[1]);
+
+        if (configs.filter.base_currencies && configs.filter.quote_currencies) {
+            if (is_base && is_quote) {
+                symbols.push(symbol);
+            }
+        } else if (configs.filter.base_currencies) {
+            if (is_base) {
+                symbols.push(symbol);
+            }
+        } else if (configs.filter.quote_currencies) {
+            if (is_quote) {
                 symbols.push(symbol);
             }
         } else {
-            return configs.arbitrage.filter.tickets
-                ? configs.arbitrage.tickets.map(tn =>
-                      symbol.indexOf(tn) >= 0 ? symbols.push(symbol) : 0
-                  )
-                : symbols.push(symbol);
+            symbols.push(symbol);
         }
     });
 

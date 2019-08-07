@@ -21,7 +21,10 @@
         "ethereumjs-util": "^6.1.0",
         "json2csv": "^4.5.2",
         "lodash": "^4.17.15",
-        "web3": "^1.2.0"
+        "mongodb": "^3.3.0-beta2",
+        "numbro": "^2.1.2",
+        "web3": "^1.2.0",
+        "zero-fill": "^2.2.3"
     },
     "devDependencies": {
         "nodemon": "^1.18.3",

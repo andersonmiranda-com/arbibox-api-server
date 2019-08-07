@@ -42,11 +42,13 @@ exports.checkOpportunity = async function(prices) {
             ask: bestAsk.ask,
             sale_at: bestBid.name,
             bid: bestBid.bid,
+            baseVolume: bestAsk.baseVolume,
+            quoteVolume: bestAsk.quoteVolume,
             gain: Number(percentage.toFixed(4))
         };
 
         let index = lastOpportunities.indexOf(opportunity.id);
-        if (index == -1 && percentage >= configs.arbitrage.openOpportunity) {
+        if (index == -1 && percentage >= configs.openOpportunity) {
             console.log("");
             console.info("✔ Opportunity found:".green);
             console.info("  Estimated gain:", colors.green(percentage.toFixed(4)), "%");
@@ -59,7 +61,7 @@ exports.checkOpportunity = async function(prices) {
 
             register(opportunity);
             lastOpportunities.push(opportunity.id);
-        } else if (index != -1 && percentage <= configs.arbitrage.closeOpportunity) {
+        } else if (index != -1 && percentage <= configs.closeOpportunity) {
             console.log("");
             console.info(colors.yellow("✔ Opportunity closed: %s"), opportunity.id);
             lastOpportunities.splice(index);
@@ -81,6 +83,8 @@ function register(opportunity) {
         "ask",
         "sale_at",
         "bid",
+        "baseVolume",
+        "quoteVolume",
         "gain"
     ];
 
