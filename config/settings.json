@@ -1,21 +1,22 @@
 {
-  "checkInterval": 2,
+  "checkInterval": 0.2,
   "openOpportunity": 1,
-  "closeOpportunity": 0.5,
-  "api_timeout": 10,
+  "closeOpportunity": 1,
+  "api_timeout": 20,
   "filter": {
     "exchanges": true,
     "exchanges_blacklist": true,
     "base_currencies": true,
-    "quote_currencies": true
+    "quote_currencies": false
   },
   "exchanges": [
-    "bittrex", "binance"
+    "binance", "hitbtc", "yobit", "poloniex", "kraken"
   ],
   "exchanges_blacklist": [
-    "coinmarketcap", "lbank", "dx"
+    "coinmarketcap", "lbank", "dx", "crex24"
   ],
   "base_currencies": [
+    "BTC",
     "ETH",
     "XPR",
     "LTC",
@@ -39,26 +40,11 @@
     "XEM",
     "MKR",
     "ZEC",
-    "ONT",
-    "CRO",
-    "BTG",
-    "USDC",
-    "VSYS",
-    "EGT",
-    "VET",
-    "BAT",
-    "DCR",
-    "QTUM",
-    "HT",
-    "OMG",
-    "TUSD",
-    "BTT",
-    "HEDG"
+    "ONT"
   ],
   "quote_currencies": [
-    "BTC", "USD", "USDT"
+    "BTC", "USD", "USDT", "ETH"
   ],
-  "currencies_blacklist": ["VIA"],
   "keys": {
     "binance": {
       "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",

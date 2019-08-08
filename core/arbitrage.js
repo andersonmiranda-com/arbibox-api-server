@@ -1,11 +1,13 @@
 "use strict";
 
+const ccxt = require("ccxt");
 const lodash = require("lodash");
 const configs = require("../config/settings");
 const colors = require("colors");
 const util = require("util");
 const { Parser } = require("json2csv");
 const fs = require("fs");
+const db = require("./db");
 
 let lastOpportunities = [];
 
@@ -22,6 +24,12 @@ exports.checkOpportunity = async function(prices) {
     // console.log("bestAsk:", bestAsk);
 
     if (bestBid.bid > bestAsk.ask) {
+        let askOrders = await fetchOrderBook(bestAsk.name, bestAsk.ticket);
+        let bidOrders = await fetchOrderBook(bestBid.name, bestBid.ticket);
+
+        let buy_qty = askOrders.asks[0] ? askOrders.asks[0][1] : "";
+        let sell_qty = bidOrders.bids[0] ? bidOrders.bids[0][1] : "";
+
         let funds = getFunds();
         let amount = funds / bestAsk.ask;
 
@@ -39,11 +47,17 @@ exports.checkOpportunity = async function(prices) {
             ticket: bestAsk.ticket,
             amount: Number(amount.toFixed(8)),
             buy_at: bestAsk.name,
+            buy_qty: buy_qty,
+            sell_qty: sell_qty,
             ask: bestAsk.ask,
+            asks: askOrders.asks,
             sale_at: bestBid.name,
             bid: bestBid.bid,
-            baseVolume: bestAsk.baseVolume,
-            quoteVolume: bestAsk.quoteVolume,
+            bids: bidOrders.bids,
+            askBaseVolume: bestAsk.baseVolume,
+            bidBaseVolume: bestBid.baseVolume,
+            askQuoteVolume: bestAsk.quoteVolume,
+            bidQuoteVolume: bestBid.quoteVolume,
             gain: Number(percentage.toFixed(4))
         };
 
@@ -58,13 +72,14 @@ exports.checkOpportunity = async function(prices) {
                     colors: true
                 })
             );
-
+            db.saveOpportunity(opportunity);
             register(opportunity);
             lastOpportunities.push(opportunity.id);
         } else if (index != -1 && percentage <= configs.closeOpportunity) {
             console.log("");
             console.info(colors.yellow("✔ Opportunity closed: %s"), opportunity.id);
             lastOpportunities.splice(index);
+            db.removeOpportunity(opportunity);
         }
     }
 };
@@ -103,5 +118,32 @@ function register(opportunity) {
         });
     } catch (error) {
         console.error(colors.red("Error:"), error.message);
+    }
+}
+
+async function fetchOrderBook(exchange, symbol) {
+    let orders = {};
+    try {
+        var _exchange;
+
+        if (configs.keys[exchange]) {
+            _exchange = new ccxt[exchange]({
+                apiKey: configs.keys[exchange].apiKey,
+                secret: configs.keys[exchange].secret,
+                timeout: configs.api_timeout * 1000
+                //enableRateLimit: true
+            });
+        } else {
+            _exchange = new ccxt[exchange]({
+                timeout: configs.api_timeout * 1000
+                //enableRateLimit: true
+            });
+        }
+
+        orders = await _exchange.fetchOrderBook(symbol, 5);
+        return orders;
+    } catch (error) {
+        console.error(colors.red("Error fetchOrders:"), exchange, error.message);
+        return orders;
     }
 }

@@ -3,32 +3,49 @@
 const ccxt = require("ccxt");
 const lodash = require("lodash");
 const configs = require("../config/settings");
-const arbitrage = require("./arbitrage");
 const colors = require("colors");
 const z = require("zero-fill");
 const n = require("numbro");
 
-var prices = [];
+const arbitrage = require("./arbitrage");
+const db = require("./db");
 
 exports.initialize = async function() {
     try {
         console.info("\nLoading exchanges and tickets...");
-        const tickets = await prepareTickets();
+        const { tickets, exchangesSymbols } = await prepareTickets();
+        //for (let ticket of tickets) {
+        //    startArbitrageByTicket(ticket);
+        //    //setInterval(function() {
+        //    //    startArbitrageByTicket(ticket);
+        //    //}, (configs.checkInterval > 0 ? configs.checkInterval : 1) * 60000);
+        //}
+        //console.log("----------------------------- new");
+        startArbitrageByExchange(tickets, exchangesSymbols);
+        setInterval(function() {
+            startArbitrageByExchange(tickets, exchangesSymbols);
+        }, (configs.checkInterval > 0 ? configs.checkInterval : 1) * 60000);
         console.info("Bot started at", new Date());
-        for (let ticket of tickets) {
-            prices = [];
-            await startArbitrageByTicket(ticket);
-        }
     } catch (error) {
         console.error(colors.red("Error1:"), error.message);
     }
 };
 
 async function startArbitrageByTicket(ticket) {
-    for (let exchange of ticket.exchanges) {
-        let response = await fetchDataByTicketAndExchange(ticket.symbol, exchange);
-        prices.push(response);
-        arbitrage.checkOpportunity(prices);
+    try {
+        let promises = ticket.exchanges.map(async exchange =>
+            Promise.resolve(await fetchDataByTicketAndExchange(ticket.symbol, exchange))
+        );
+
+        Promise.all(promises)
+            .then(response => {
+                arbitrage.checkOpportunity(response);
+            })
+            .catch(error => {
+                console.error(colors.red("Error2:"), error.message);
+            });
+    } catch (error) {
+        console.error(colors.red("Error3:"), error.message);
     }
 }
 
@@ -41,8 +58,6 @@ async function fetchDataByTicketAndExchange(ticket, exchangeName) {
         ask: 0
     };
 
-    var exchange;
-
     try {
         var exchange;
 
@@ -50,17 +65,15 @@ async function fetchDataByTicketAndExchange(ticket, exchangeName) {
             exchange = new ccxt[exchangeName]({
                 apiKey: configs.keys[exchangeName].apiKey,
                 secret: configs.keys[exchangeName].secret,
-                timeout: configs.api_timeout * 1000,
-                enableRateLimit: true
+                timeout: configs.api_timeout * 1000
+                //enableRateLimit: true
             });
         } else {
             exchange = new ccxt[exchangeName]({
-                timeout: configs.api_timeout * 1000,
-                enableRateLimit: true
+                timeout: configs.api_timeout * 1000
+                //enableRateLimit: true
             });
         }
-
-        //console.log("---- get market ----", exchangeName, ticket);
 
         const market = await exchange.fetchTicker(ticket);
 
@@ -102,6 +115,112 @@ async function fetchDataByTicketAndExchange(ticket, exchangeName) {
     }
 }
 
+async function startArbitrageByExchange(tickets, exchangesSymbols) {
+    try {
+        let promises = exchangesSymbols.map(async exchange =>
+            Promise.resolve(await fetchTickersByExchange(exchange))
+        );
+
+        Promise.all(promises)
+            .then(
+                response => {
+                    //console.log(tickets);
+                    //console.log(response);
+
+                    let counter = 0;
+
+                    for (let ticket of tickets) {
+                        let prices = [];
+
+                        //console.log(ticket);
+                        counter++;
+
+                        for (let exchange of ticket.exchanges) {
+                            let price = {};
+
+                            let exchangePrices =
+                                response.find(exch => exch.id === exchange).tickets[
+                                    ticket.symbol
+                                ] || {};
+
+                            price.bid = exchangePrices.bid;
+                            price.ask = exchangePrices.ask;
+                            price.baseVolume = exchangePrices.baseVolume;
+                            price.quoteVolume = exchangePrices.quoteVolume;
+                            price.name = exchange;
+                            price.ticket = ticket.symbol;
+                            price.cost = 0.0025; ///////////TODO: ler maket/taker do exchange
+                            prices.push(price);
+                            /* console.log(
+                                z(5, counter, " "),
+                                z(13, exchange, " "),
+                                ":",
+                                z(9, ticket.symbol, " "),
+                                ":",
+                                "bid:",
+                                colors.green(z(16, n(price.bid).format("0.00000000"), " ")),
+                                "|",
+                                "ask:",
+                                colors.red(z(16, n(price.ask).format("0.00000000"), " ")),
+                                "|",
+                                "baseVolume:",
+                                z(16, n(price.baseVolume).format("0.0000"), " "),
+                                "|",
+                                "quoteVolume:",
+                                z(16, n(price.quoteVolume).format("0.0000"), " ")
+                            ); */
+                        }
+                        //console.log(prices);
+                        arbitrage.checkOpportunity(prices);
+                    }
+                }
+
+                //arbitrage.checkOpportunity(response);
+            )
+            .catch(error => {
+                console.error(colors.red("Error2:"), error.message);
+            });
+    } catch (error) {
+        console.error(colors.red("Error3:"), error.message);
+    }
+}
+
+async function fetchTickersByExchange(exchange) {
+    var exchangeTickets = {
+        id: exchange.id,
+        tickets: []
+    };
+
+    try {
+        var _exchange;
+
+        if (configs.keys[exchange.id]) {
+            _exchange = new ccxt[exchange.id]({
+                apiKey: configs.keys[exchange.id].apiKey,
+                secret: configs.keys[exchange.id].secret,
+                timeout: configs.api_timeout * 1000
+                //enableRateLimit: true
+            });
+        } else {
+            _exchange = new ccxt[exchange.id]({
+                timeout: configs.api_timeout * 1000
+                //enableRateLimit: true
+            });
+        }
+
+        exchangeTickets.tickets = await _exchange.fetchTickers(exchange.symbols);
+
+        db.saveTickets(exchangeTickets.id, exchangeTickets);
+
+        //tickets.map(ticket => console.log(ticket));
+    } catch (error) {
+        console.error(colors.red("Error:"), error.message);
+        return exchangeTickets;
+    } finally {
+        return exchangeTickets;
+    }
+}
+
 async function prepareTickets() {
     let api = {};
     let exchanges = [];
@@ -139,10 +258,16 @@ async function prepareTickets() {
             }
 
             await _instance.loadMarkets();
-            api[name] = _instance;
+            if (_instance.has["fetchTickers"]) {
+                api[name] = _instance;
+                //db.saveExchange(name, { symbols: _instance.symbols, markets: _instance.markets });
+            } else {
+                console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
+                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            }
         } catch (error) {
             //console.error(colors.red("Error:"), error.message);
-            console.error(colors.red("Error (cannot open API):"), name);
+            console.error(colors.red("Error initiating:"), name);
             checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
         }
     }
@@ -154,7 +279,8 @@ async function prepareTickets() {
     ccxt.unique(
         ccxt.flatten(
             exchanges.map(name => {
-                return api[name].symbols;
+                if (!api[name]) console.log(name);
+                return api[name] ? api[name].symbols : [];
             })
         )
     ).filter(symbol => {
@@ -191,14 +317,27 @@ async function prepareTickets() {
     //console.log(symbols);
     //console.log(symbols.length);
 
+    let exchangesSymbols = [];
+
+    for (let name of exchanges) {
+        exchangesSymbols.push({ id: name, symbols: [] });
+    }
+
     let tickets = arbitrables.map(symbol => {
         //console.log(symbol);
         let row = {
             symbol,
             exchanges: []
         };
-        for (let name of exchanges)
-            if (api[name].symbols.indexOf(symbol) >= 0) row.exchanges.push(name);
+
+        for (let name of exchanges) {
+            if (api[name].symbols.indexOf(symbol) >= 0) {
+                //append ticket to exchangesSYmbols list
+                exchangesSymbols.find(exch => exch.id === name).symbols.push(symbol);
+                //                exchangesSymbols[name].symbols.push(symbol);
+                row.exchanges.push(name);
+            }
+        }
         return row;
     });
 
@@ -210,5 +349,5 @@ async function prepareTickets() {
         "| Tickets:",
         colors.green(tickets.length)
     );
-    return tickets;
+    return { tickets, exchangesSymbols };
 }
