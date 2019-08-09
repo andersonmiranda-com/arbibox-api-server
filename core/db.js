@@ -1,7 +1,5 @@
 "use strict";
 
-var mongo = require("mongodb");
-
 var MongoClient = require("mongodb").MongoClient;
 var url = "mongodb://localhost:27017/";
 const lodash = require("lodash");
@@ -43,6 +41,30 @@ exports.removeOpportunity = function(data) {
         if (err) throw err;
         var db = client.db("arbibox");
         db.collection("opportunities").deleteMany({ id: data.id }, function(err, res) {
+            if (err) throw err;
+            //console.log(res.result);
+            client.close();
+        });
+    });
+};
+
+exports.removeOpportunitiesByTicket = function(ticket) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        var db = client.db("arbibox");
+        db.collection("opportunities").deleteMany({ ticket: ticket }, function(err, res) {
+            if (err) throw err;
+            //console.log(res.result);
+            client.close();
+        });
+    });
+};
+
+exports.removeAllOpportunities = function() {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        var db = client.db("arbibox");
+        db.collection("opportunities").deleteMany({}, function(err, res) {
             if (err) throw err;
             //console.log(res.result);
             client.close();

@@ -13,6 +13,7 @@ const db = require("./db");
 exports.initialize = async function() {
     try {
         console.info("\nLoading exchanges and tickets...");
+        db.removeAllOpportunities();
         const { tickets, exchangesSymbols } = await prepareTickets();
         //for (let ticket of tickets) {
         //    startArbitrageByTicket(ticket);
@@ -123,7 +124,7 @@ async function startArbitrageByExchange(tickets, exchangesSymbols) {
 
         Promise.all(promises)
             .then(
-                response => {
+                async response => {
                     //console.log(tickets);
                     //console.log(response);
 
@@ -171,7 +172,7 @@ async function startArbitrageByExchange(tickets, exchangesSymbols) {
                             ); */
                         }
                         //console.log(prices);
-                        arbitrage.checkOpportunity(prices);
+                        await arbitrage.checkOpportunity(prices);
                     }
                 }
 

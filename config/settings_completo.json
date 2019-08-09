@@ -1,5 +1,5 @@
 {
-    "checkInterval": 1,
+    "checkInterval": 0.5,
     "openOpportunity": 1,
     "closeOpportunity": 0.5,
     "api_timeout": 10,

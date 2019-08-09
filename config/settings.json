@@ -1,5 +1,5 @@
 {
-  "checkInterval": 0.2,
+  "checkInterval": 1,
   "openOpportunity": 1,
   "closeOpportunity": 1,
   "api_timeout": 20,
@@ -7,7 +7,7 @@
     "exchanges": true,
     "exchanges_blacklist": true,
     "base_currencies": true,
-    "quote_currencies": false
+    "quote_currencies": true
   },
   "exchanges": [
     "binance", "hitbtc", "yobit", "poloniex", "kraken"
@@ -43,7 +43,7 @@
     "ONT"
   ],
   "quote_currencies": [
-    "BTC", "USD", "USDT", "ETH"
+    "BTC", "USD", "USDT"
   ],
   "keys": {
     "binance": {
@@ -62,5 +62,19 @@
       "apiKey": "ede1062034397deabacc4221dcd358ef",
       "secret": "8qLzMOB0dCfTOHGTqyxT/ZyhNQNKIPPy6VWGw9UAhWkkk4pEcUbXjsI2FXeqhetAwFDs+Qy4WrrJSB/8oLqCNQ=="
     }
+  },
+
+  "tringular": {
+    "exchanges": [
+      "binance", "hitbtc", "yobit", "poloniex", "kraken"
+    ],
+    "startTickets": [
+      "LTC",
+      "ETH",
+      "USDT",
+      "USD",
+      "BNB",
+      "BTC"
+    ]
   }
 }

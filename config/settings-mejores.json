@@ -1,6 +1,6 @@
 {
     "checkInterval": 0.3,
-    "openOpportunity": 1,
+    "openOpportunity": 2,
     "closeOpportunity": 1,
     "api_timeout": 20,
     "filter": {
