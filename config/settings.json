@@ -1,5 +1,5 @@
 {
-  "checkInterval": 1,
+  "checkInterval": 0.5,
   "openOpportunity": 1,
   "closeOpportunity": 1,
   "api_timeout": 20,
@@ -64,11 +64,11 @@
     }
   },
 
-  "tringular": {
+  "triangular": {
     "exchanges": [
-      "binance", "hitbtc", "yobit", "poloniex", "kraken"
+      "binance", "hitbtc", "poloniex", "kraken"
     ],
-    "startTickets": [
+    "targetAssets": [
       "LTC",
       "ETH",
       "USDT",

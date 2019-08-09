@@ -1,39 +1,144 @@
 const ccxt = require("ccxt");
 const lodash = require("lodash");
 const configs = require("../config/settings");
+const { getConnectingAsset, getMultiplier } = require("./util");
+const colors = require("colors");
+const z = require("zero-fill");
+const n = require("numbro");
 
-const verbose = true;
+const verbose = false;
 
-async function findChains(targetAsset, markets) {
-    const symbols = symbolFinder(targetAsset, markets);
+const colorProfit = percentage => (percentage > 0 ? `${percentage}`.green : `${percentage}`.red);
 
-    return symbols.then(async function({ sourceSymbols, compatibleSymbols }) {
-        let chains = [];
+exports.initialize = async function() {
+    let targetAssets = configs.triangular.targetAssets;
+    try {
+        console.info("\nLoading exchanges and tickets...");
+        //db.removeAllOpportunities();
+        const { exchanges, markets } = await prepareExchanges();
+        console.info("Bot started at", new Date());
+        for (let exchange of exchanges) {
+            await findChains(targetAssets, exchange, markets);
+            //setInterval(function() {
+            //    startArbitrageByTicket(ticket);
+            //}, (configs.checkInterval > 0 ? configs.checkInterval : 1) * 60000);
+        }
+        //console.log("----------------------------- new");
+    } catch (error) {
+        console.error(colors.red("Error1:"), error.message);
+    }
+};
 
-        for (let firstSymbol of sourceSymbols) {
-            for (let secondSymbol of compatibleSymbols) {
-                for (let thirdSymbol of sourceSymbols) {
-                    if (!matchSymbol(targetAsset, firstSymbol, secondSymbol, thirdSymbol)) {
-                        continue;
-                    }
-                    let chain = new Chain(targetAsset, [firstSymbol, secondSymbol, thirdSymbol]);
-                    // let chain = createChain(exchange, targetAsset, firstSymbol, secondSymbol, thirdSymbol);
-                    chains.push(chain);
-                    // console.log(`${chain}`);
+class Chain {
+    constructor(targetAsset, symbols) {
+        this.targetAsset = targetAsset;
+        this.symbols = symbols;
+        this.triagePercentage = 100;
+    }
+
+    toString() {
+        return this.targetAsset + " '" + this.symbols.map(s => s.symbol).join("','") + "'";
+    }
+
+    getHashKey() {
+        return this.targetAsset + "-" + this.symbols.map(s => s.symbol).join("-");
+    }
+}
+
+async function findChains(targetAssets, exchange, markets) {
+    //return new Promise(async (resolve, reject) => {
+    var _exchange;
+
+    //try {
+    if (configs.keys[exchange]) {
+        _exchange = new ccxt[exchange]({
+            apiKey: configs.keys[exchange].apiKey,
+            secret: configs.keys[exchange].secret,
+            timeout: configs.api_timeout * 1000
+            //enableRateLimit: true
+        });
+    } else {
+        _exchange = new ccxt[exchange]({
+            timeout: configs.api_timeout * 1000
+            //enableRateLimit: true
+        });
+    }
+
+    tickers = await _exchange.fetchTickers();
+
+    exchangeMarket = markets.find(market => market.id === exchange);
+    for (let targetAsset of targetAssets) {
+        let chains = prepareChains(targetAsset, exchangeMarket.markets);
+
+        for (const chain of chains) {
+            chainResult = await calculateChainProfit(
+                exchange,
+                chain,
+                tickers,
+                exchangeMarket.markets
+            );
+
+            if (chain.triagePercentage >= 0) {
+                console.log(
+                    exchange.id,
+                    chain + "; triage: " + colorProfit(chain.triagePercentage) + " %"
+                );
+            }
+            //     console.log(".");
+            // }
+            // console.log(
+            //     z(13, exchange, " "),
+            //     z(40, chainResult, " "),
+            //     " triage: ",
+            //     chainResult.triagePercentage + " %"
+            // );
+        }
+        //} catch (error) {
+        //    console.log("Error on ", targetAsset);
+        //    return false;
+        //}
+    }
+    return true;
+    //    resolve(true);
+    //});
+}
+
+function prepareChains(targetAsset, markets) {
+    let { sourceSymbols, compatibleSymbols } = symbolFinder(targetAsset, markets);
+
+    let chains = [];
+
+    for (let firstSymbol of sourceSymbols) {
+        for (let secondSymbol of compatibleSymbols) {
+            for (let thirdSymbol of sourceSymbols) {
+                if (!matchSymbol(targetAsset, firstSymbol, secondSymbol, thirdSymbol)) {
+                    continue;
                 }
+                let chain = new Chain(targetAsset, [firstSymbol, secondSymbol, thirdSymbol]);
+                // let chain = createChain(exchange, targetAsset, firstSymbol, secondSymbol, thirdSymbol);
+                chains.push(chain);
+                // console.log(`${chain}`);
             }
         }
+    }
 
-        return chains;
-    });
+    return chains;
 }
 
 function symbolFinder(targetAsset, markets) {
-    verbose && console.log("There are " + markets.length + " total symbols on this exchange.");
+    verbose &&
+        console.log(
+            "There are " +
+                Object.getOwnPropertyNames(markets).length +
+                " total symbols on this exchange."
+        );
     verbose && console.log("Looking for all " + targetAsset + " symbols:");
     let sourceSymbols = [];
     let otherAssetIds = [];
-    for (let symbol of markets) {
+
+    Object.keys(markets).forEach(function(key) {
+        symbol = markets[key];
+
         //console.log(symbol);
 
         if (
@@ -50,7 +155,8 @@ function symbolFinder(targetAsset, markets) {
                 otherAssetIds.push(symbol.quote);
             }
         }
-    }
+    });
+
     verbose && console.log("\t" + sourceSymbols.map(s => "- " + s.symbol).join("\n\t"));
     verbose &&
         console.log(
@@ -63,11 +169,12 @@ function symbolFinder(targetAsset, markets) {
             "Looking for all compatible " + targetAsset + " symbols to calculate arbitrage:"
         );
     let compatibleSymbols = [];
-    for (let symbol of markets) {
+    Object.keys(markets).forEach(function(key) {
+        symbol = markets[key];
         if (otherAssetIds.indexOf(symbol.base) != -1 && otherAssetIds.indexOf(symbol.quote) != -1) {
             compatibleSymbols.push(symbol);
         }
-    }
+    });
     verbose &&
         console.log(
             "\tFound " +
@@ -81,15 +188,60 @@ function symbolFinder(targetAsset, markets) {
     return { sourceSymbols, compatibleSymbols };
 }
 
-async function prepareTickets() {
-    let api = {};
-    let exchanges = [];
+function matchSymbol(targetAsset, symbol1, symbol2, symbol3) {
+    try {
+        let c1 = getConnectingAsset(symbol1, targetAsset); // 'ETH/BTC' c1 = ETH
+        let c2 = getConnectingAsset(symbol2, c1); // 'QTUM/ETH' c2 = QTUM
+        let c3 = getConnectingAsset(symbol3, targetAsset); // 'QTUM/BTC' c3 = QTUM
 
-    if (configs.filter.exchanges) {
-        exchanges = configs.exchanges;
-    } else {
-        exchanges = ccxt.exchanges;
+        return c3 === c2;
+    } catch (error) {
+        return false;
     }
+
+    return false;
+}
+
+const substractFee = fee => amount => {
+    let res = amount - amount * fee;
+    return res;
+};
+
+function calculateChainProfit(exchange, chain, tickers, markets) {
+    const target = chain.targetAsset;
+    const [symbol1, symbol2, symbol3] = chain.symbols;
+
+    let ticker1 = tickers[symbol1.symbol];
+    let ticker2 = tickers[symbol2.symbol];
+    let ticker3 = tickers[symbol3.symbol];
+
+    const a = Number(getMultiplier(symbol1, target, ticker1), 10);
+
+    // Get second multiplier
+    const connectingAsset1 = getConnectingAsset(symbol1, target);
+    const b = getMultiplier(symbol2, connectingAsset1, ticker2);
+
+    // Get third multiplier
+    const connectingAsset2 = getConnectingAsset(symbol2, connectingAsset1);
+    const c = getMultiplier(symbol3, connectingAsset2, ticker3);
+
+    let market1 = markets[symbol1.symbol];
+    let market2 = markets[symbol2.symbol];
+    let market3 = markets[symbol3.symbol];
+
+    const fee1 = market1.taker;
+    const fee2 = market2.taker;
+    const fee3 = market3.taker;
+
+    const difference = 100 * a * (1 - fee1) * b * (1 - fee2) * c * (1 - fee3) - 100;
+
+    chain.triagePercentage = difference;
+    return chain;
+}
+
+async function prepareExchanges() {
+    let exchanges = configs.triangular.exchanges;
+    let markets = [];
 
     if (configs.filter.exchanges_blacklist) {
         exchanges = lodash.difference(exchanges, configs.exchanges_blacklist);
@@ -119,8 +271,7 @@ async function prepareTickets() {
 
             await _instance.loadMarkets();
             if (_instance.has["fetchTickers"]) {
-                api[name] = _instance;
-                //db.saveExchange(name, { symbols: _instance.symbols, markets: _instance.markets });
+                markets.push({ id: name, markets: _instance.markets });
             } else {
                 console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
@@ -134,80 +285,6 @@ async function prepareTickets() {
 
     exchanges = [...checkedExchanges];
 
-    let symbols0 = [];
-    let symbols = [];
-    ccxt.unique(
-        ccxt.flatten(
-            exchanges.map(name => {
-                if (!api[name]) console.log(name);
-                return api[name] ? api[name].symbols : [];
-            })
-        )
-    ).filter(symbol => {
-        var coins = symbol.split("/");
-        var is_base = false;
-        var is_quote = false;
-
-        is_base = lodash.includes(configs.base_currencies, coins[0]);
-        is_quote = lodash.includes(configs.quote_currencies, coins[1]);
-
-        if (configs.filter.base_currencies && configs.filter.quote_currencies) {
-            if (is_base && is_quote) {
-                symbols.push(symbol);
-            }
-        } else if (configs.filter.base_currencies) {
-            if (is_base) {
-                symbols.push(symbol);
-            }
-        } else if (configs.filter.quote_currencies) {
-            if (is_quote) {
-                symbols.push(symbol);
-            }
-        } else {
-            symbols.push(symbol);
-        }
-    });
-
-    let arbitrables = symbols
-        .filter(
-            symbol => exchanges.filter(name => api[name].symbols.indexOf(symbol) >= 0).length > 1
-        )
-        .sort((id1, id2) => (id1 > id2 ? 1 : id2 > id1 ? -1 : 0));
-
-    //console.log(symbols);
-    //console.log(symbols.length);
-
-    let exchangesSymbols = [];
-
-    for (let name of exchanges) {
-        exchangesSymbols.push({ id: name, symbols: [] });
-    }
-
-    let tickets = arbitrables.map(symbol => {
-        //console.log(symbol);
-        let row = {
-            symbol,
-            exchanges: []
-        };
-
-        for (let name of exchanges) {
-            if (api[name].symbols.indexOf(symbol) >= 0) {
-                //append ticket to exchangesSYmbols list
-                exchangesSymbols.find(exch => exch.id === name).symbols.push(symbol);
-                //                exchangesSymbols[name].symbols.push(symbol);
-                row.exchanges.push(name);
-            }
-        }
-        return row;
-    });
-
-    //console.log(tickets);
-
-    console.info(
-        "Exchanges:",
-        colors.green(exchanges.length),
-        "| Tickets:",
-        colors.green(tickets.length)
-    );
-    return { tickets, exchangesSymbols };
+    verbose && console.info("Exchanges:", colors.green(exchanges.length));
+    return { exchanges, markets };
 }
