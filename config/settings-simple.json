@@ -8,7 +8,10 @@
         "exchanges": true,
         "exchanges_blacklist": true,
         "base_currencies": true,
-        "quote_currencies": true
+        "quote_currencies": false,
+        "low_volume": true,
+        "low_base_volume_limit": 0.1,
+        "low_quote_volume_limit": 0.1
     },
 
     "exchanges": ["binance", "bitfinex", "bittrex", "cex", "kraken"],
@@ -38,5 +41,10 @@
             "apiKey": "ede1062034397deabacc4221dcd358ef",
             "secret": "8qLzMOB0dCfTOHGTqyxT/ZyhNQNKIPPy6VWGw9UAhWkkk4pEcUbXjsI2FXeqhetAwFDs+Qy4WrrJSB/8oLqCNQ=="
         }
+    },
+
+    "triangular": {
+        "exchanges": ["binance", "hitbtc", "poloniex", "kraken"],
+        "targetAssets": ["LTC", "ETH", "USDT", "USD", "BNB", "BTC"]
     }
 }

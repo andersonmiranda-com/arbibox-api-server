@@ -1,80 +1,89 @@
 {
-  "checkInterval": 0.5,
-  "openOpportunity": 1,
-  "closeOpportunity": 1,
-  "api_timeout": 20,
-  "filter": {
-    "exchanges": true,
-    "exchanges_blacklist": true,
-    "base_currencies": true,
-    "quote_currencies": true
-  },
-  "exchanges": [
-    "binance", "hitbtc", "yobit", "poloniex", "kraken"
-  ],
-  "exchanges_blacklist": [
-    "coinmarketcap", "lbank", "dx", "crex24"
-  ],
-  "base_currencies": [
-    "BTC",
-    "ETH",
-    "XPR",
-    "LTC",
-    "BCH",
-    "BNB",
-    "USDT",
-    "EOS",
-    "BSV",
-    "XLM",
-    "TRX",
-    "ADA",
-    "XMR",
-    "LEO",
-    "DASH",
-    "LINK",
-    "NEO",
-    "IOTA",
-    "ATOM",
-    "ETC",
-    "XTZ",
-    "XEM",
-    "MKR",
-    "ZEC",
-    "ONT"
-  ],
-  "quote_currencies": [
-    "BTC", "USD", "USDT"
-  ],
-  "keys": {
-    "binance": {
-      "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
-      "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
+    "checkInterval": 0.5,
+    "openOpportunity": 2,
+    "closeOpportunity": 1,
+    "api_timeout": 20,
+    "filter": {
+        "exchanges": true,
+        "exchanges_blacklist": true,
+        "base_currencies": true,
+        "quote_currencies": false,
+        "low_volume": true,
+        "low_base_volume_limit": 0.1,
+        "low_quote_volume_limit": 0.1
     },
-    "poloniex": {
-      "apiKey": "Y6D2EYJG-DIWXCTIX-S85GA9SK-6ZW2231Q",
-      "secret": "8130bf4bd3a7fbac5dca62a4873b1850583dc348b8c50f666f480d35d909dd65afe4310998018cbd9aafc0db6802dd36daf97742368f07fa00ea114fe1eac802"
-    },
-    "kraken": {
-      "apiKey": "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
-      "secret": "csjYywPe8c51zBvDrYV96iiZVwokozSpmCP+pdOGOzWQ1FwStEpRZnIEhujxx9Hxb2XK7oipi5k7ZU/jrCKdPw=="
-    },
-    "coinbasepro": {
-      "apiKey": "ede1062034397deabacc4221dcd358ef",
-      "secret": "8qLzMOB0dCfTOHGTqyxT/ZyhNQNKIPPy6VWGw9UAhWkkk4pEcUbXjsI2FXeqhetAwFDs+Qy4WrrJSB/8oLqCNQ=="
-    }
-  },
-
-  "triangular": {
     "exchanges": [
-      "binance", "hitbtc", "poloniex", "kraken"
+        "binance",
+        "okex",
+        "huobipro",
+        "lbank",
+        "bittrex",
+        "bitfinex",
+        "kucoin",
+        "hitbtc",
+        "kraken",
+        "poloniex",
+        "gateio",
+        "livecoin",
+        "bitz",
+        "lbank",
+        "zb",
+        "exx",
+        "exmo",
+        "yobit"
     ],
-    "targetAssets": [
-      "LTC",
-      "ETH",
-      "USDT",
-      "USD",
-      "BNB",
-      "BTC"
-    ]
-  }
+    "exchanges_blacklist": ["coinmarketcap", "dx", "crex24"],
+
+    "base_currencies": [
+        "BTC",
+        "ETH",
+        "XPR",
+        "LTC",
+        "BCH",
+        "BNB",
+        "USDT",
+        "EOS",
+        "BSV",
+        "XLM",
+        "TRX",
+        "ADA",
+        "XMR",
+        "LEO",
+        "DASH",
+        "LINK",
+        "NEO",
+        "IOTA",
+        "ATOM",
+        "ETC",
+        "XTZ",
+        "XEM",
+        "MKR",
+        "ZEC",
+        "ONT"
+    ],
+    "quote_currencies": ["BTC", "USD", "USDT", "ETH"],
+
+    "keys": {
+        "binance": {
+            "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
+            "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
+        },
+        "poloniex": {
+            "apiKey": "Y6D2EYJG-DIWXCTIX-S85GA9SK-6ZW2231Q",
+            "secret": "8130bf4bd3a7fbac5dca62a4873b1850583dc348b8c50f666f480d35d909dd65afe4310998018cbd9aafc0db6802dd36daf97742368f07fa00ea114fe1eac802"
+        },
+        "kraken": {
+            "apiKey": "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
+            "secret": "csjYywPe8c51zBvDrYV96iiZVwokozSpmCP+pdOGOzWQ1FwStEpRZnIEhujxx9Hxb2XK7oipi5k7ZU/jrCKdPw=="
+        },
+        "coinbasepro": {
+            "apiKey": "ede1062034397deabacc4221dcd358ef",
+            "secret": "8qLzMOB0dCfTOHGTqyxT/ZyhNQNKIPPy6VWGw9UAhWkkk4pEcUbXjsI2FXeqhetAwFDs+Qy4WrrJSB/8oLqCNQ=="
+        }
+    },
+
+    "triangular": {
+        "exchanges": ["binance", "hitbtc", "poloniex", "kraken"],
+        "targetAssets": ["LTC", "ETH", "USDT", "USD", "BNB", "BTC"]
+    }
 }

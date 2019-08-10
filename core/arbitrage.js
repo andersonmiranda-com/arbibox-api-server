@@ -14,7 +14,25 @@ exports.checkOpportunity = function(prices) {
         let opportunities = [];
         db.removeOpportunitiesByTicket(prices[0].ticket);
         for (let priceAsk of prices) {
+            if (
+                configs.filter.low_volume &&
+                (!priceAsk.baseVolume ||
+                    !priceAsk.quoteVolume ||
+                    priceAsk.baseVolume <= configs.filter.low_base_volume_limit ||
+                    priceAsk.quoteVolume <= configs.filter.lowquote_volume_limit)
+            ) {
+                continue;
+            }
             for (let priceBid of prices) {
+                if (
+                    configs.filter.low_volume &&
+                    (!priceBid.baseVolume ||
+                        !priceBid.quoteVolume ||
+                        priceBid.baseVolume <= configs.filter.low_base_volume_limit ||
+                        priceBid.quoteVolume <= configs.filter.lowquote_volume_limit)
+                ) {
+                    continue;
+                }
                 if (priceAsk.ask < priceBid.bid) {
                     opportunities.push({ bestAsk: priceAsk, bestBid: priceBid });
                     //console.log("\n\nbestBid:", priceBid);
