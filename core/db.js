@@ -103,3 +103,18 @@ exports.saveTickets = function(id, data) {
         });
     });
 };
+
+exports.saveWallets = function(id, data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        var db = client.db("arbibox");
+        db.collection("wallets").updateOne({ id: id }, { $set: data }, { upsert: true }, function(
+            err,
+            res
+        ) {
+            if (err) throw err;
+            //console.log(res.result);
+            client.close();
+        });
+    });
+};

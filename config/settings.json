@@ -1,6 +1,6 @@
 {
-    "checkInterval": 0.5,
-    "openOpportunity": 2,
+    "checkInterval": 0.2,
+    "openOpportunity": 1,
     "closeOpportunity": 1,
     "api_timeout": 20,
     "filter": {
@@ -12,28 +12,8 @@
         "low_base_volume_limit": 0.1,
         "low_quote_volume_limit": 0.1
     },
-    "exchanges": [
-        "binance",
-        "okex",
-        "huobipro",
-        "lbank",
-        "bittrex",
-        "bitfinex",
-        "kucoin",
-        "hitbtc",
-        "kraken",
-        "poloniex",
-        "gateio",
-        "livecoin",
-        "bitz",
-        "lbank",
-        "zb",
-        "exx",
-        "exmo",
-        "yobit"
-    ],
-    "exchanges_blacklist": ["coinmarketcap", "dx", "crex24"],
-
+    "exchanges": ["binance", "hitbtc", "yobit", "poloniex", "kraken"],
+    "exchanges_blacklist": ["coinmarketcap", "lbank", "dx", "crex24"],
     "base_currencies": [
         "BTC",
         "ETH",
@@ -62,7 +42,6 @@
         "ONT"
     ],
     "quote_currencies": ["BTC", "USD", "USDT", "ETH"],
-
     "keys": {
         "binance": {
             "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
