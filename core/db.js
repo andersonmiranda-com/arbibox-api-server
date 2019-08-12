@@ -1,6 +1,6 @@
 "use strict";
 
-var moment = require('moment');
+var moment = require("moment");
 var lodash = require("lodash");
 var MongoClient = require("mongodb").MongoClient;
 var url = "mongodb://localhost:27017/";
@@ -25,14 +25,11 @@ exports.createOpportunity = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
-        db.collection("opportunities").insertOne(
-            data,
-            function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                client.close();
-            }
-        );
+        db.collection("opportunities").insertOne(data, function(err, res) {
+            if (err) throw err;
+            //console.log(res.result);
+            client.close();
+        });
     });
 };
 
@@ -43,7 +40,17 @@ exports.upsertOpportunity = function(data) {
         var db = client.db("arbibox");
         db.collection("opportunities").updateOne(
             { id: data.id },
-            { $set: data, $addToSet: { latest: {created_at: data.created_at, bid: data.bid, ask: data.ask, gain: data.gain}}},
+            {
+                $set: data,
+                $addToSet: {
+                    latest: {
+                        created_at: data.created_at,
+                        bid: data.bid,
+                        ask: data.ask,
+                        gain: data.gain
+                    }
+                }
+            },
             { upsert: true },
             function(err, res) {
                 if (err) throw err;
@@ -79,15 +86,20 @@ exports.removeOpportunitiesByTicket = function(ticket) {
 };
 
 exports.removeOldOpportunitiesByTicket = function(ticket) {
-    const minutesAgo = moment().subtract(configs.filter.remove_after_minutes, 'minutes').toDate();
+    const minutesAgo = moment()
+        .subtract(configs.remove_after_minutes, "minutes")
+        .toDate();
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
-        db.collection("opportunities").deleteMany({ ticket: ticket, created_at: { $lt : minutesAgo }}, function(err, res) {
-            if (err) throw err;
-            //console.log(res.result);
-            client.close();
-        });
+        db.collection("opportunities").deleteMany(
+            { ticket: ticket, created_at: { $lt: minutesAgo } },
+            function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                client.close();
+            }
+        );
     });
 };
 
