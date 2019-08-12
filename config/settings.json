@@ -1,8 +1,9 @@
 {
-    "checkInterval": 0.2,
+    "checkInterval": 0.5,
     "openOpportunity": 1,
     "closeOpportunity": 1,
     "api_timeout": 20,
+    "remove_after_minutes": 3,
     "filter": {
         "exchanges": true,
         "exchanges_blacklist": true,
@@ -47,10 +48,7 @@
             "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
             "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
         },
-        "poloniex": {
-            "apiKey": "Y6D2EYJG-DIWXCTIX-S85GA9SK-6ZW2231Q",
-            "secret": "8130bf4bd3a7fbac5dca62a4873b1850583dc348b8c50f666f480d35d909dd65afe4310998018cbd9aafc0db6802dd36daf97742368f07fa00ea114fe1eac802"
-        },
+    
         "kraken": {
             "apiKey": "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
             "secret": "csjYywPe8c51zBvDrYV96iiZVwokozSpmCP+pdOGOzWQ1FwStEpRZnIEhujxx9Hxb2XK7oipi5k7ZU/jrCKdPw=="

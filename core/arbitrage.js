@@ -12,7 +12,7 @@ const db = require("./db");
 exports.checkOpportunity = function(prices) {
     return new Promise(async (resolve, reject) => {
         let opportunities = [];
-        db.removeOpportunitiesByTicket(prices[0].ticket);
+        db.removeOldOpportunitiesByTicket(prices[0].ticket);
         for (let priceAsk of prices) {
             if (
                 configs.filter.low_volume &&
@@ -96,7 +96,7 @@ exports.checkOpportunity = function(prices) {
                         colors: true
                     })
                 );
-                db.saveOpportunity(opportunity);
+                db.upsertOpportunity(opportunity);
                 //register(opportunity);
 
                 // } else if (index != -1 && percentage <= configs.closeOpportunity) {

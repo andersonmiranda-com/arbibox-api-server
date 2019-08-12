@@ -3,6 +3,7 @@
     "openOpportunity": 2,
     "closeOpportunity": 1,
     "api_timeout": 20,
+    "remove_after_minutes": 3,
     "filter": {
         "exchanges": true,
         "exchanges_blacklist": true,

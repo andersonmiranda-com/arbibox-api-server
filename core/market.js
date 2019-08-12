@@ -108,8 +108,8 @@ async function fetchTickersByExchange(exchange) {
             _exchange = new ccxt[exchange.id]({
                 apiKey: configs.keys[exchange.id].apiKey,
                 secret: configs.keys[exchange.id].secret,
-                timeout: configs.api_timeout * 1000
-                //enableRateLimit: true
+                timeout: configs.api_timeout * 1000,
+                enableRateLimit: true
             });
             exchangeTickets.wallets = await _exchange.fetchBalance();
             db.saveWallets(exchangeTickets.id, {
@@ -119,8 +119,8 @@ async function fetchTickersByExchange(exchange) {
             });
         } else {
             _exchange = new ccxt[exchange.id]({
-                timeout: configs.api_timeout * 1000
-                //enableRateLimit: true
+                timeout: configs.api_timeout * 1000,
+                enableRateLimit: true
             });
             exchangeTickets.wallets = [];
         }

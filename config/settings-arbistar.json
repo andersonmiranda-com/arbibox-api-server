@@ -1,8 +1,9 @@
 {
     "checkInterval": 0.5,
-    "openOpportunity": 1,
-    "closeOpportunity": 0.5,
-    "api_timeout": 10,
+    "openOpportunity": 0.2,
+    "closeOpportunity": 0,
+    "api_timeout": 20,
+    "remove_after_minutes": 3,
 
     "filter": {
         "exchanges": true,
