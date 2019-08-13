@@ -40,8 +40,8 @@
         "coinbasepro",
         "exx"
     ],
-    "exchanges_blacklist": ["coinmarketcap", "lbank", "dx"],
-    "base_currencies": [
+    "exchangesBlacklist": ["coinmarketcap", "lbank", "dx"],
+    "baseCurrencies": [
         "ETH",
         "XPR",
         "LTC",
@@ -81,8 +81,8 @@
         "BTT",
         "HEDG"
     ],
-    "quote_currencies": ["BTC", "USD", "USDT", "ETH"],
-    "currencies_blacklist": ["VIA"],
+    "quoteCurrencies": ["BTC", "USD", "USDT", "ETH"],
+    "currenciesBlacklist": ["VIA"],
     "keys": {
         "binance": {
             "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",

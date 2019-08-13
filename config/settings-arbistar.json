@@ -13,13 +13,13 @@
 
     "exchanges": ["binance", "bitfinex", "bittrex", "cex", "kraken"],
 
-    "exchanges_blacklist": ["coinmarketcap", "lbank", "dx"],
+    "exchangesBlacklist": ["coinmarketcap", "lbank", "dx"],
 
-    "base_currencies": ["BTC", "DASH", "ETH", "ETC", "LTC"],
+    "baseCurrencies": ["BTC", "DASH", "ETH", "ETC", "LTC"],
 
-    "quote_currencies": ["BTC", "USD", "USDT"],
+    "quoteCurrencies": ["BTC", "USD", "USDT"],
 
-    "currencies_blacklist": ["VIA"],
+    "currenciesBlacklist": ["VIA"],
 
     "keys": {
         "binance": {
