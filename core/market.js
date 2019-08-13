@@ -1,5 +1,3 @@
-"use strict";
-
 const ccxt = require("ccxt");
 const lodash = require("lodash");
 const configs = require("../config/settings");
@@ -9,6 +7,8 @@ const n = require("numbro");
 
 const arbitrage = require("./arbitrage");
 const db = require("./db");
+
+global.withdrawalFees = [];
 
 exports.initialize = async function() {
     try {
@@ -108,7 +108,7 @@ async function fetchTickersByExchange(exchange) {
             _exchange = new ccxt[exchange.id]({
                 apiKey: configs.keys[exchange.id].apiKey,
                 secret: configs.keys[exchange.id].secret,
-                timeout: configs.api_timeout * 1000,
+                timeout: configs.apiTimeout * 1000,
                 enableRateLimit: true
             });
             exchangeTickets.wallets = await _exchange.fetchBalance();
@@ -119,7 +119,7 @@ async function fetchTickersByExchange(exchange) {
             });
         } else {
             _exchange = new ccxt[exchange.id]({
-                timeout: configs.api_timeout * 1000,
+                timeout: configs.apiTimeout * 1000,
                 enableRateLimit: true
             });
             exchangeTickets.wallets = [];
@@ -127,7 +127,10 @@ async function fetchTickersByExchange(exchange) {
 
         exchangeTickets.tickets = await _exchange.fetchTickers(exchange.symbols);
 
-        db.saveTickets(exchangeTickets.id, { id: exchangeTickets.id, id: exchangeTickets.tickets });
+        db.saveTickets(exchangeTickets.id, {
+            id: exchangeTickets.id,
+            tickets: exchangeTickets.tickets
+        });
 
         //tickets.map(ticket => console.log(ticket));
     } catch (error) {
@@ -139,17 +142,21 @@ async function fetchTickersByExchange(exchange) {
 }
 
 async function prepareTickets() {
+    //get withdrawal fees
+    db.getWithdrawalFees(function(response) {
+        global.withdrawalFees = response;
+    });
     let api = {};
     let exchanges = [];
 
-    if (configs.filter.exchanges) {
+    if (configs.marketFilter.exchanges) {
         exchanges = configs.exchanges;
     } else {
         exchanges = ccxt.exchanges;
     }
 
-    if (configs.filter.exchanges_blacklist) {
-        exchanges = lodash.difference(exchanges, configs.exchanges_blacklist);
+    if (configs.marketFilter.exchangesBlacklist) {
+        exchanges = lodash.difference(exchanges, configs.exchangesBlacklist);
     }
 
     let checkedExchanges = [...exchanges];
@@ -164,23 +171,34 @@ async function prepareTickets() {
                 _instance = new ccxt[name]({
                     apiKey: configs.keys[name].apiKey,
                     secret: configs.keys[name].secret,
-                    timeout: configs.api_timeout * 1000,
+                    timeout: configs.apiTimeout * 1000,
                     enableRateLimit: true
                 });
             } else {
                 _instance = new ccxt[name]({
-                    timeout: configs.api_timeout * 1000,
+                    timeout: configs.apiTimeout * 1000,
                     enableRateLimit: true
                 });
             }
 
             await _instance.loadMarkets();
-            if (_instance.has["fetchTickers"]) {
-                api[name] = _instance;
-                //db.saveExchange(name, { symbols: _instance.symbols, markets: _instance.markets });
-            } else {
+
+            //CCXT API Exchange validation
+            if (!_instance.has["fetchTickers"]) {
                 console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            } else if (!_instance.has["fetchOrderBook"]) {
+                console.error(colors.red("Error: Exchange has no fetchOrderBook:"), name);
+                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            } else if (!_instance.has["fetchTrades"]) {
+                console.error(colors.red("Error: Exchange has no fetchTrades:"), name);
+                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            } else if (!_instance.has["withdraw"]) {
+                console.error(colors.red("Error: Exchange has no withdraw:"), name);
+                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            } else {
+                api[name] = _instance;
+                //db.saveExchange(name, { symbols: _instance.symbols, markets: _instance.markets });
             }
         } catch (error) {
             //console.error(colors.red("Error:"), error.message);
@@ -205,18 +223,18 @@ async function prepareTickets() {
         var is_base = false;
         var is_quote = false;
 
-        is_base = lodash.includes(configs.base_currencies, coins[0]);
-        is_quote = lodash.includes(configs.quote_currencies, coins[1]);
+        is_base = lodash.includes(configs.baseCurrencies, coins[0]);
+        is_quote = lodash.includes(configs.quoteCurrencies, coins[1]);
 
-        if (configs.filter.base_currencies && configs.filter.quote_currencies) {
+        if (configs.marketFilter.baseCurrencies && configs.marketFilter.quoteCurrencies) {
             if (is_base && is_quote) {
                 symbols.push(symbol);
             }
-        } else if (configs.filter.base_currencies) {
+        } else if (configs.marketFilter.baseCurrencies) {
             if (is_base) {
                 symbols.push(symbol);
             }
-        } else if (configs.filter.quote_currencies) {
+        } else if (configs.marketFilter.quoteCurrencies) {
             if (is_quote) {
                 symbols.push(symbol);
             }

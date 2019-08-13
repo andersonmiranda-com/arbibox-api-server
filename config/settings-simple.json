@@ -1,20 +1,15 @@
 {
-    "checkInterval": 0.5,
-    "openOpportunity": 1,
-    "closeOpportunity": 0.5,
-    "api_timeout": 20,
-    "remove_after_minutes": 3,
-
-    "filter": {
+    "checkInterval": 0.25,
+    "minimumProfit": 1,
+    "minimumProfitInvest": 0.5,
+    "apiTimeout": 10,
+    "removeAfterMinutes": 5,
+    "marketFilter": {
         "exchanges": true,
-        "exchanges_blacklist": true,
-        "base_currencies": true,
-        "quote_currencies": false,
-        "low_volume": true,
-        "low_base_volume_limit": 0.1,
-        "low_quote_volume_limit": 0.1
+        "exchangesBlacklist": true,
+        "baseCurrencies": true,
+        "quoteCurrencies": false
     },
-
     "exchanges": ["binance", "bitfinex", "bittrex", "cex", "kraken"],
 
     "exchanges_blacklist": ["coinmarketcap", "lbank", "dx"],
@@ -47,5 +42,14 @@
     "triangular": {
         "exchanges": ["binance", "hitbtc", "poloniex", "kraken"],
         "targetAssets": ["LTC", "ETH", "USDT", "USD", "BNB", "BTC"]
+    },
+
+    "quality": {
+        "filter": {
+            "lowVolume": true,
+            "baseLowVolumeLimit": 0.1,
+            "quoteLowVolumeLimit": { "BTC": 0.1, "USD": 1000, "USDT": 1000, "ETH": 5 }
+        },
+        "quoteCurrencyFunds": { "BTC": 0.1, "USD": 1000, "USDT": 1000, "ETH": 5 }
     }
 }

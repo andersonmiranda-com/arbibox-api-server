@@ -1,23 +1,19 @@
 {
-    "checkInterval": 0.5,
-    "openOpportunity": 2,
-    "closeOpportunity": 1,
-    "api_timeout": 20,
-    "remove_after_minutes": 3,
-    "filter": {
+    "checkInterval": 0.25,
+    "minimumProfit": 1,
+    "minimumProfitInvest": 0.5,
+    "apiTimeout": 10,
+    "removeAfterMinutes": 5,
+    "marketFilter": {
         "exchanges": true,
-        "exchanges_blacklist": true,
-        "base_currencies": true,
-        "quote_currencies": false,
-        "low_volume": true,
-        "low_base_volume_limit": 0.1,
-        "low_quote_volume_limit": 0.1
+        "exchangesBlacklist": true,
+        "baseCurrencies": true,
+        "quoteCurrencies": false
     },
     "exchanges": [
         "binance",
         "okex",
         "huobipro",
-        "lbank",
         "bittrex",
         "bitfinex",
         "kucoin",
@@ -26,16 +22,13 @@
         "poloniex",
         "gateio",
         "livecoin",
-        "bitz",
-        "lbank",
         "zb",
-        "exx",
         "exmo",
         "yobit"
     ],
-    "exchanges_blacklist": ["coinmarketcap", "dx", "crex24"],
+    "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
 
-    "base_currencies": [
+    "baseCurrencies": [
         "BTC",
         "ETH",
         "XPR",
@@ -62,16 +55,12 @@
         "ZEC",
         "ONT"
     ],
-    "quote_currencies": ["BTC", "USD", "USDT", "ETH"],
+    "quoteCurrencies": ["BTC", "USD", "USDT", "ETH"],
 
     "keys": {
         "binance": {
             "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
             "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
-        },
-        "poloniex": {
-            "apiKey": "Y6D2EYJG-DIWXCTIX-S85GA9SK-6ZW2231Q",
-            "secret": "8130bf4bd3a7fbac5dca62a4873b1850583dc348b8c50f666f480d35d909dd65afe4310998018cbd9aafc0db6802dd36daf97742368f07fa00ea114fe1eac802"
         },
         "kraken": {
             "apiKey": "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
@@ -86,5 +75,14 @@
     "triangular": {
         "exchanges": ["binance", "hitbtc", "poloniex", "kraken"],
         "targetAssets": ["LTC", "ETH", "USDT", "USD", "BNB", "BTC"]
+    },
+
+    "quality": {
+        "filter": {
+            "lowVolume": true,
+            "baseLowVolumeLimit": 0.1,
+            "quoteLowVolumeLimit": { "BTC": 0.1, "USD": 1000, "USDT": 1000, "ETH": 5 }
+        },
+        "quoteCurrencyFunds": { "BTC": 0.1, "USD": 1000, "USDT": 1000, "ETH": 5 }
     }
 }
