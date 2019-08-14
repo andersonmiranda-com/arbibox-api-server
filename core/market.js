@@ -81,7 +81,7 @@ async function startArbitrageByExchange(tickets, exchangesSymbols) {
                             ); */
                         }
                         //console.log(prices);
-                        await arbitrage.checkOpportunity(prices);
+                        arbitrage.checkOpportunity(prices);
                     }
                 }
 
