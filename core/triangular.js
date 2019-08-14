@@ -54,12 +54,12 @@ async function findChains(targetAssets, exchange, markets) {
         _exchange = new ccxt[exchange]({
             apiKey: configs.keys[exchange].apiKey,
             secret: configs.keys[exchange].secret,
-            timeout: configs.api_timeout * 1000
+            timeout: configs.apiTimeout * 1000
             //enableRateLimit: true
         });
     } else {
         _exchange = new ccxt[exchange]({
-            timeout: configs.api_timeout * 1000
+            timeout: configs.apiTimeout * 1000
             //enableRateLimit: true
         });
     }
@@ -243,8 +243,8 @@ async function prepareExchanges() {
     let exchanges = configs.triangular.exchanges;
     let markets = [];
 
-    if (configs.filter.exchanges_blacklist) {
-        exchanges = lodash.difference(exchanges, configs.exchanges_blacklist);
+    if (configs.marketFilter.exchangesBlacklist) {
+        exchanges = lodash.difference(exchanges, configs.marketFilter.exchangesBlacklist);
     }
 
     let checkedExchanges = [...exchanges];
@@ -259,12 +259,12 @@ async function prepareExchanges() {
                 _instance = new ccxt[name]({
                     apiKey: configs.keys[name].apiKey,
                     secret: configs.keys[name].secret,
-                    timeout: configs.api_timeout * 1000,
+                    timeout: configs.apiTimeout * 1000,
                     enableRateLimit: true
                 });
             } else {
                 _instance = new ccxt[name]({
-                    timeout: configs.api_timeout * 1000,
+                    timeout: configs.apiTimeout * 1000,
                     enableRateLimit: true
                 });
             }
