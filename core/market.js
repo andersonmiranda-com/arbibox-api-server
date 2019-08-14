@@ -18,8 +18,9 @@ exports.initialize = async function() {
         startArbitrageByExchange(tickets, exchangesSymbols);
         setInterval(function() {
             startArbitrageByExchange(tickets, exchangesSymbols);
+            console.info(">>>>>> Starting new search at", new Date());
         }, (configs.checkInterval > 0 ? configs.checkInterval : 1) * 60000);
-        console.info("Bot started at", new Date());
+        console.info(">>>>>> Bot started at", new Date());
     } catch (error) {
         console.error(colors.red("Error1:"), error.message);
     }
