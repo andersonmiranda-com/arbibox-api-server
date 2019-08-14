@@ -177,3 +177,16 @@ exports.getWithdrawalFees = function(cb) {
             });
     });
 };
+
+exports.insertTriangularOpportunity = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+
+        var db = client.db("arbibox");
+        db.collection("triangular").insertOne(data, function(err, res) {
+            if (err) throw err;
+            //console.log(res.result);
+            client.close();
+        });
+    });
+};
