@@ -61,14 +61,6 @@
         "binance": {
             "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
             "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
-        },
-        "kraken": {
-            "apiKey": "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
-            "secret": "csjYywPe8c51zBvDrYV96iiZVwokozSpmCP+pdOGOzWQ1FwStEpRZnIEhujxx9Hxb2XK7oipi5k7ZU/jrCKdPw=="
-        },
-        "coinbasepro": {
-            "apiKey": "ede1062034397deabacc4221dcd358ef",
-            "secret": "8qLzMOB0dCfTOHGTqyxT/ZyhNQNKIPPy6VWGw9UAhWkkk4pEcUbXjsI2FXeqhetAwFDs+Qy4WrrJSB/8oLqCNQ=="
         }
     },
 

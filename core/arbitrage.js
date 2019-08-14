@@ -67,11 +67,7 @@ exports.checkOpportunity = function(prices) {
                     bestAsk,
                     bestBid
                 );
-                let { minQuote, minBase } = getMinimunInversion(
-                    configs.quality.quoteCurrencyFunds[quoteCurrency],
-                    bestAsk,
-                    bestBid
-                );
+                let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
                 let percentageAfterWdFees2 = getPercentageAfterWdFees(minQuote, bestAsk, bestBid);
                 let opportunity = {
                     id: bestAsk.ticket.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
@@ -167,7 +163,7 @@ function getPercentageAfterWdFees(funds, bestAsk, bestBid) {
     return percentage;
 }
 
-function getMinimunInversion(seed, bestAsk, bestBid) {
+function getMinimunInversion(bestAsk, bestBid) {
     let { baseCurrency, quoteCurrency } = getCurrencies(bestAsk);
 
     let baseWithdrawalFee = getWithdrawalFee(baseCurrency);
