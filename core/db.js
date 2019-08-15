@@ -45,9 +45,9 @@ exports.upsertOpportunity = function(data) {
                 $addToSet: {
                     latest: {
                         created_at: data.created_at,
-                        bid: data.bid,
-                        ask: data.ask,
-                        gain: data.gain
+                        bid: data.sale.bid,
+                        ask: data.buy.ask,
+                        gain: data.profit1
                     }
                 }
             },
