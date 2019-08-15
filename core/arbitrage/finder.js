@@ -167,7 +167,7 @@ const initialize = async function() {
 ///
 ///
 
-async function checkOpportunities(tickets, exchangesSymbols) {
+async function findOpportunities(tickets, exchangesSymbols) {
     try {
         let promises = exchangesSymbols.map(async exchange =>
             Promise.resolve(await fetchTickersByExchange(exchange))
@@ -199,7 +199,7 @@ async function checkOpportunities(tickets, exchangesSymbols) {
                             price.baseVolume = exchangePrices.baseVolume;
                             price.quoteVolume = exchangePrices.quoteVolume;
                             price.name = exchange;
-                            price.ticket = ticket.symbol;
+                            price.symbol = ticket.symbol;
                             price.cost = 0.0025; ///////////TODO: ler maket/taker do exchange
                             prices.push(price);
                             /* verbose && console.log(
@@ -301,7 +301,7 @@ function filterOpportunities(prices) {
     return new Promise(async (resolve, reject) => {
         let opportunities = [];
         let { baseCurrency, quoteCurrency } = getCurrencies(prices[0]);
-        db.removeOldOpportunitiesByTicket(prices[0].ticket);
+        db.removeOldOpportunitiesBySymbol(prices[0].symbol);
         for (let priceAsk of prices) {
             if (
                 configs.quality.filter.lowVolume &&
@@ -349,9 +349,9 @@ function filterOpportunities(prices) {
                 let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
                 let percentageAfterWdFees2 = getPercentageAfterWdFees(minQuote, bestAsk, bestBid);
                 let opportunity = {
-                    id: bestAsk.ticket.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
+                    id: bestAsk.symbol.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
                     created_at: new Date(),
-                    ticket: bestAsk.ticket,
+                    symbol: bestAsk.symbol,
                     type: "AP",
                     qualified: false,
                     score: 0,
@@ -389,7 +389,7 @@ function filterOpportunities(prices) {
                         "✔".cyan,
                         colors.green(percentageAfterWdFees1.toFixed(4)),
                         "% ",
-                        colors.yellow(z(9, opportunity.ticket, " ")),
+                        colors.yellow(z(9, opportunity.symbol, " ")),
                         z(10, opportunity.buy_at, " "),
                         z(10, opportunity.sale_at, " ")
                     );
@@ -498,7 +498,7 @@ function getMinimunInversion(bestAsk, bestBid) {
 }
 
 function getCurrencies(price) {
-    let coins = price.ticket.split("/");
+    let coins = price.symbol.split("/");
     let baseCurrency = coins[0];
     let quoteCurrency = coins[1];
     return { baseCurrency, quoteCurrency };
@@ -506,5 +506,5 @@ function getCurrencies(price) {
 
 module.exports = {
     initialize,
-    checkOpportunities
+    findOpportunities
 };

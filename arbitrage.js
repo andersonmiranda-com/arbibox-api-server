@@ -36,11 +36,11 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Serach for arbitrage opportunities and saves it on a mongo DB collection
 
     const { tickets, exchangesSymbols } = await finder.initialize();
-    finder.checkOpportunities(tickets, exchangesSymbols);
+    finder.findOpportunities(tickets, exchangesSymbols);
 
     // loop every x seconds
     setInterval(function() {
-        finder.checkOpportunities(tickets, exchangesSymbols);
+        finder.findOpportunities(tickets, exchangesSymbols);
         verbose &&
             console.info(
                 "\n>> New search at",
