@@ -33,6 +33,22 @@ exports.createOpportunity = function(data) {
     });
 };
 
+exports.readOpportunities = function(query) {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            var db = client.db("arbibox");
+            db.collection("opportunities")
+                .find(query)
+                .toArray(function(err, res) {
+                    if (err) throw err;
+                    resolve(res);
+                    client.close();
+                });
+        });
+    });
+};
+
 exports.upsertOpportunity = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
@@ -73,11 +89,11 @@ exports.removeOpportunity = function(data) {
     });
 };
 
-exports.removeOpportunitiesByTicket = function(ticket) {
+exports.removeOpportunitiesBySymbol = function(symbol) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
-        db.collection("opportunities").deleteMany({ ticket: ticket }, function(err, res) {
+        db.collection("opportunities").deleteMany({ symbol: symbol }, function(err, res) {
             if (err) throw err;
             //console.log(res.result);
             client.close();
@@ -85,7 +101,7 @@ exports.removeOpportunitiesByTicket = function(ticket) {
     });
 };
 
-exports.removeOldOpportunitiesByTicket = function(ticket) {
+exports.removeOldOpportunitiesBySymbol = function(symbol) {
     const minutesAgo = moment()
         .subtract(configs.removeAfterMinutes, "minutes")
         .toDate();
@@ -93,7 +109,7 @@ exports.removeOldOpportunitiesByTicket = function(ticket) {
         if (err) throw err;
         var db = client.db("arbibox");
         db.collection("opportunities").deleteMany(
-            { ticket: ticket, created_at: { $lt: minutesAgo } },
+            { symbol: symbol, created_at: { $lt: minutesAgo } },
             function(err, res) {
                 if (err) throw err;
                 //console.log(res.result);
