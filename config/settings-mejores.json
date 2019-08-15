@@ -1,5 +1,5 @@
 {
-    "checkInterval": 0.25,
+    "checkInterval": 0.5,
     "minimumProfit": 1,
     "minimumProfitInvest": 0.5,
     "apiTimeout": 10,

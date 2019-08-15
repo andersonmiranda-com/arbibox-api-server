@@ -3,6 +3,7 @@ const lodash = require("lodash");
 const configs = require("../../config/settings");
 const colors = require("colors");
 const util = require("util");
+const z = require("zero-fill");
 
 const db = require("../db");
 
@@ -351,7 +352,9 @@ function filterOpportunities(prices) {
                     id: bestAsk.ticket.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
                     created_at: new Date(),
                     ticket: bestAsk.ticket,
-
+                    type: "AP",
+                    qualified: false,
+                    score: 0,
                     buy_at: bestAsk.name,
                     buy: {
                         at: bestAsk.name,
@@ -381,17 +384,23 @@ function filterOpportunities(prices) {
                     profit1: Number(percentageAfterWdFees1.toFixed(4))
                 };
 
-                verbose && console.log("");
-                verbose && console.info("✔ Opportunity found:".green);
-                verbose &&
-                    console.info("  Estimated gain:", colors.green(percentage.toFixed(4)), "%");
                 verbose &&
                     console.info(
-                        "\n",
-                        util.inspect(opportunity, {
-                            colors: true
-                        })
+                        "✔".cyan,
+                        colors.green(percentageAfterWdFees1.toFixed(4)),
+                        "% ",
+                        colors.yellow(z(9, opportunity.ticket, " ")),
+                        z(10, opportunity.buy_at, " "),
+                        z(10, opportunity.sale_at, " ")
                     );
+
+                // verbose &&
+                //     console.info(
+                //         "\n",
+                //         util.inspect(opportunity, {
+                //             colors: true
+                //         })
+                //     );
                 db.upsertOpportunity(opportunity);
             }
         }

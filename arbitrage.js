@@ -12,7 +12,6 @@ global.verbose = true;
 global.withdrawalFees = [];
 
 const logo = ` 
-
 ----------------------------------------------------------------
 
  $$$$$$\\            $$\\       $$\\ $$\\                           
@@ -44,13 +43,13 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         finder.checkOpportunities(tickets, exchangesSymbols);
         verbose &&
             console.info(
-                "\n>>>>>> Starting new search at",
+                "\n>> New search at",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
     }, (configs.checkInterval > 0 ? configs.checkInterval : 1) * 60000);
     verbose &&
         console.info(
-            "\n>>>>>> Bot started at",
+            "\n>> Bot started at",
             colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
         );
 })();
