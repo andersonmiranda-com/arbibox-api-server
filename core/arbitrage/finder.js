@@ -345,7 +345,7 @@ function filterOpportunities(prices) {
                 bestAsk,
                 bestBid
             );
-            if (percentageAfterWdFees1 >= configs.minimumProfit) {
+            if (percentageAfterWdFees1 >= configs.opportunity.minimumProfit) {
                 let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
                 let percentageAfterWdFees2 = getPercentageAfterWdFees(minQuote, bestAsk, bestBid);
                 let opportunity = {
@@ -484,7 +484,7 @@ function getMinimunInversion(bestAsk, bestBid) {
             100 * bestAsk.ask * bestBid.bid * baseWithdrawalFee +
             100 * bestAsk.ask * quoteWithdrawalFee) /
         (100 * bestBid.bid * bestAsk.cost * bestBid.cost -
-            bestAsk.ask * configs.minimumProfitInvest -
+            bestAsk.ask * configs.opportunity.minimumProfitInvest -
             100 * bestBid.bid * bestAsk.cost -
             100 * bestBid.bid * bestBid.cost -
             100 * bestAsk.ask +

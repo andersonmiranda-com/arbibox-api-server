@@ -55,7 +55,7 @@ async function findChains(targetAssets, tickers, markets) {
                 chainResult = await calculateChainProfit(chain, tickers, markets);
 
                 if (
-                    chain.triagePercentage >= configs.minimumProfit &&
+                    chain.triagePercentage >= configs.opportunity.minimumProfit &&
                     chain.triagePercentage <= 100 &&
                     chain.triagePercentage !== Infinity
                 ) {

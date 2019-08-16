@@ -1,80 +1,108 @@
 {
-    "checkInterval": 0.5,
+  "opportunity": {
     "minimumProfit": 1,
     "minimumProfitInvest": 0.5,
-    "apiTimeout": 10,
-    "removeAfterMinutes": 5,
-    "marketFilter": {
-        "exchanges": true,
-        "exchangesBlacklist": true,
-        "baseCurrencies": true,
-        "quoteCurrencies": false
-    },
-    "exchanges": [
-        "binance",
-        "okex",
-        "huobipro",
-        "bittrex",
-        "bitfinex",
-        "kucoin",
-        "hitbtc",
-        "kraken",
-        "poloniex",
-        "gateio",
-        "livecoin",
-        "zb",
-        "exmo",
-        "yobit"
-    ],
-    "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
+    "removeAfterMinutesOff": 5,
+    "removeAfterIterations": 10
+  },
 
-    "baseCurrencies": [
-        "BTC",
-        "ETH",
-        "XPR",
-        "LTC",
-        "BCH",
-        "BNB",
-        "USDT",
-        "EOS",
-        "BSV",
-        "XLM",
-        "TRX",
-        "ADA",
-        "XMR",
-        "LEO",
-        "DASH",
-        "LINK",
-        "NEO",
-        "IOTA",
-        "ATOM",
-        "ETC",
-        "XTZ",
-        "XEM",
-        "MKR",
-        "ZEC",
-        "ONT"
-    ],
-    "quoteCurrencies": ["BTC", "USD", "USDT", "ETH"],
+  "checkInterval": 0.5,
+  "apiTimeout": 10,
+  "marketFilter": {
+    "exchanges": true,
+    "exchangesBlacklist": true,
+    "baseCurrencies": true,
+    "quoteCurrencies": false
+  },
+  "exchanges": [
+    "binance",
+    "okex",
+    "huobipro",
+    "bittrex",
+    "bitfinex",
+    "kucoin",
+    "hitbtc",
+    "kraken",
+    "poloniex",
+    "gateio",
+    "livecoin",
+    "zb",
+    "exmo",
+    "yobit"
+  ],
+  "exchangesBlacklist": [
+    "coinmarketcap", "dx", "crex24"
+  ],
 
-    "keys": {
-        "binance": {
-            "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
-            "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
-        }
-    },
+  "baseCurrencies": [
+    "BTC",
+    "ETH",
+    "XPR",
+    "LTC",
+    "BCH",
+    "BNB",
+    "USDT",
+    "EOS",
+    "BSV",
+    "XLM",
+    "TRX",
+    "ADA",
+    "XMR",
+    "LEO",
+    "DASH",
+    "LINK",
+    "NEO",
+    "IOTA",
+    "ATOM",
+    "ETC",
+    "XTZ",
+    "XEM",
+    "MKR",
+    "ZEC",
+    "ONT"
+  ],
+  "quoteCurrencies": [
+    "BTC", "USD", "USDT", "ETH"
+  ],
 
-    "triangular": {
-        "exchanges": ["binance", "hitbtc", "poloniex", "kraken"],
-        "targetAssets": ["LTC", "ETH", "USDT", "USD", "BNB", "BTC"]
-    },
-
-    "quality": {
-        "filter": {
-            "lowVolume": true,
-            "baseLowVolumeLimit": 0.1,
-            "quoteLowVolumeLimit": { "BTC": 0.1, "USD": 1000, "USDT": 1000, "ETH": 5 }
-        },
-        "quoteCurrencyFunds": { "BTC": 0.1, "USD": 1000, "USDT": 1000, "ETH": 5 }
+  "keys": {
+    "binance": {
+      "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
+      "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
     }
+  },
+
+  "triangular": {
+    "exchanges": [
+      "binance", "hitbtc", "poloniex", "kraken"
+    ],
+    "targetAssets": [
+      "LTC",
+      "ETH",
+      "USDT",
+      "USD",
+      "BNB",
+      "BTC"
+    ]
+  },
+
+  "quality": {
+    "filter": {
+      "lowVolume": true,
+      "baseLowVolumeLimit": 0.1,
+      "quoteLowVolumeLimit": {
+        "BTC": 0.1,
+        "USD": 1000,
+        "USDT": 1000,
+        "ETH": 5
+      }
+    },
+    "quoteCurrencyFunds": {
+      "BTC": 0.1,
+      "USD": 1000,
+      "USDT": 1000,
+      "ETH": 5
+    },
+    "lastTradeTimeLimit": 10
+  }
 }

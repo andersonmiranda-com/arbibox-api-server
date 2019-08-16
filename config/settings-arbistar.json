@@ -1,9 +1,13 @@
 {
-    "checkInterval": 0.25,
-    "minimumProfit": 1,
-    "minimumProfitInvest": 0.5,
+    "opportunity": {
+        "minimumProfit": 1,
+        "minimumProfitInvest": 0.5,
+        "removeAfterMinutesOff": 5,
+        "removeAfterIterations": 10
+    },
+
+    "checkInterval": 0.5,
     "apiTimeout": 10,
-    "removeAfterMinutes": 5,
     "marketFilter": {
         "exchanges": true,
         "exchangesBlacklist": true,
