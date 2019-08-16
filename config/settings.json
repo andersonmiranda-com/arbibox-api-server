@@ -1,12 +1,10 @@
 {
   "opportunity": {
     "minimumProfit": 1,
-    "minimumProfitInvest": 0.5,
-    "removeAfterMinutesOff": 5,
-    "removeAfterIterations": 10
+    "minimumProfitInvest": 0.5
   },
 
-  "checkInterval": 0.5,
+  "checkInterval": 0.25,
   "apiTimeout": 10,
   "marketFilter": {
     "exchanges": true,
@@ -103,6 +101,8 @@
       "USDT": 1000,
       "ETH": 5
     },
-    "lastTradeTimeLimit": 10
+    "lastTradeTimeLimit": 10,
+    "removeAfterMinutesOff": 5,
+    "removeAfterIterations": 10
   }
 }

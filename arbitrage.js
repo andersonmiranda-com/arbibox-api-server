@@ -6,6 +6,7 @@ const configs = require("./config/settings");
 
 /// agent 1 - opportunities finder
 const finder = require("./core/arbitrage/finder");
+const qualifier = require("./core/arbitrage/qualifier");
 
 global.verbose = true;
 
@@ -31,16 +32,25 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     verbose && console.info("\nLoading exchanges and tickets...");
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///
-    /// Aagent 1 - Finder
-    /// Serach for arbitrage opportunities and saves it on a mongo DB collection
+    /// Agent 1 - Finder
+    /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
 
     const { tickets, exchangesSymbols } = await finder.initialize();
     finder.findOpportunities(tickets, exchangesSymbols);
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Agent 2 - Qualifier
+    /// Read opportunities from "opportunities" mongoDB collection and check quality. Remove bad ones
+
+    qualifier.initialize();
+
     // loop every x seconds
     setInterval(function() {
+        /// Agent 1 - Finder
         finder.findOpportunities(tickets, exchangesSymbols);
+        /// Agent 2 - Qualifier
+        qualifier.initialize();
+        ///
         verbose &&
             console.info(
                 "\n>> New search at",

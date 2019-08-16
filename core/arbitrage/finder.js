@@ -301,7 +301,6 @@ function filterOpportunities(prices) {
     return new Promise(async (resolve, reject) => {
         let opportunities = [];
         let { baseCurrency, quoteCurrency } = getCurrencies(prices[0]);
-        db.removeOldOpportunitiesBySymbol(prices[0].symbol);
         for (let priceAsk of prices) {
             if (
                 configs.quality.filter.lowVolume &&

@@ -59,7 +59,7 @@ exports.upsertOpportunity = function(data) {
             {
                 $set: data,
                 $addToSet: {
-                    latest: {
+                    lastest: {
                         created_at: data.created_at,
                         bid: data.sell.bid,
                         ask: data.buy.ask,
@@ -96,11 +96,11 @@ exports.updateOpportunity = function(data) {
     });
 };
 
-exports.removeOpportunity = function(data) {
+exports.removeOpportunity = function(query) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
-        db.collection("opportunities").deleteMany({ id: data.id }, function(err, res) {
+        db.collection("opportunities").deleteMany(query, function(err, res) {
             if (err) throw err;
             //console.log(res.result);
             client.close();
