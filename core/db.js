@@ -61,13 +61,32 @@ exports.upsertOpportunity = function(data) {
                 $addToSet: {
                     latest: {
                         created_at: data.created_at,
-                        bid: data.sale.bid,
+                        bid: data.sell.bid,
                         ask: data.buy.ask,
                         gain: data.profit1
                     }
                 }
             },
             { upsert: true },
+            function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                client.close();
+            }
+        );
+    });
+};
+
+exports.updateOpportunity = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+
+        var db = client.db("arbibox");
+        db.collection("opportunities").updateOne(
+            { id: data.id },
+            {
+                $set: data
+            },
             function(err, res) {
                 if (err) throw err;
                 //console.log(res.result);

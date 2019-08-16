@@ -353,8 +353,6 @@ function filterOpportunities(prices) {
                     created_at: new Date(),
                     symbol: bestAsk.symbol,
                     type: "AP",
-                    qualified: false,
-                    score: 0,
                     buy_at: bestAsk.name,
                     buy: {
                         at: bestAsk.name,
@@ -364,8 +362,8 @@ function filterOpportunities(prices) {
                         wd_fee_quote: quoteWithdrawalFee
                     },
 
-                    sale_at: bestBid.name,
-                    sale: {
+                    sell_at: bestBid.name,
+                    sell: {
                         at: bestBid.name,
                         bid: bestBid.bid,
                         volume_base: bestBid.baseVolume,
@@ -391,7 +389,7 @@ function filterOpportunities(prices) {
                         "% ",
                         colors.yellow(z(9, opportunity.symbol, " ")),
                         z(10, opportunity.buy_at, " "),
-                        z(10, opportunity.sale_at, " ")
+                        z(10, opportunity.sell_at, " ")
                     );
 
                 // verbose &&

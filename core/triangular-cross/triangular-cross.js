@@ -346,7 +346,7 @@ function register(opportunity) {
         "amount",
         "buy_at",
         "ask",
-        "sale_at",
+        "sell_at",
         "bid",
         "baseVolume",
         "quoteVolume",

@@ -1,4 +1,4 @@
-created_at,id,volume_ask_base,volume_ask_quote,volume_bid_base,volume_bid_quote,wd_fee_base,wd_fee_quote,ticket,buy_at,invest,buy_ask,sale_at,sale_bid,profit0,profit1,profit_min,invest_min_quote,invest_min_base
+created_at,id,volume_ask_base,volume_ask_quote,volume_bid_base,volume_bid_quote,wd_fee_base,wd_fee_quote,ticket,buy_at,invest,buy_ask,sell_at,sale_bid,profit0,profit1,profit_min,invest_min_quote,invest_min_base
 2019-08-13T14:56:53.115Z,btc/usd-kraken-yobit,4329.46135908,4.849110028502829e+07,11.35256402,130400.54154592,0.0005,1.3,BTC/USD,kraken,1000,10951.7,yobit,11240.64000001,2.1317,1.4351,0.5,424.8020368279281,0.03819171286063883
 2019-08-13T14:56:53.120Z,etc/btc-hitbtc-kraken,1.69299615e+06,865.778690264,1362.19069175,0.6692987744844451,0.01,0.0005,ETC/BTC,hitbtc,0.1,0.0005253,kraken,0.000538,1.9116,1.4009,0.5,0.035937997859714015,68.23319981927418
 2019-08-13T14:56:53.119Z,etc/btc-binance-kraken,107643.17,55.26062984,1362.19069175,0.6692987744844451,0.01,0.0005,ETC/BTC,binance,0.1,0.000526,kraken,0.000538,1.7757,1.2652,0.5,0.03977381225393706,75.41657361844527
