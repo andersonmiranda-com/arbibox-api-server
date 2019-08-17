@@ -42,7 +42,7 @@
     },
 
     "triangular": {
-        "exchanges": ["binance", "hitbtc", "poloniex", "kraken"],
+        "minimumProfit": 3,
         "targetAssets": ["LTC", "ETH", "USDT", "USD", "BNB", "BTC"]
     },
 

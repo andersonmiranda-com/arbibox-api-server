@@ -10,7 +10,7 @@
 
 "use strict";
 
-const triangular = require("./core/triangular-cross");
+const triangular = require("./core/triangular-cross/triangular-cross");
 
 (async function() {
     console.log("Arbibox Triangular Inter Exchange Bot - Show me the money!");

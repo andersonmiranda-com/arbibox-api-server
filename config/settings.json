@@ -4,7 +4,7 @@
     "minimumProfitInvest": 0.5
   },
 
-  "checkInterval": 0.25,
+  "checkInterval": 0.5,
   "apiTimeout": 10,
   "marketFilter": {
     "exchanges": true,
@@ -28,6 +28,7 @@
     "exmo",
     "yobit"
   ],
+
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"
   ],
@@ -71,9 +72,7 @@
   },
 
   "triangular": {
-    "exchanges": [
-      "binance", "hitbtc", "poloniex", "kraken"
-    ],
+    "minimumProfit": 3,
     "targetAssets": [
       "LTC",
       "ETH",
@@ -101,6 +100,7 @@
       "USDT": 1000,
       "ETH": 5
     },
+
     "lastTradeTimeLimit": 10,
     "removeAfterMinutesOff": 5,
     "removeAfterIterations": 10

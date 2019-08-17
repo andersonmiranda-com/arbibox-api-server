@@ -1,6 +1,6 @@
 const ccxt = require("ccxt");
 const lodash = require("lodash");
-const configs = require("../config/settings");
+const configs = require("../../config/settings");
 const { getConnectingAsset, getMultiplier } = require("../util");
 const colors = require("colors");
 const { Parser } = require("json2csv");
@@ -46,6 +46,76 @@ class Chain {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Prepare Exchanges
+///
+
+async function prepareExchanges() {
+    let exchanges = configs.exchanges;
+    let markets = [];
+    let tickers = [];
+
+    if (configs.marketFilter.exchangesBlacklist) {
+        exchanges = lodash.difference(exchanges, configs.marketFilter.exchangesBlacklist);
+    }
+
+    let checkedExchanges = [...exchanges];
+
+    for (let i = 0; i < exchanges.length; i++) {
+        let name = exchanges[i];
+        console.log("Loading markets for", colors.green(name));
+        try {
+            var _instance;
+
+            if (configs.keys[name]) {
+                _instance = new ccxt[name]({
+                    apiKey: configs.keys[name].apiKey,
+                    secret: configs.keys[name].secret,
+                    timeout: configs.apiTimeout * 1000,
+                    enableRateLimit: true
+                });
+            } else {
+                _instance = new ccxt[name]({
+                    timeout: configs.apiTimeout * 1000,
+                    enableRateLimit: true
+                });
+            }
+
+            await _instance.loadMarkets();
+            if (_instance.has["fetchTickers"]) {
+                //add markets to all markets array
+
+                Object.keys(_instance.markets).forEach(function(key) {
+                    let mkt = _instance.markets[key];
+                    mkt.exchange_id = name;
+                    markets.push(mkt);
+                });
+
+                let exchangeTickers = await _instance.fetchTickers();
+                tickers.push({ id: name, tickers: exchangeTickers });
+            } else {
+                console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
+                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            }
+        } catch (error) {
+            console.error(colors.red("Error:"), error.message);
+            console.error(colors.red("Error initiating:"), name);
+            checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+        }
+    }
+
+    exchanges = [...checkedExchanges];
+
+    verbose && console.info("Exchanges:", colors.green(exchanges.length));
+    return { exchanges, tickers, markets };
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Find Possible Chains
+///
+
 async function findChains(targetAssets, tickers, markets) {
     for (let targetAsset of targetAssets) {
         let chains = prepareChains(targetAsset, markets);
@@ -55,7 +125,7 @@ async function findChains(targetAssets, tickers, markets) {
                 chainResult = await calculateChainProfit(chain, tickers, markets);
 
                 if (
-                    chain.triagePercentage >= configs.opportunity.minimumProfit &&
+                    chain.triagePercentage >= configs.triangular.minimumProfit &&
                     chain.triagePercentage <= 100 &&
                     chain.triagePercentage !== Infinity
                 ) {
@@ -161,7 +231,7 @@ function symbolFinder(targetAsset, markets) {
         if (
             symbol.symbol.indexOf("/") !== -1 &&
             (symbol.base == targetAsset || symbol.quote == targetAsset) &&
-            lodash.includes(configs.triangular.baseCurrencies, symbol.base)
+            lodash.includes(configs.baseCurrencies, symbol.base)
         ) {
             sourceSymbols.push(symbol);
             // console.log(symbol.base, symbol.quote);
@@ -192,8 +262,8 @@ function symbolFinder(targetAsset, markets) {
         if (
             otherAssetIds.indexOf(symbol.base) != -1 &&
             otherAssetIds.indexOf(symbol.quote) != -1 &&
-            (lodash.includes(configs.triangular.baseCurrencies, symbol.base) ||
-                lodash.includes(configs.triangular.baseCurrencies, symbol.quote))
+            (lodash.includes(configs.baseCurrencies, symbol.base) ||
+                lodash.includes(configs.baseCurrencies, symbol.quote))
         ) {
             compatibleSymbols.push(symbol);
         }
@@ -276,66 +346,6 @@ function calculateChainProfit(chain, tickers, markets) {
 
     chain.triagePercentage = difference;
     return chain;
-}
-
-async function prepareExchanges() {
-    let exchanges = configs.triangular.exchanges;
-    let markets = [];
-    let tickers = [];
-
-    if (configs.marketFilter.exchangesBlacklist) {
-        exchanges = lodash.difference(exchanges, configs.marketFilter.exchangesBlacklist);
-    }
-
-    let checkedExchanges = [...exchanges];
-
-    for (let i = 0; i < exchanges.length; i++) {
-        let name = exchanges[i];
-        console.log("Loading markets for", colors.green(name));
-        try {
-            var _instance;
-
-            if (configs.keys[name]) {
-                _instance = new ccxt[name]({
-                    apiKey: configs.keys[name].apiKey,
-                    secret: configs.keys[name].secret,
-                    timeout: configs.apiTimeout * 1000,
-                    enableRateLimit: true
-                });
-            } else {
-                _instance = new ccxt[name]({
-                    timeout: configs.apiTimeout * 1000,
-                    enableRateLimit: true
-                });
-            }
-
-            await _instance.loadMarkets();
-            if (_instance.has["fetchTickers"]) {
-                //add markets to all markets array
-
-                Object.keys(_instance.markets).forEach(function(key) {
-                    let mkt = _instance.markets[key];
-                    mkt.exchange_id = name;
-                    markets.push(mkt);
-                });
-
-                let exchangeTickers = await _instance.fetchTickers();
-                tickers.push({ id: name, tickers: exchangeTickers });
-            } else {
-                console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
-                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
-            }
-        } catch (error) {
-            console.error(colors.red("Error:"), error.message);
-            console.error(colors.red("Error initiating:"), name);
-            checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
-        }
-    }
-
-    exchanges = [...checkedExchanges];
-
-    verbose && console.info("Exchanges:", colors.green(exchanges.length));
-    return { exchanges, tickers, markets };
 }
 
 function register(opportunity) {
