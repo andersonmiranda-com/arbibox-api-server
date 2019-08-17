@@ -6,6 +6,11 @@ var MongoClient = require("mongodb").MongoClient;
 var url = "mongodb://localhost:27017/";
 const configs = require("../config/settings");
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Exchanges
+///
+
 exports.saveExchange = function(id, data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
@@ -20,6 +25,11 @@ exports.saveExchange = function(id, data) {
         });
     });
 };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Opportunities
+///
 
 exports.createOpportunity = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
@@ -52,7 +62,7 @@ exports.readOpportunities = function(query) {
 exports.upsertOpportunity = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
-
+        // avoid update different _id
         var db = client.db("arbibox");
         db.collection("opportunities").updateOne(
             { id: data.id },
@@ -80,7 +90,8 @@ exports.upsertOpportunity = function(data) {
 exports.updateOpportunity = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
-
+        // avoid update different _id
+        delete data._id;
         var db = client.db("arbibox");
         db.collection("opportunities").updateOne(
             { id: data.id },
@@ -150,22 +161,10 @@ exports.removeAllOpportunities = function() {
     });
 };
 
-exports.saveArbitrages = function(id, data) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        var db = client.db("arbibox");
-        db.collection("arbitrages").updateOne(
-            { id: id },
-            { $set: data },
-            { upsert: true },
-            function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                client.close();
-            }
-        );
-    });
-};
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Tickets
+///
 
 exports.saveTickets = function(id, data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
@@ -182,6 +181,11 @@ exports.saveTickets = function(id, data) {
     });
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Wallets
+///
+
 exports.saveWallets = function(id, data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
@@ -196,6 +200,11 @@ exports.saveWallets = function(id, data) {
         });
     });
 };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Withdrawals Fees
+///
 
 exports.getWithdrawalFees = function(cb) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
@@ -213,12 +222,34 @@ exports.getWithdrawalFees = function(cb) {
     });
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Triangular
+///
+
 exports.insertTriangularOpportunity = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
 
         var db = client.db("arbibox");
         db.collection("triangular").insertOne(data, function(err, res) {
+            if (err) throw err;
+            //console.log(res.result);
+            client.close();
+        });
+    });
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Orders
+///
+
+exports.createOrder = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        var db = client.db("arbibox");
+        db.collection("orders").insertOne(data, function(err, res) {
             if (err) throw err;
             //console.log(res.result);
             client.close();

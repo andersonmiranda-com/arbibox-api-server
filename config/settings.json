@@ -1,10 +1,4 @@
 {
-  "opportunity": {
-    "minimumProfit": 1,
-    "minimumProfitInvest": 0.5
-  },
-
-  "checkInterval": 0.5,
   "apiTimeout": 10,
   "marketFilter": {
     "exchanges": true,
@@ -83,7 +77,21 @@
     ]
   },
 
+  "finder": {
+    "checkInterval": 20,
+    "minimumProfit": 1,
+    "minimumProfitInvest": 0.5,
+    "quoteCurrencyFunds": {
+      "BTC": 0.1,
+      "USD": 1000,
+      "USDT": 1000,
+      "ETH": 5
+    }
+  },
+
   "quality": {
+    "checkInterval": 15,
+
     "filter": {
       "lowVolume": true,
       "baseLowVolumeLimit": 0.1,
@@ -94,15 +102,12 @@
         "ETH": 5
       }
     },
-    "quoteCurrencyFunds": {
-      "BTC": 0.1,
-      "USD": 1000,
-      "USDT": 1000,
-      "ETH": 5
-    },
-
     "lastTradeTimeLimit": 10,
     "removeAfterMinutesOff": 5,
     "removeAfterIterations": 10
+  },
+
+  "execution": {
+    "checkInterval": 10
   }
 }

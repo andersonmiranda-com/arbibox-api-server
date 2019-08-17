@@ -7,6 +7,7 @@ const configs = require("./config/settings");
 /// agent 1 - opportunities finder
 const finder = require("./core/arbitrage/finder");
 const qualifier = require("./core/arbitrage/qualifier");
+const execution = require("./core/arbitrage/execution");
 
 global.verbose = true;
 
@@ -38,25 +39,45 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     const { tickets, exchangesSymbols } = await finder.initialize();
     finder.findOpportunities(tickets, exchangesSymbols);
 
+    // loop every x seconds
+    setInterval(function() {
+        finder.findOpportunities(tickets, exchangesSymbols);
+        verbose &&
+            console.info(
+                "\n>> Finder agent >",
+                colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+            );
+    }, (configs.finder.checkInterval > 0 ? configs.finder.checkInterval : 30) * 1000);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 2 - Qualifier
     /// Read opportunities from "opportunities" mongoDB collection and check quality. Remove bad ones
 
-    qualifier.initialize();
+    // loop every x seconds
+    setInterval(function() {
+        qualifier.initialize();
+        verbose &&
+            console.info(
+                "\n>> Qualifier agent >",
+                colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+            );
+    }, (configs.quality.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Agent 3 - Execution
+    ///
 
     // loop every x seconds
     setInterval(function() {
-        /// Agent 1 - Finder
-        finder.findOpportunities(tickets, exchangesSymbols);
-        /// Agent 2 - Qualifier
-        qualifier.initialize();
-        ///
         verbose &&
             console.info(
-                "\n>> New search at",
+                "\n>> Execution agent >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.checkInterval > 0 ? configs.checkInterval : 1) * 60000);
+        execution.initialize();
+    }, (configs.execution.checkInterval > 0 ? configs.execution.checkInterval : 30) * 1000);
+
+    /// started
     verbose &&
         console.info(
             "\n>> Bot started at",
