@@ -1,35 +1,18 @@
 const ccxt = require("ccxt");
+var moment = require("moment");
 const lodash = require("lodash");
 const configs = require("../../config/settings");
 const { getConnectingAsset, getMultiplier } = require("../util");
 const colors = require("colors");
-const { Parser } = require("json2csv");
-const fs = require("fs");
 const z = require("zero-fill");
 const n = require("numbro");
 const db = require("../db");
 
+const args = process.argv;
+
 const verbose = false;
 
 const colorProfit = percentage => (percentage > 0 ? `${percentage}`.green : `${percentage}`.red);
-
-exports.initialize = async function() {
-    let targetAssets = configs.triangular.targetAssets;
-    try {
-        console.info("\nLoading exchanges and tickets...");
-        //db.removeAllOpportunities();
-        const { exchanges, tickers, markets } = await prepareExchanges();
-        console.info("Bot started at", new Date());
-        findChains(targetAssets, tickers, markets);
-        //setInterval(function() {
-        //    console.info("Bot search at", new Date());
-        //    findChains(targetAssets, tickers, markets);
-        //}, (configs.checkInterval > 0 ? configs.triangular.checkInterval : 60) * 1000);
-        //console.log("----------------------------- new");
-    } catch (error) {
-        console.error(colors.red("Error1:"), error.message);
-    }
-};
 
 class Chain {
     constructor(targetAsset, symbols) {
@@ -52,10 +35,14 @@ class Chain {
 /// Prepare Exchanges
 ///
 
-async function prepareExchanges() {
+const initialize = async function() {
     let exchanges = configs.exchanges;
+
+    if (args[2]) {
+        exchanges = [args[2]];
+    }
+
     let markets = [];
-    let tickers = [];
 
     if (configs.marketFilter.exchangesBlacklist) {
         exchanges = lodash.difference(exchanges, configs.marketFilter.exchangesBlacklist);
@@ -96,19 +83,12 @@ async function prepareExchanges() {
                 verbose && console.error(colors.red("Error: Exchange has no fetchTrades:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else {
-                Object.keys(_instance.markets).forEach(function(key) {
-                    let mkt = _instance.markets[key];
-                    mkt.exchange_id = name;
-                    markets.push(mkt);
-                });
-
-                let exchangeTickers = await _instance.fetchTickers();
-                tickers.push({ id: name, tickers: exchangeTickers });
+                markets.push({ id: name, markets: _instance.markets });
                 //db.saveExchange(name, { symbols: _instance.symbols, markets: _instance.markets });
             }
         } catch (error) {
-            verbose && console.error(colors.red("Error:"), error.message);
-            verbose && console.error(colors.red("Error initiating:"), name);
+            console.error(colors.red("Error1:"), error.message);
+            console.error(colors.red("Error initiating:"), name);
             checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
         }
     }
@@ -116,7 +96,28 @@ async function prepareExchanges() {
     exchanges = [...checkedExchanges];
 
     verbose && console.info("Exchanges:", colors.green(exchanges.length));
-    return { exchanges, tickers, markets };
+    return { exchanges, markets };
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Build a Queue
+///
+async function findOpportunities(exchanges, markets, targetAssets) {
+    let promises = exchanges.map(async exchange =>
+        Promise.resolve(findChains(targetAssets, exchange, markets))
+    );
+
+    Promise.all(promises).then(response => {
+        console.info(
+            "\n>> Finder scan finished >",
+            colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+        );
+        //console.info(">>> Triangular scan finished at", new Date());
+
+        return true;
+        //console.log(response);
+    });
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,37 +125,69 @@ async function prepareExchanges() {
 /// Find Possible Chains
 ///
 
-async function findChains(targetAssets, tickers, markets) {
+async function findChains(targetAssets, exchange, markets) {
+    //return new Promise(async (resolve, reject) => {
+    var _exchange;
+
+    try {
+        if (configs.keys[exchange]) {
+            _exchange = new ccxt[exchange]({
+                apiKey: configs.keys[exchange].apiKey,
+                secret: configs.keys[exchange].secret,
+                timeout: configs.apiTimeout * 1000
+                //enableRateLimit: true
+            });
+        } else {
+            _exchange = new ccxt[exchange]({
+                timeout: configs.apiTimeout * 1000
+                //enableRateLimit: true
+            });
+        }
+
+        tickers = await _exchange.fetchTickers();
+    } catch (error) {
+        console.error(colors.red("Error fetchTickers on:"), exchange);
+        console.error(colors.red("Error:"), error.message);
+    }
+
+    exchangeMarket = markets.find(market => market.id === exchange);
     for (let targetAsset of targetAssets) {
-        let chains = prepareChains(targetAsset, markets);
+        console.log(colors.yellow(">>>"), colors.magenta(targetAsset), colors.cyan(exchange));
+
+        let chains = prepareChains(targetAsset, exchangeMarket.markets);
 
         for (const chain of chains) {
             try {
-                chainResult = await calculateChainProfit(chain, tickers, markets);
+                chainResult = await calculateChainProfit(
+                    exchange,
+                    chain,
+                    tickers,
+                    exchangeMarket.markets
+                );
 
                 if (
                     chain.triagePercentage >= configs.triangular.minimumProfit &&
-                    chain.triagePercentage <= 100 &&
+                    chain.triagePercentage <= 200 &&
                     chain.triagePercentage !== Infinity
                 ) {
                     //console.log(chain + "; triage: " + colorProfit(chain.triagePercentage) + " %");
 
                     try {
                         let opportunity = {
+                            exchange: exchange,
                             base: targetAsset,
                             created_at: new Date(),
                             ticket1: chain.symbols[0].symbol,
                             ticket2: chain.symbols[1].symbol,
                             ticket3: chain.symbols[2].symbol,
-                            exchange1: chain.symbols[0].exchange_id,
-                            exchange2: chain.symbols[1].exchange_id,
-                            exchange3: chain.symbols[2].exchange_id,
                             profit: Number(chain.triagePercentage.toFixed(4))
                         };
 
-                        db.insertTriangularCrossOpportunity(opportunity);
+                        db.insertTriangularOpportunity(opportunity);
 
                         console.log(
+                            exchange,
+                            "|",
                             targetAsset,
                             "|",
                             chain.symbols[0].symbol,
@@ -163,22 +196,20 @@ async function findChains(targetAssets, tickers, markets) {
                             ">",
                             chain.symbols[2].symbol,
                             "|",
-                            chain.symbols[0].exchange_id,
-                            ">",
-                            chain.symbols[1].exchange_id,
-                            ">",
-                            chain.symbols[2].exchange_id,
-                            "|",
                             "profit:",
                             colorProfit(chain.triagePercentage) + " %"
                         );
                     } catch (error) {
-                        console.log(error);
-                        return false;
+                        console.error(colors.red("Error4:"), error.message);
+                        //return false;
                     }
                     //     }
                     //     console.log(".");
                 }
+
+                //}
+                //     console.log(".");
+                // }
                 // console.log(
                 //     z(13, exchange, " "),
                 //     z(40, chainResult, " "),
@@ -186,15 +217,19 @@ async function findChains(targetAssets, tickers, markets) {
                 //     chainResult.triagePercentage + " %"
                 // );
             } catch (error) {
-                //console.log("Error on ", chain);
-                //console.log(error);
-                //return false;
+                console.log(
+                    colors.red("Error on:"),
+                    colors.magenta(targetAsset),
+                    colors.cyan(exchange)
+                );
+                console.error(colors.red("Error3"), error.message);
+                //return false
             }
         }
+        //return true;
+        //    resolve(true);
+        //});
     }
-    return true;
-    //    resolve(true);
-    //});
 }
 
 function prepareChains(targetAsset, markets) {
@@ -210,7 +245,6 @@ function prepareChains(targetAsset, markets) {
                 }
                 let chain = new Chain(targetAsset, [firstSymbol, secondSymbol, thirdSymbol]);
                 // let chain = createChain(exchange, targetAsset, firstSymbol, secondSymbol, thirdSymbol);
-                //console.log(chain);
                 chains.push(chain);
                 // console.log(`${chain}`);
             }
@@ -238,8 +272,7 @@ function symbolFinder(targetAsset, markets) {
 
         if (
             symbol.symbol.indexOf("/") !== -1 &&
-            (symbol.base == targetAsset || symbol.quote == targetAsset) &&
-            lodash.includes(configs.baseCurrencies, symbol.base)
+            (symbol.base == targetAsset || symbol.quote == targetAsset)
         ) {
             sourceSymbols.push(symbol);
             // console.log(symbol.base, symbol.quote);
@@ -279,17 +312,13 @@ function symbolFinder(targetAsset, markets) {
     let compatibleSymbols = [];
     Object.keys(markets).forEach(function(key) {
         symbol = markets[key];
-        if (otherAssetIds.indexOf(symbol.base) != -1 && otherAssetIds.indexOf(symbol.quote) != -1) {
-            if (configs.marketFilter.baseCurrencies) {
-                if (
-                    lodash.includes(configs.baseCurrencies, symbol.base) &&
-                    lodash.includes(configs.baseCurrencies, symbol.quote)
-                ) {
-                    compatibleSymbols.push(symbol);
-                }
-            } else {
-                compatibleSymbols.push(symbol);
-            }
+        if (
+            otherAssetIds.indexOf(symbol.base) != -1 &&
+            otherAssetIds.indexOf(symbol.quote) != -1 &&
+            (lodash.includes(configs.baseCurrencies, symbol.base) &&
+                lodash.includes(configs.baseCurrencies, symbol.quote))
+        ) {
+            compatibleSymbols.push(symbol);
         }
     });
     verbose &&
@@ -324,26 +353,13 @@ const substractFee = fee => amount => {
     return res;
 };
 
-function getTicker(tickers, symbol) {
-    let ticker = tickers.find(t => t.id === symbol.exchange_id);
-    let t = ticker.tickers[symbol.symbol];
-    t.exchange_id = symbol.exchange_id;
-    return t;
-}
-
-function calculateChainProfit(chain, tickers, markets) {
-    //console.log(chain);
-
+function calculateChainProfit(exchange, chain, tickers, markets) {
     const target = chain.targetAsset;
     const [symbol1, symbol2, symbol3] = chain.symbols;
 
-    let ticker1 = getTicker(tickers, symbol1);
-    let ticker2 = getTicker(tickers, symbol2);
-    let ticker3 = getTicker(tickers, symbol3);
-
-    // let ticker1 = tickers[symbol1.symbol];
-    // let ticker2 = tickers[symbol2.symbol];
-    // let ticker3 = tickers[symbol3.symbol];
+    let ticker1 = tickers[symbol1.symbol];
+    let ticker2 = tickers[symbol2.symbol];
+    let ticker3 = tickers[symbol3.symbol];
 
     const a = Number(getMultiplier(symbol1, target, ticker1), 10);
 
@@ -359,12 +375,9 @@ function calculateChainProfit(chain, tickers, markets) {
     let market2 = markets[symbol2.symbol];
     let market3 = markets[symbol3.symbol];
 
-    // const fee1 = market1.taker;
-    // const fee2 = market2.taker;
-    // const fee3 = market3.taker;
-    const fee1 = symbol1.taker;
-    const fee2 = symbol2.taker;
-    const fee3 = symbol2.taker;
+    const fee1 = market1.taker;
+    const fee2 = market2.taker;
+    const fee3 = market3.taker;
 
     const difference = 100 * a * (1 - fee1) * b * (1 - fee2) * c * (1 - fee3) - 100;
 
@@ -372,35 +385,7 @@ function calculateChainProfit(chain, tickers, markets) {
     return chain;
 }
 
-function register(opportunity) {
-    const fields = [
-        "id",
-        "created_at",
-        "ticket",
-        "amount",
-        "buy_at",
-        "ask",
-        "sell_at",
-        "bid",
-        "baseVolume",
-        "quoteVolume",
-        "gain"
-    ];
-
-    const opts = { fields, header: false };
-    const json2csvParser = new Parser(opts);
-
-    let jsonData = JSON.stringify(opportunity);
-
-    try {
-        let csv = json2csvParser.parse(opportunity) + "\r\n";
-        fs.appendFile("data/results-arbitrage.csv", csv, function(err) {
-            if (err) throw err;
-        });
-        fs.appendFile("data/results-arbitrage.json", jsonData + ",\r\n", function(err) {
-            if (err) throw err;
-        });
-    } catch (error) {
-        console.error(colors.red("Error:"), error.message);
-    }
-}
+module.exports = {
+    initialize,
+    findOpportunities
+};

@@ -2,73 +2,57 @@
     "checkInterval": 0.5,
     "apiTimeout": 10,
     "marketFilter": {
-        "exchanges": false,
+        "exchanges": true,
         "exchangesBlacklist": true,
-        "baseCurrencies": false,
+        "baseCurrencies": true,
         "quoteCurrencies": false
     },
     "exchanges": [
+        "binance",
         "okex",
-        "bibox",
-        "zb",
-        "binance",
         "huobipro",
-        "kucoin",
-        "hitbtc",
-        "binance",
-        "bithumb",
-        "bcex",
-        "bitz",
-        "rightbtc",
-        "coinex",
-        "cointiger",
-        "liquid",
-        "coinbasepro",
-        "bitmart",
-
         "bittrex",
         "bitfinex",
+        "kucoin",
+        "hitbtc",
         "kraken",
         "poloniex",
         "gateio",
         "livecoin",
-        "exmo"
+        "zb",
+        "exmo",
+        "yobit"
     ],
     "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
 
     "baseCurrencies": [
         "BTC",
         "ETH",
-        "XRP",
-        "BCH",
+        "XPR",
         "LTC",
+        "BCH",
         "BNB",
         "USDT",
         "EOS",
         "BSV",
-        "XMR",
         "XLM",
-        "LEO",
-        "ADA",
         "TRX",
-        "LINK",
+        "ADA",
+        "XMR",
+        "LEO",
         "DASH",
-        "XTZ",
+        "LINK",
         "NEO",
-        "MIOTA",
-        "ETC",
+        "IOTA",
         "ATOM",
+        "ETC",
+        "XTZ",
         "XEM",
         "MKR",
-        "ONT",
-        "CRO",
-        "USDC",
         "ZEC",
-        "VSYS",
-        "DOGE",
-        "DCR"
+        "ONT"
     ],
-    "quoteCurrencies": ["BTC", "USDT", "ETH"],
+    "quoteCurrencies": ["BTC", "USD", "USDT", "ETH"],
 
     "keys": {
         "binance": {
@@ -79,7 +63,7 @@
 
     "triangular": {
         "minimumProfit": 3,
-        "targetAssets": ["LTC", "ETH", "USDT", "BNB", "BTC"]
+        "targetAssets": ["LTC", "ETH", "USDT", "USD", "BNB", "BTC"]
     },
 
     "finder": {

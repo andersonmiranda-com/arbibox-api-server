@@ -228,14 +228,33 @@ exports.getWithdrawalFees = function(cb) {
 ///
 
 exports.insertTriangularOpportunity = function(data) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-
-        var db = client.db("arbibox");
-        db.collection("triangular").insertOne(data, function(err, res) {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
             if (err) throw err;
-            //console.log(res.result);
-            client.close();
+
+            var db = client.db("arbibox");
+            db.collection("triangular").insertOne(data, function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                resolve(true);
+                client.close();
+            });
+        });
+    });
+};
+
+exports.insertTriangularCrossOpportunity = function(data) {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+
+            var db = client.db("arbibox");
+            db.collection("triangular-cross").insertOne(data, function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                resolve(true);
+                client.close();
+            });
         });
     });
 };

@@ -274,13 +274,14 @@ async function fetchTickersByExchange(exchange) {
 
         exchangeTickets.tickets = await _exchange.fetchTickers(exchange.symbols);
 
-        db.saveTickets(exchangeTickets.id, {
-            id: exchangeTickets.id,
-            tickets: exchangeTickets.tickets
-        });
+        //db.saveTickets(exchangeTickets.id, {
+        //    id: exchangeTickets.id,
+        //    tickets: exchangeTickets.tickets
+        //});
 
         //tickets.map(ticket => verbose && console.log(ticket));
     } catch (error) {
+        verbose && console.error(exchange.id);
         verbose && console.error(colors.red("Error:"), error.message);
         return exchangeTickets;
     } finally {

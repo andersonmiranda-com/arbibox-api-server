@@ -5,108 +5,103 @@
         "exchanges": true,
         "exchangesBlacklist": true,
         "baseCurrencies": true,
-        "quoteCurrencies": false
+        "quoteCurrencies": true
     },
+
     "exchanges": [
-        "bittrex",
+        "okex",
+        "bibox",
+        "zb",
         "binance",
-        "bitfinex",
-        "bleutrade",
-        "cex",
-        "coinexchange",
-        "coss",
-        "exmo",
         "kucoin",
-        "bitbay",
         "hitbtc",
+        "bithumb",
+        "coinex",
+        "cointiger",
+        "coinbasepro",
+        "bitmart",
+        "bittrex",
+        "bitfinex",
         "kraken",
         "poloniex",
         "gateio",
         "livecoin",
-        "okex",
-        "cobinhood",
-        "crex24",
-        "bitz",
-        "coinegg",
-        "lbank",
-        "cointiger",
-        "bitforex",
-        "bibox",
-        "zb",
-        "coss",
-        "coinbasepro",
-        "exx"
+        "exmo"
     ],
-    "exchangesBlacklist": ["coinmarketcap", "lbank", "dx"],
+    "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
     "baseCurrencies": [
+        "BTC",
         "ETH",
-        "XPR",
-        "LTC",
+        "XRP",
         "BCH",
+        "LTC",
         "BNB",
         "USDT",
         "EOS",
         "BSV",
-        "XLM",
-        "TRX",
-        "ADA",
         "XMR",
+        "XLM",
         "LEO",
-        "DASH",
+        "ADA",
+        "TRX",
         "LINK",
-        "NEO",
-        "IOTA",
-        "ATOM",
-        "ETC",
+        "DASH",
         "XTZ",
+        "NEO",
+        "MIOTA",
+        "ETC",
+        "ATOM",
         "XEM",
         "MKR",
-        "ZEC",
         "ONT",
         "CRO",
-        "BTG",
         "USDC",
+        "ZEC",
         "VSYS",
-        "EGT",
-        "VET",
-        "BAT",
+        "DOGE",
         "DCR",
+        "VET",
         "QTUM",
         "HT",
-        "OMG",
+        "BTG",
+        "BAT",
+        "HEDG",
         "TUSD",
+        "PAX",
+        "OMG",
+        "ALGO",
+        "LSK",
+        "RVN",
         "BTT",
-        "HEDG"
+        "NANO",
+        "BCD",
+        "EGT",
+        "NRG",
+        "WAVES",
+        "HC",
+        "LAMB"
     ],
-    "quoteCurrencies": ["BTC", "USD", "USDT", "ETH"],
+
+    "quoteCurrencies": ["BTC", "ETH", "USDT", "LTC", "BNB"],
+
     "currenciesBlacklist": ["VIA"],
+
     "keys": {
         "binance": {
             "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
             "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
-        },
-        "poloniex": {
-            "apiKey": "Y6D2EYJG-DIWXCTIX-S85GA9SK-6ZW2231Q",
-            "secret": "8130bf4bd3a7fbac5dca62a4873b1850583dc348b8c50f666f480d35d909dd65afe4310998018cbd9aafc0db6802dd36daf97742368f07fa00ea114fe1eac802"
-        },
-        "kraken": {
-            "apiKey": "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
-            "secret": "csjYywPe8c51zBvDrYV96iiZVwokozSpmCP+pdOGOzWQ1FwStEpRZnIEhujxx9Hxb2XK7oipi5k7ZU/jrCKdPw=="
-        },
-        "coinbasepro": {
-            "apiKey": "ede1062034397deabacc4221dcd358ef",
-            "secret": "8qLzMOB0dCfTOHGTqyxT/ZyhNQNKIPPy6VWGw9UAhWkkk4pEcUbXjsI2FXeqhetAwFDs+Qy4WrrJSB/8oLqCNQ=="
         }
     },
 
     "triangular": {
-        "minimumProfit": 3,
-        "targetAssets": ["LTC", "ETH", "USDT", "USD", "BNB", "BTC"]
+        "checkInterval": 60,
+        "minimumProfit": 0.0,
+        "targetAssets": ["LTC", "ETH", "USDT", "BTC"]
     },
 
     "finder": {
         "checkInterval": 20,
-        "minimumProfit": 1,
+        "minimumProfit": 0.5,
         "minimumProfitInvest": 0.5,
         "quoteCurrencyFunds": {
             "BTC": 0.1,
@@ -129,7 +124,7 @@
                 "ETH": 5
             }
         },
-        "lastTradeTimeLimit": 10,
+        "lastTradeTimeLimit": 5,
         "removeAfterMinutesOff": 5,
         "removeAfterIterations": 10
     },
