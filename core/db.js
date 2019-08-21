@@ -73,7 +73,7 @@ exports.upsertOpportunity = function(data) {
                         created_at: data.created_at,
                         bid: data.sell.bid,
                         ask: data.buy.ask,
-                        gain: data.profit1
+                        profit: data.profit
                     }
                 }
             },
@@ -107,7 +107,7 @@ exports.updateOpportunity = function(data) {
     });
 };
 
-exports.removeOpportunity = function(query) {
+exports.removeOpportunities = function(query) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
@@ -233,7 +233,7 @@ exports.insertTriangularOpportunity = function(data) {
             if (err) throw err;
 
             var db = client.db("arbibox");
-            db.collection("triangular").insertOne(data, function(err, res) {
+            db.collection("-opportunities-triangular").insertOne(data, function(err, res) {
                 if (err) throw err;
                 //console.log(res.result);
                 resolve(true);
@@ -242,6 +242,85 @@ exports.insertTriangularOpportunity = function(data) {
         });
     });
 };
+
+exports.readTriangularOpportunities = function(query) {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            var db = client.db("arbibox");
+            db.collection("opportunities-triangular")
+                .find(query)
+                .toArray(function(err, res) {
+                    if (err) throw err;
+                    resolve(res);
+                    client.close();
+                });
+        });
+    });
+};
+
+exports.upsertTriangularOpportunity = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        // avoid update different _id
+        var db = client.db("arbibox");
+        db.collection("opportunities-triangular").updateOne(
+            { id: data.id },
+            {
+                $set: data,
+                $addToSet: {
+                    lastest: {
+                        created_at: data.created_at,
+                        profit: data.profit
+                    }
+                }
+            },
+            { upsert: true },
+            function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                client.close();
+            }
+        );
+    });
+};
+
+exports.updateTriangularOpportunity = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        // avoid update different _id
+        delete data._id;
+        var db = client.db("arbibox");
+        db.collection("opportunities-triangular").updateOne(
+            { id: data.id },
+            {
+                $set: data
+            },
+            function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                client.close();
+            }
+        );
+    });
+};
+
+exports.removeTriangularOpportunity = function(query) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        var db = client.db("arbibox");
+        db.collection("opportunities-triangular").deleteMany(query, function(err, res) {
+            if (err) throw err;
+            //console.log(res.result);
+            client.close();
+        });
+    });
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Triangular
+///
 
 exports.insertTriangularCrossOpportunity = function(data) {
     return new Promise(async (resolve, reject) => {
