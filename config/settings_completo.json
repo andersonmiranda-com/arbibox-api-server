@@ -1,5 +1,4 @@
 {
-    "checkInterval": 0.5,
     "apiTimeout": 10,
     "marketFilter": {
         "exchanges": true,
@@ -93,43 +92,39 @@
         }
     },
 
-    "triangular": {
-        "checkInterval": 60,
-        "minimumProfit": 0.0,
-        "targetAssets": ["LTC", "ETH", "USDT", "BTC"]
-    },
-
-    "finder": {
-        "checkInterval": 20,
-        "minimumProfit": 0.5,
-        "minimumProfitInvest": 0.5,
-        "quoteCurrencyFunds": {
-            "BTC": 0.1,
-            "USD": 1000,
-            "USDT": 1000,
-            "ETH": 5
-        }
-    },
-
-    "quality": {
-        "checkInterval": 15,
-
-        "filter": {
-            "lowVolume": true,
-            "baseLowVolumeLimit": 0.1,
-            "quoteLowVolumeLimit": {
+    "arbitrage": {
+        "finder": {
+            "checkInterval": 20,
+            "minimumProfit": 0.5,
+            "minimumProfitInvest": 0.5,
+            "quoteCurrencyFunds": {
                 "BTC": 0.1,
                 "USD": 1000,
                 "USDT": 1000,
                 "ETH": 5
             }
         },
-        "lastTradeTimeLimit": 5,
-        "removeAfterMinutesOff": 5,
-        "removeAfterIterations": 10
-    },
 
-    "execution": {
-        "checkInterval": 10
+        "quality": {
+            "checkInterval": 15,
+
+            "filter": {
+                "lowVolume": true,
+                "baseLowVolumeLimit": 0.1,
+                "quoteLowVolumeLimit": {
+                    "BTC": 0.1,
+                    "USD": 1000,
+                    "USDT": 1000,
+                    "ETH": 5
+                }
+            },
+            "lastTradeTimeLimit": 5,
+            "removeAfterMinutesOff": 5,
+            "removeAfterIterations": 10
+        },
+
+        "execution": {
+            "checkInterval": 10
+        }
     }
 }

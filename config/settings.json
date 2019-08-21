@@ -75,42 +75,65 @@
   },
 
   "triangular": {
-    "checkInterval": 15,
-    "minimumProfit": 0.05,
-    "targetAssets": ["BTC", "ETH"]
-  },
-
-  "finder": {
-    "checkInterval": 20,
-    "minimumProfit": 0.5,
-    "minimumProfitInvest": 0.5,
-    "quoteCurrencyFunds": {
-      "BTC": 0.1,
-      "USD": 1000,
-      "USDT": 1000,
-      "ETH": 5
+    "finder": {
+      "checkInterval": 15,
+      "minimumProfit": 0.05,
+      "targetAssets": ["BTC", "ETH"]
+    },
+    "quality": {
+      "checkInterval": 15,
+      "filter": {
+        "lowVolume": false,
+        "baseLowVolumeLimit": 0.1,
+        "quoteLowVolumeLimit": {
+          "BTC": 0.1,
+          "USD": 1000,
+          "USDT": 1000,
+          "ETH": 5
+        }
+      },
+      "lastTradeTimeLimit": 5,
+      "removeAfterMinutesOff": 5,
+      "removeAfterIterations": 10
+    },
+    "execution": {
+      "checkInterval": 10
     }
   },
 
-  "quality": {
-    "checkInterval": 15,
-
-    "filter": {
-      "lowVolume": true,
-      "baseLowVolumeLimit": 0.1,
-      "quoteLowVolumeLimit": {
+  "arbitrage": {
+    "finder": {
+      "checkInterval": 20,
+      "minimumProfit": 0.5,
+      "minimumProfitInvest": 0.5,
+      "quoteCurrencyFunds": {
         "BTC": 0.1,
         "USD": 1000,
         "USDT": 1000,
         "ETH": 5
       }
     },
-    "lastTradeTimeLimit": 5,
-    "removeAfterMinutesOff": 5,
-    "removeAfterIterations": 10
-  },
 
-  "execution": {
-    "checkInterval": 10
+    "quality": {
+      "checkInterval": 15,
+
+      "filter": {
+        "lowVolume": true,
+        "baseLowVolumeLimit": 0.1,
+        "quoteLowVolumeLimit": {
+          "BTC": 0.1,
+          "USD": 1000,
+          "USDT": 1000,
+          "ETH": 5
+        }
+      },
+      "lastTradeTimeLimit": 5,
+      "removeAfterMinutesOff": 5,
+      "removeAfterIterations": 10
+    },
+
+    "execution": {
+      "checkInterval": 10
+    }
   }
 }

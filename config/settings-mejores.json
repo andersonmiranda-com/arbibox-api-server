@@ -2,30 +2,19 @@
     "checkInterval": 0.5,
     "apiTimeout": 10,
     "marketFilter": {
-        "exchanges": false,
+        "exchanges": true,
         "exchangesBlacklist": true,
-        "baseCurrencies": false,
-        "quoteCurrencies": false
+        "baseCurrencies": true,
+        "quoteCurrencies": true
     },
     "exchanges": [
         "okex",
-        "bibox",
         "zb",
         "binance",
-        "huobipro",
         "kucoin",
         "hitbtc",
-        "binance",
         "bithumb",
-        "bcex",
-        "bitz",
-        "rightbtc",
         "coinex",
-        "cointiger",
-        "liquid",
-        "coinbasepro",
-        "bitmart",
-
         "bittrex",
         "bitfinex",
         "kraken",
@@ -35,7 +24,6 @@
         "exmo"
     ],
     "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
-
     "baseCurrencies": [
         "BTC",
         "ETH",
@@ -66,9 +54,14 @@
         "ZEC",
         "VSYS",
         "DOGE",
-        "DCR"
+        "DCR",
+        "VET",
+        "QTUM"
     ],
-    "quoteCurrencies": ["BTC", "USDT", "ETH"],
+
+    "quoteCurrencies": ["BTC", "ETH", "USDT", "LTC", "BNB"],
+
+    "currenciesBlacklist": ["VIA"],
 
     "keys": {
         "binance": {
@@ -78,41 +71,65 @@
     },
 
     "triangular": {
-        "minimumProfit": 3,
-        "targetAssets": ["LTC", "ETH", "USDT", "BNB", "BTC"]
-    },
-
-    "finder": {
-        "checkInterval": 20,
-        "minimumProfit": 1,
-        "minimumProfitInvest": 0.5,
-        "quoteCurrencyFunds": {
-            "BTC": 0.1,
-            "USD": 1000,
-            "USDT": 1000,
-            "ETH": 5
+        "finder": {
+            "checkInterval": 15,
+            "minimumProfit": 0.05,
+            "targetAssets": ["BTC", "ETH"]
+        },
+        "quality": {
+            "checkInterval": 15,
+            "filter": {
+                "lowVolume": false,
+                "baseLowVolumeLimit": 0.1,
+                "quoteLowVolumeLimit": {
+                    "BTC": 0.1,
+                    "USD": 1000,
+                    "USDT": 1000,
+                    "ETH": 5
+                }
+            },
+            "lastTradeTimeLimit": 5,
+            "removeAfterMinutesOff": 5,
+            "removeAfterIterations": 10
+        },
+        "execution": {
+            "checkInterval": 10
         }
     },
 
-    "quality": {
-        "checkInterval": 15,
-
-        "filter": {
-            "lowVolume": true,
-            "baseLowVolumeLimit": 0.1,
-            "quoteLowVolumeLimit": {
+    "arbitrage": {
+        "finder": {
+            "checkInterval": 20,
+            "minimumProfit": 0.5,
+            "minimumProfitInvest": 0.5,
+            "quoteCurrencyFunds": {
                 "BTC": 0.1,
                 "USD": 1000,
                 "USDT": 1000,
                 "ETH": 5
             }
         },
-        "lastTradeTimeLimit": 10,
-        "removeAfterMinutesOff": 5,
-        "removeAfterIterations": 10
-    },
 
-    "execution": {
-        "checkInterval": 10
+        "quality": {
+            "checkInterval": 15,
+
+            "filter": {
+                "lowVolume": true,
+                "baseLowVolumeLimit": 0.1,
+                "quoteLowVolumeLimit": {
+                    "BTC": 0.1,
+                    "USD": 1000,
+                    "USDT": 1000,
+                    "ETH": 5
+                }
+            },
+            "lastTradeTimeLimit": 5,
+            "removeAfterMinutesOff": 5,
+            "removeAfterIterations": 10
+        },
+
+        "execution": {
+            "checkInterval": 10
+        }
     }
 }
