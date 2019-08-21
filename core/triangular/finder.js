@@ -174,9 +174,20 @@ async function findChains(targetAssets, exchange, markets) {
 
                     try {
                         let opportunity = {
+                            id:
+                                exchange.toLowerCase() +
+                                "_" +
+                                targetAsset +
+                                "_" +
+                                chain.symbols[0].symbol +
+                                "-" +
+                                chain.symbols[1].symbol +
+                                "-" +
+                                chain.symbols[2].symbol +
+                                bestBid.name,
+                            created_at: new Date(),
                             exchange: exchange,
                             base: targetAsset,
-                            created_at: new Date(),
                             ticket1: chain.symbols[0].symbol,
                             ticket2: chain.symbols[1].symbol,
                             ticket3: chain.symbols[2].symbol,
@@ -217,7 +228,7 @@ async function findChains(targetAssets, exchange, markets) {
                 //     chainResult.triagePercentage + " %"
                 // );
             } catch (error) {
-                console.log(
+                console.error(
                     colors.red("Error on:"),
                     colors.magenta(targetAsset),
                     colors.cyan(exchange)

@@ -1,0 +1,1 @@
+db.getCollection('triangular').find({}).sort({created_at: -1});

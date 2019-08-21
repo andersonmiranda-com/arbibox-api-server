@@ -75,7 +75,7 @@
   },
 
   "triangular": {
-    "checkInterval": 10,
+    "checkInterval": 15,
     "minimumProfit": 0.05,
     "targetAssets": ["BTC", "ETH"]
   },
