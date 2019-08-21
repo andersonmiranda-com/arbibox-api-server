@@ -14,7 +14,8 @@ const db = require("../db");
 
 const initialize = async function() {
     //initialize oppotunities table
-    db.removeAllOpportunities();
+    db.removeOpportunities({ type: "PA" });
+
     //get withdrawal fees
     db.getWithdrawalFees(function(response) {
         global.withdrawalFees = response;
@@ -304,23 +305,24 @@ function filterOpportunities(prices) {
         let { baseCurrency, quoteCurrency } = getCurrencies(prices[0]);
         for (let priceAsk of prices) {
             if (
-                configs.quality.filter.lowVolume &&
+                configs.arbitrage.quality.filter.lowVolume &&
                 (!priceAsk.baseVolume ||
                     !priceAsk.quoteVolume ||
-                    priceAsk.baseVolume <= configs.quality.filter.baseLowVolumeLimit ||
+                    priceAsk.baseVolume <= configs.arbitrage.quality.filter.baseLowVolumeLimit ||
                     priceAsk.quoteVolume <=
-                        configs.quality.filter.quoteLowVolumeLimit[quoteCurrency])
+                        configs.arbitrage.quality.filter.quoteLowVolumeLimit[quoteCurrency])
             ) {
                 continue;
             }
             for (let priceBid of prices) {
                 if (
-                    configs.quality.filter.lowVolume &&
+                    configs.arbitrage.quality.filter.lowVolume &&
                     (!priceBid.baseVolume ||
                         !priceBid.quoteVolume ||
-                        priceBid.baseVolume <= configs.quality.filter.baseLowVolumeLimit ||
+                        priceBid.baseVolume <=
+                            configs.arbitrage.quality.filter.baseLowVolumeLimit ||
                         priceBid.quoteVolume <=
-                            configs.quality.filter.quoteLowVolumeLimit[quoteCurrency])
+                            configs.arbitrage.quality.filter.quoteLowVolumeLimit[quoteCurrency])
                 ) {
                     continue;
                 }
@@ -341,19 +343,25 @@ function filterOpportunities(prices) {
             let quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
 
             let percentageAfterWdFees1 = getPercentageAfterWdFees(
-                configs.finder.quoteCurrencyFunds[quoteCurrency],
+                configs.arbitrage.finder.quoteCurrencyFunds[quoteCurrency],
                 bestAsk,
                 bestBid
             );
-            if (percentageAfterWdFees1 >= configs.finder.minimumProfit) {
+
+            //console.log("percentageAfterWdFees1", percentageAfterWdFees1);
+
+            if (percentageAfterWdFees1 >= configs.arbitrage.finder.minimumProfit) {
                 let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
                 let percentageAfterWdFees2 = getPercentageAfterWdFees(minQuote, bestAsk, bestBid);
                 let opportunity = {
                     id: bestAsk.symbol.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
                     created_at: new Date(),
+                    type: "PA",
                     symbol: bestAsk.symbol,
-                    type: "AP",
                     buy_at: bestAsk.name,
+                    sell_at: bestBid.name,
+                    profit0: Number(percentage.toFixed(4)),
+                    profit: Number(percentageAfterWdFees1.toFixed(4)),
                     buy: {
                         at: bestAsk.name,
                         ask: bestAsk.ask,
@@ -362,7 +370,6 @@ function filterOpportunities(prices) {
                         wd_fee_quote: quoteWithdrawalFee
                     },
 
-                    sell_at: bestBid.name,
                     sell: {
                         at: bestBid.name,
                         bid: bestBid.bid,
@@ -377,9 +384,7 @@ function filterOpportunities(prices) {
                         profit_min: Number(percentageAfterWdFees2.toFixed(4))
                     },
                     //bids: bidOrders.bids,
-                    invest: configs.finder.quoteCurrencyFunds[quoteCurrency],
-                    profit0: Number(percentage.toFixed(4)),
-                    profit1: Number(percentageAfterWdFees1.toFixed(4))
+                    invest: configs.arbitrage.finder.quoteCurrencyFunds[quoteCurrency]
                 };
 
                 verbose &&
@@ -419,7 +424,7 @@ function getWithdrawalFee(currency) {
 function getPercentage(bestAsk, bestBid) {
     let { baseCurrency, quoteCurrency } = getCurrencies(bestAsk);
 
-    let funds = configs.finder.quoteCurrencyFunds[quoteCurrency];
+    let funds = configs.arbitrage.finder.quoteCurrencyFunds[quoteCurrency];
     let amount = funds / bestAsk.ask;
 
     let bought = bestAsk.ask * amount;
@@ -484,7 +489,7 @@ function getMinimunInversion(bestAsk, bestBid) {
             100 * bestAsk.ask * bestBid.bid * baseWithdrawalFee +
             100 * bestAsk.ask * quoteWithdrawalFee) /
         (100 * bestBid.bid * bestAsk.cost * bestBid.cost -
-            bestAsk.ask * configs.finder.minimumProfitInvest -
+            bestAsk.ask * configs.arbitrage.finder.minimumProfitInvest -
             100 * bestBid.bid * bestAsk.cost -
             100 * bestBid.bid * bestBid.cost -
             100 * bestAsk.ask +

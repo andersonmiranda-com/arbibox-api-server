@@ -16,23 +16,24 @@ const initialize = async function() {
     // remove opportunities created some time ago - wich does not have upadates
     ////////
     const minutesAgo = moment()
-        .subtract(configs.quality.removeAfterMinutesOff, "minutes")
+        .subtract(configs.arbitrage.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
-    db.removeOpportunity({ created_at: { $lt: minutesAgo } });
+    db.removeOpportunities({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "PA" }] });
 
     ////////
     // remove poportunities with more than X iterractions and approved = false
     ////////
-    db.removeOpportunity({
+    db.removeOpportunities({
         $and: [
             // { approved: false },
-            { $where: "this.lastest.length >= " + configs.quality.removeAfterIterations }
+            { type: "PA" },
+            { $where: "this.lastest.length >= " + configs.arbitrage.quality.removeAfterIterations }
         ]
     });
 
     let opportunities = await db.readOpportunities({
-        $and: [{ type: "AP", qualified: { $exists: false } }]
+        $and: [{ type: "PA", qualified: { $exists: false } }]
     });
 
     for (let opportunity of opportunities) {
@@ -164,7 +165,8 @@ async function fetchTrades(exchange, symbol) {
             exchangeInfo.wallets = [];
         }
 
-        let since = _exchange.milliseconds() - configs.quality.lastTradeTimeLimit * 60 * 1000; //
+        let since =
+            _exchange.milliseconds() - configs.arbitrage.quality.lastTradeTimeLimit * 60 * 1000; //
         let limit = 1;
         exchangeInfo.trades = await _exchange.fetchTrades(symbol, since, limit);
 

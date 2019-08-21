@@ -44,10 +44,11 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         finder.findOpportunities(tickets, exchangesSymbols);
         verbose &&
             console.info(
-                "\n>> Finder agent >",
+                ">>> Finder agent >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.finder.checkInterval > 0 ? configs.finder.checkInterval : 30) * 1000);
+    }, (configs.arbitrage.finder.checkInterval > 0 ? configs.arbitrage.finder.checkInterval : 30) *
+        1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 2 - Qualifier
@@ -58,10 +59,12 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         qualifier.initialize();
         verbose &&
             console.info(
-                "\n>> Qualifier agent >",
+                ">>> Qualifier agent >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.quality.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
+    }, (configs.arbitrage.quality.checkInterval > 0
+        ? configs.arbitrage.quality.checkInterval
+        : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 3 - Execution
@@ -71,16 +74,18 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     setInterval(function() {
         verbose &&
             console.info(
-                "\n>> Execution agent >",
+                ">>> Execution agent >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
         execution.initialize();
-    }, (configs.execution.checkInterval > 0 ? configs.execution.checkInterval : 30) * 1000);
+    }, (configs.arbitrage.execution.checkInterval > 0
+        ? configs.arbitrage.execution.checkInterval
+        : 30) * 1000);
 
     /// started
     verbose &&
         console.info(
-            "\n>> Bot started at",
+            "\n>>> Bot started at",
             colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
         );
 })();
