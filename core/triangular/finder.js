@@ -71,6 +71,7 @@ const initialize = async function() {
             }
 
             await _instance.loadMarkets();
+
             //CCXT API Exchange validation
             if (!_instance.has["fetchTickers"]) {
                 verbose && console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
@@ -147,7 +148,7 @@ async function findChains(targetAssets, exchange, markets) {
         tickers = await _exchange.fetchTickers();
     } catch (error) {
         console.error(colors.red("Error fetchTickers on:"), exchange);
-        console.error(colors.red("Error:"), error.message);
+        console.error(colors.red("Error2:"), error.message);
     }
 
     exchangeMarket = markets.find(market => market.id === exchange);
@@ -166,7 +167,7 @@ async function findChains(targetAssets, exchange, markets) {
                 );
 
                 if (
-                    chain.triagePercentage >= configs.triangular.minimumProfit &&
+                    chain.triagePercentage >= configs.triangular.finder.minimumProfit &&
                     chain.triagePercentage <= 200 &&
                     chain.triagePercentage !== Infinity
                 ) {
@@ -183,8 +184,8 @@ async function findChains(targetAssets, exchange, markets) {
                                 "-" +
                                 chain.symbols[1].symbol +
                                 "-" +
-                                chain.symbols[2].symbol +
-                                bestBid.name,
+                                chain.symbols[2].symbol,
+                            type: "TR",
                             created_at: new Date(),
                             exchange: exchange,
                             base: targetAsset,
@@ -194,7 +195,7 @@ async function findChains(targetAssets, exchange, markets) {
                             profit: Number(chain.triagePercentage.toFixed(4))
                         };
 
-                        db.insertTriangularOpportunity(opportunity);
+                        db.upsertOpportunity(opportunity);
 
                         console.log(
                             exchange,
@@ -214,19 +215,14 @@ async function findChains(targetAssets, exchange, markets) {
                         console.error(colors.red("Error4:"), error.message);
                         //return false;
                     }
-                    //     }
-                    //     console.log(".");
                 }
 
-                //}
-                //     console.log(".");
-                // }
-                // console.log(
-                //     z(13, exchange, " "),
-                //     z(40, chainResult, " "),
-                //     " triage: ",
-                //     chainResult.triagePercentage + " %"
-                // );
+                //console.log(
+                //    z(13, exchange, " "),
+                //    z(40, chainResult, " "),
+                //    " triage: ",
+                //    chainResult.triagePercentage + " %"
+                //);
             } catch (error) {
                 console.error(
                     colors.red("Error on:"),
@@ -234,6 +230,7 @@ async function findChains(targetAssets, exchange, markets) {
                     colors.cyan(exchange)
                 );
                 console.error(colors.red("Error3"), error.message);
+                //console.error(colors.red("Error3"), error);
                 //return false
             }
         }

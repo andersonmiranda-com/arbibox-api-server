@@ -1,5 +1,7 @@
 "use strict";
 
+const colors = require("colors");
+
 const getBase = symbol => symbol.base || symbol.market.base;
 const getQuote = symbol => symbol.quote || symbol.market.quote;
 const inversePrice = n => 1 / n;
@@ -26,10 +28,21 @@ const getMultiplier = (symbol, inputTarget, ticker) => {
     //console.log("ticker", ticker);
     //cccccconsole.log("ticker.info", ticker.info);
 
-    if (getBase(symbol) === inputTarget) {
-        return ticker.info.bidPrice || ticker.info.bid || ticker.bid;
-    } else {
-        return inversePrice(ticker.info.askPrice || ticker.info.ask || ticker.ask);
+    try {
+        if (getBase(symbol) === inputTarget) {
+            return ticker ? ticker.info.bidPrice || ticker.info.bid || ticker.bid : 0;
+        } else {
+            return inversePrice(ticker ? ticker.info.askPrice || ticker.info.ask || ticker.ask : 0);
+        }
+    } catch (error) {
+        //console.error(colors.red("Error getMultiplier"), error.message);
+        //console.error(colors.red("Error getMultiplier"), error);
+        //console.log();
+        //console.log("symbol", symbol);
+        //console.log("inputTarget", inputTarget);
+        //console.log("ticker", ticker);
+        // error - no correspondent ticker available
+        //return 0;
     }
 };
 

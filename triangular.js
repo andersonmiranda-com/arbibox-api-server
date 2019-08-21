@@ -17,8 +17,8 @@ const interval =
     1000 *
     (args[3]
         ? args[3]
-        : configs.triangular.checkInterval > 0
-        ? configs.triangular.checkInterval
+        : configs.triangular.finder.checkInterval > 0
+        ? configs.triangular.finder.checkInterval
         : 60);
 
 const logo = ` 
@@ -45,7 +45,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
 
     //db.removeAllOpportunities();
-    let targetAssets = configs.triangular.targetAssets;
+    let targetAssets = configs.triangular.finder.targetAssets;
     const { exchanges, markets } = await finder.initialize();
     console.info(
         "\n>> Finder agent started >",
@@ -75,7 +75,8 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
                 "\n>> Qualifier agent >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.quality.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
+    }, (configs.triangular.quality.checkInterval > 0 ? 
+    }, (configs.triangular.quality.checkInterval : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 3 - Execution
@@ -89,7 +90,9 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
         execution.initialize();
-    }, (configs.execution.checkInterval > 0 ? configs.execution.checkInterval : 30) * 1000);
+    }, (
+    }, (configs.triangular.execution.checkInterval > 0 ? 
+    }, (configs.triangular.execution.checkInterval : 30) * 1000);
 
     /// started
     verbose &&

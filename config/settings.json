@@ -9,19 +9,34 @@
   },
   "exchanges": [
     "okex",
+    "bibox",
     "zb",
     "binance",
     "kucoin",
     "hitbtc",
     "bithumb",
     "coinex",
+    "cointiger",
+    "coinbasepro",
+    "bitmart",
     "bittrex",
     "bitfinex",
     "kraken",
     "poloniex",
     "gateio",
     "livecoin",
-    "exmo"
+    "exmo",
+    "bleutrade",
+    "foxbit",
+    "mercado",
+    "negociecoins",
+    "braziliex",
+    "bitfinex2",
+    "exx",
+    "hitbtc2",
+    "coinexchange",
+    "binanceje",
+    "bitmex"
   ],
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"
@@ -68,9 +83,21 @@
   "currenciesBlacklist": ["VIA"],
 
   "keys": {
+    "bibox": {
+      "apiKey": "4fd164f9c755a39b6ac35e47f2c9507a0deafd88",
+      "secret": "2a308fe5e96918f748db68d2ae0b6acc31adff47"
+    },
     "binance": {
       "apiKey": "8it95ff5sk2WihVVUcOts0UsTgoaaPH21i2sjB4lxxn9r2fVscJCt3U1S7s988Nt",
       "secret": "Gpx3dv6n2NQoRQhxMkZ1nfuhTAThyJbSjcmB2h1tc96WUZmyXECfBJhh6kAQE6rP"
+    },
+    "bitfinex": {
+      "apiKey": "gfuxiWVe33k0dX46Ug3XiOy3U6z6r9KUgoOYhQCh0gM",
+      "secret": "zcBrFykqhh6RwUFNlcQRoaATm6nbEh3NLvh1zaXAWx3"
+    },
+    "cointiger": {
+      "apiKey": "ca3b1ccc-fb62-4c38-bb4a-052fd0989de0",
+      "secret": "Yzc1ZjM4MWQzMjk4NjRlOWM5ZjkxY2ViNTRmMGQxNDM3YjJkOTI0MDgwODI0Y2FlNjFjODNiNzE4NDEwNTRiMA=="
     }
   },
 

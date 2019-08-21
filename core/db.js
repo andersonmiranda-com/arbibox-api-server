@@ -71,8 +71,6 @@ exports.upsertOpportunity = function(data) {
                 $addToSet: {
                     lastest: {
                         created_at: data.created_at,
-                        bid: data.sell.bid,
-                        ask: data.buy.ask,
                         profit: data.profit
                     }
                 }

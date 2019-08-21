@@ -1,0 +1,200 @@
+{"_id":{"$oid":"5d5268c17c1ce45855d731dc"},"coin":"BCHSV","name":"Bitcoin Cash SV","minimumWithdrawal":0.0001,"withdrawalFee":0.0001}
+{"_id":{"$oid":"5d5268c17c1ce45855d731dd"},"coin":"BNB","name":"Binance Coin","minimumWithdrawal":0.1,"withdrawalFee":0.001}
+{"_id":{"$oid":"5d5268c17c1ce45855d731de"},"coin":"BTC","name":"Bitcoin","minimumWithdrawal":0.002,"withdrawalFee":0.0005}
+{"_id":{"$oid":"5d5268c17c1ce45855d731df"},"coin":"FTM","name":"Fantom","minimumWithdrawal":20.2,"withdrawalFee":10.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e0"},"coin":"NEO","name":"NEO","minimumWithdrawal":1,"withdrawalFee":0}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e1"},"coin":"ETH","name":"Ethereum","minimumWithdrawal":0.02,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e2"},"coin":"LTC","name":"Litecoin","minimumWithdrawal":0.002,"withdrawalFee":0.001}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e3"},"coin":"QTUM","name":"Qtum","minimumWithdrawal":0.02,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e4"},"coin":"SNT","name":"Status","minimumWithdrawal":130,"withdrawalFee":65}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e5"},"coin":"EOS","name":"EOS","minimumWithdrawal":0.2,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e6"},"coin":"BTM","name":"Bytom","minimumWithdrawal":5,"withdrawalFee":5}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e7"},"coin":"ICN","name":"ICONOMI","minimumWithdrawal":3.4,"withdrawalFee":3.4}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e8"},"coin":"BNT","name":"Bancor","minimumWithdrawal":5.8,"withdrawalFee":2.9}
+{"_id":{"$oid":"5d5268c17c1ce45855d731e9"},"coin":"GAS","name":"NeoGas","minimumWithdrawal":0.001,"withdrawalFee":0}
+{"_id":{"$oid":"5d5268c17c1ce45855d731ea"},"coin":"USDT","name":"TetherUS","minimumWithdrawal":2.6,"withdrawalFee":1.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d731eb"},"coin":"OAX","name":"openANX","minimumWithdrawal":32,"withdrawalFee":16}
+{"_id":{"$oid":"5d5268c17c1ce45855d731ec"},"coin":"ZRX","name":"0x","minimumWithdrawal":13.6,"withdrawalFee":6.8}
+{"_id":{"$oid":"5d5268c17c1ce45855d731ed"},"coin":"MCO","name":"Crypto.com","minimumWithdrawal":0.66,"withdrawalFee":0.33}
+{"_id":{"$oid":"5d5268c17c1ce45855d731ee"},"coin":"OMG","name":"OmiseGO","minimumWithdrawal":1.84,"withdrawalFee":0.92}
+{"_id":{"$oid":"5d5268c17c1ce45855d731ef"},"coin":"WTC","name":"Walton","minimumWithdrawal":1.8,"withdrawalFee":0.9}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f0"},"coin":"LRC","name":"Loopring","minimumWithdrawal":70.6,"withdrawalFee":35.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f1"},"coin":"LLT","name":"LLToken","minimumWithdrawal":67.8,"withdrawalFee":67.8}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f2"},"coin":"HCC","name":"HealthCare Chain","minimumWithdrawal":0.0005,"withdrawalFee":0.0005}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f3"},"coin":"YOYO","name":"YOYOW","minimumWithdrawal":10,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f4"},"coin":"TRX","name":"TRON","minimumWithdrawal":10,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f5"},"coin":"STRAT","name":"Stratis","minimumWithdrawal":0.002,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f6"},"coin":"BQX","name":"ETHOS","minimumWithdrawal":26.8,"withdrawalFee":13.4}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f7"},"coin":"KNC","name":"KyberNetwork","minimumWithdrawal":15.6,"withdrawalFee":7.8}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f8"},"coin":"SNM","name":"SONM","minimumWithdrawal":252,"withdrawalFee":126}
+{"_id":{"$oid":"5d5268c17c1ce45855d731f9"},"coin":"FUN","name":"FunFair","minimumWithdrawal":1126,"withdrawalFee":563}
+{"_id":{"$oid":"5d5268c17c1ce45855d731fa"},"coin":"LINK","name":"ChainLink","minimumWithdrawal":1.2,"withdrawalFee":0.6}
+{"_id":{"$oid":"5d5268c17c1ce45855d731fb"},"coin":"XVG","name":"Verge","minimumWithdrawal":0.2,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d731fc"},"coin":"CTR","name":"Centra","minimumWithdrawal":35,"withdrawalFee":35}
+{"_id":{"$oid":"5d5268c17c1ce45855d731fd"},"coin":"SALT","name":"Salt","minimumWithdrawal":5.2,"withdrawalFee":5.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d731fe"},"coin":"MDA","name":"Moeda Loyalty Points","minimumWithdrawal":4.2,"withdrawalFee":2.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d731ff"},"coin":"SNGLS","name":"Breaker","minimumWithdrawal":330,"withdrawalFee":165}
+{"_id":{"$oid":"5d5268c17c1ce45855d73200"},"coin":"SUB","name":"Substratum","minimumWithdrawal":40,"withdrawalFee":40}
+{"_id":{"$oid":"5d5268c17c1ce45855d73201"},"coin":"ETC","name":"Ethereum Classic","minimumWithdrawal":0.02,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d73202"},"coin":"MTH","name":"Monetha","minimumWithdrawal":202,"withdrawalFee":101}
+{"_id":{"$oid":"5d5268c17c1ce45855d73203"},"coin":"MTL","name":"Metal","minimumWithdrawal":9.2,"withdrawalFee":4.6}
+{"_id":{"$oid":"5d5268c17c1ce45855d73204"},"coin":"REQ","name":"Request Network","minimumWithdrawal":208.2,"withdrawalFee":104.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73205"},"coin":"DNT","name":"district0x","minimumWithdrawal":358,"withdrawalFee":179}
+{"_id":{"$oid":"5d5268c17c1ce45855d73206"},"coin":"VIB","name":"Viberate","minimumWithdrawal":146,"withdrawalFee":73}
+{"_id":{"$oid":"5d5268c17c1ce45855d73207"},"coin":"DASH","name":"Dash","minimumWithdrawal":0.004,"withdrawalFee":0.002}
+{"_id":{"$oid":"5d5268c17c1ce45855d73208"},"coin":"ENG","name":"Enigma","minimumWithdrawal":6.2,"withdrawalFee":3.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73209"},"coin":"EVX","name":"Everex","minimumWithdrawal":5.2,"withdrawalFee":2.6}
+{"_id":{"$oid":"5d5268c17c1ce45855d7320a"},"coin":"BTG","name":"Bitcoin Gold","minimumWithdrawal":0.002,"withdrawalFee":0.001}
+{"_id":{"$oid":"5d5268c17c1ce45855d7320b"},"coin":"ARK","name":"Ark","minimumWithdrawal":0.4,"withdrawalFee":0.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d7320c"},"coin":"XRP","name":"Ripple","minimumWithdrawal":22,"withdrawalFee":0.25}
+{"_id":{"$oid":"5d5268c17c1ce45855d7320d"},"coin":"POWR","name":"PowerLedger","minimumWithdrawal":40.2,"withdrawalFee":20.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7320e"},"coin":"MOD","name":"Modum","minimumWithdrawal":5,"withdrawalFee":5}
+{"_id":{"$oid":"5d5268c17c1ce45855d7320f"},"coin":"ENJ","name":"Enjin Coin","minimumWithdrawal":38,"withdrawalFee":19}
+{"_id":{"$oid":"5d5268c17c1ce45855d73210"},"coin":"STORJ","name":"Storj","minimumWithdrawal":17,"withdrawalFee":8.5}
+{"_id":{"$oid":"5d5268c17c1ce45855d73211"},"coin":"AST","name":"AirSwap","minimumWithdrawal":87,"withdrawalFee":43.5}
+{"_id":{"$oid":"5d5268c17c1ce45855d73212"},"coin":"KMD","name":"Komodo","minimumWithdrawal":0.004,"withdrawalFee":0.002}
+{"_id":{"$oid":"5d5268c17c1ce45855d73213"},"coin":"RCN","name":"Ripio Credit Network","minimumWithdrawal":154,"withdrawalFee":77}
+{"_id":{"$oid":"5d5268c17c1ce45855d73214"},"coin":"IOTA","name":"MIOTA","minimumWithdrawal":10,"withdrawalFee":0.5}
+{"_id":{"$oid":"5d5268c17c1ce45855d73215"},"coin":"NULS","name":"Nuls","minimumWithdrawal":0.02,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d73216"},"coin":"RDN","name":"Raiden Network Token","minimumWithdrawal":13.4,"withdrawalFee":6.7}
+{"_id":{"$oid":"5d5268c17c1ce45855d73217"},"coin":"XMR","name":"Monero","minimumWithdrawal":0.01,"withdrawalFee":0.0001}
+{"_id":{"$oid":"5d5268c17c1ce45855d73218"},"coin":"DLT","name":"Agrello","minimumWithdrawal":49.6,"withdrawalFee":24.8}
+{"_id":{"$oid":"5d5268c17c1ce45855d73219"},"coin":"AMB","name":"Ambrosus","minimumWithdrawal":101.8,"withdrawalFee":50.9}
+{"_id":{"$oid":"5d5268c17c1ce45855d7321a"},"coin":"BAT","name":"Basic Attention Token","minimumWithdrawal":14,"withdrawalFee":7}
+{"_id":{"$oid":"5d5268c17c1ce45855d7321b"},"coin":"ZEC","name":"Zcash","minimumWithdrawal":0.01,"withdrawalFee":0.005}
+{"_id":{"$oid":"5d5268c17c1ce45855d7321c"},"coin":"BCPT","name":"BlockMason Credit Protocol","minimumWithdrawal":1.8,"withdrawalFee":0.9}
+{"_id":{"$oid":"5d5268c17c1ce45855d7321d"},"coin":"ARN","name":"Aeron","minimumWithdrawal":0.4,"withdrawalFee":0.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d7321e"},"coin":"GVT","name":"Genesis Vision","minimumWithdrawal":1.88,"withdrawalFee":0.94}
+{"_id":{"$oid":"5d5268c17c1ce45855d7321f"},"coin":"CDT","name":"Blox","minimumWithdrawal":156,"withdrawalFee":78}
+{"_id":{"$oid":"5d5268c17c1ce45855d73220"},"coin":"GXS","name":"GXChain","minimumWithdrawal":0.6,"withdrawalFee":0.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d73221"},"coin":"POE","name":"Po.et","minimumWithdrawal":1100,"withdrawalFee":550}
+{"_id":{"$oid":"5d5268c17c1ce45855d73222"},"coin":"BTS","name":"BitShares","minimumWithdrawal":50,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73223"},"coin":"QSP","name":"Quantstamp","minimumWithdrawal":232,"withdrawalFee":116}
+{"_id":{"$oid":"5d5268c17c1ce45855d73224"},"coin":"TNT","name":"Tierion","minimumWithdrawal":72,"withdrawalFee":36}
+{"_id":{"$oid":"5d5268c17c1ce45855d73225"},"coin":"FUEL","name":"Etherparty","minimumWithdrawal":864,"withdrawalFee":432}
+{"_id":{"$oid":"5d5268c17c1ce45855d73226"},"coin":"LSK","name":"Lisk","minimumWithdrawal":0.2,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73227"},"coin":"MANA","name":"Decentraland","minimumWithdrawal":64,"withdrawalFee":32}
+{"_id":{"$oid":"5d5268c17c1ce45855d73228"},"coin":"XZC","name":"Zcoin","minimumWithdrawal":0.04,"withdrawalFee":0.02}
+{"_id":{"$oid":"5d5268c17c1ce45855d73229"},"coin":"BCD","name":"Bitcoin Diamond","minimumWithdrawal":0.02,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d7322a"},"coin":"ADX","name":"AdEx","minimumWithdrawal":28.6,"withdrawalFee":14.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d7322b"},"coin":"DGD","name":"DigixDAO","minimumWithdrawal":0.12,"withdrawalFee":0.06}
+{"_id":{"$oid":"5d5268c17c1ce45855d7322c"},"coin":"PPT","name":"Populous","minimumWithdrawal":3.98,"withdrawalFee":1.99}
+{"_id":{"$oid":"5d5268c17c1ce45855d7322d"},"coin":"ADA","name":"Cardano","minimumWithdrawal":4,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7322e"},"coin":"CMT","name":"CyberMiles","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7322f"},"coin":"XLM","name":"Stellar Lumens","minimumWithdrawal":3,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d73230"},"coin":"CND","name":"Cindicator","minimumWithdrawal":328,"withdrawalFee":164}
+{"_id":{"$oid":"5d5268c17c1ce45855d73231"},"coin":"LEND","name":"Aave","minimumWithdrawal":726,"withdrawalFee":363}
+{"_id":{"$oid":"5d5268c17c1ce45855d73232"},"coin":"WABI","name":"TAEL","minimumWithdrawal":22.6,"withdrawalFee":11.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d73233"},"coin":"SBTC","name":"Super Bitcoin","minimumWithdrawal":0.001,"withdrawalFee":0.0005}
+{"_id":{"$oid":"5d5268c17c1ce45855d73234"},"coin":"BCX","name":"BitcoinX","minimumWithdrawal":0.5,"withdrawalFee":0.5}
+{"_id":{"$oid":"5d5268c17c1ce45855d73235"},"coin":"TNB","name":"Time New Bank","minimumWithdrawal":804,"withdrawalFee":402}
+{"_id":{"$oid":"5d5268c17c1ce45855d73236"},"coin":"WAVES","name":"Waves","minimumWithdrawal":0.004,"withdrawalFee":0.002}
+{"_id":{"$oid":"5d5268c17c1ce45855d73237"},"coin":"GTO","name":"Gifto","minimumWithdrawal":4.4,"withdrawalFee":2.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d73238"},"coin":"ICX","name":"ICON","minimumWithdrawal":0.04,"withdrawalFee":0.02}
+{"_id":{"$oid":"5d5268c17c1ce45855d73239"},"coin":"OST","name":"OST","minimumWithdrawal":238,"withdrawalFee":119}
+{"_id":{"$oid":"5d5268c17c1ce45855d7323a"},"coin":"ELF","name":"aelf","minimumWithdrawal":29.2,"withdrawalFee":14.6}
+{"_id":{"$oid":"5d5268c17c1ce45855d7323b"},"coin":"CVC","name":"Civic","minimumWithdrawal":63.4,"withdrawalFee":31.7}
+{"_id":{"$oid":"5d5268c17c1ce45855d7323c"},"coin":"AION","name":"AION","minimumWithdrawal":0.2,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7323d"},"coin":"GNT","name":"Golem","minimumWithdrawal":46.4,"withdrawalFee":23.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d7323e"},"coin":"REP","name":"Augur","minimumWithdrawal":0.4,"withdrawalFee":0.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d7323f"},"coin":"DATA","name":"Streamr DATAcoin","minimumWithdrawal":237.4,"withdrawalFee":118.7}
+{"_id":{"$oid":"5d5268c17c1ce45855d73240"},"coin":"BRD","name":"Bread","minimumWithdrawal":10.8,"withdrawalFee":5.4}
+{"_id":{"$oid":"5d5268c17c1ce45855d73241"},"coin":"ETF","name":"ETF","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73242"},"coin":"VIBE","name":"VIBE","minimumWithdrawal":162.4,"withdrawalFee":81.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d73243"},"coin":"LUN","name":"Lunyr","minimumWithdrawal":2.12,"withdrawalFee":1.06}
+{"_id":{"$oid":"5d5268c17c1ce45855d73244"},"coin":"NEBL","name":"Neblio","minimumWithdrawal":0.1,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d73245"},"coin":"CHAT","name":"ChatCoin","minimumWithdrawal":90.6,"withdrawalFee":90.5}
+{"_id":{"$oid":"5d5268c17c1ce45855d73246"},"coin":"RLC","name":"iExecRLC","minimumWithdrawal":10.2,"withdrawalFee":5.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73247"},"coin":"INS","name":"Insolar","minimumWithdrawal":11.2,"withdrawalFee":5.6}
+{"_id":{"$oid":"5d5268c17c1ce45855d73248"},"coin":"IOST","name":"Internet of Services","minimumWithdrawal":100,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73249"},"coin":"STEEM","name":"Steem","minimumWithdrawal":0.02,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d7324a"},"coin":"AE","name":"Aeternity","minimumWithdrawal":1,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7324b"},"coin":"VIA","name":"Viacoin","minimumWithdrawal":1,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d7324c"},"coin":"SYS","name":"Syscoin","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7324d"},"coin":"BLZ","name":"Bluzelle","minimumWithdrawal":78.4,"withdrawalFee":39.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d7324e"},"coin":"NANO","name":"NANO","minimumWithdrawal":1,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d7324f"},"coin":"NCASH","name":"Nucleus Vision","minimumWithdrawal":2044.4,"withdrawalFee":1022.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d73250"},"coin":"POA","name":"POA Network","minimumWithdrawal":0.02,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d73251"},"coin":"ONT","name":"Ontology","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73252"},"coin":"ZIL","name":"Zilliqa","minimumWithdrawal":1,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d73253"},"coin":"STORM","name":"Storm","minimumWithdrawal":1388,"withdrawalFee":694}
+{"_id":{"$oid":"5d5268c17c1ce45855d73254"},"coin":"XEM","name":"NEM","minimumWithdrawal":8,"withdrawalFee":4}
+{"_id":{"$oid":"5d5268c17c1ce45855d73255"},"coin":"WAN","name":"Wanchain","minimumWithdrawal":0.2,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73256"},"coin":"WPR","name":"WePower","minimumWithdrawal":485.8,"withdrawalFee":242.9}
+{"_id":{"$oid":"5d5268c17c1ce45855d73257"},"coin":"CLOAK","name":"CloakCoin","minimumWithdrawal":0.02,"withdrawalFee":0.02}
+{"_id":{"$oid":"5d5268c17c1ce45855d73258"},"coin":"LOOM","name":"Loom Network","minimumWithdrawal":74.6,"withdrawalFee":37.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d73259"},"coin":"GRS","name":"Groestlcoin","minimumWithdrawal":0.4,"withdrawalFee":0.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d7325a"},"coin":"QLC","name":"QLC Chain","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7325b"},"coin":"TUSD","name":"TrueUSD","minimumWithdrawal":2.6,"withdrawalFee":1.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d7325c"},"coin":"SKY","name":"Skycoin","minimumWithdrawal":1,"withdrawalFee":0.02}
+{"_id":{"$oid":"5d5268c17c1ce45855d7325d"},"coin":"ZEN","name":"Horizen","minimumWithdrawal":0.004,"withdrawalFee":0.002}
+{"_id":{"$oid":"5d5268c17c1ce45855d7325e"},"coin":"THETA","name":"Theta Token","minimumWithdrawal":2,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7325f"},"coin":"AGI","name":"SingularityNET","minimumWithdrawal":81.3,"withdrawalFee":40.65}
+{"_id":{"$oid":"5d5268c17c1ce45855d73260"},"coin":"QKC","name":"QuarkChain","minimumWithdrawal":150,"withdrawalFee":75}
+{"_id":{"$oid":"5d5268c17c1ce45855d73261"},"coin":"IOTX","name":"IoTeX","minimumWithdrawal":472,"withdrawalFee":236}
+{"_id":{"$oid":"5d5268c17c1ce45855d73262"},"coin":"NXS","name":"Nexus","minimumWithdrawal":0.04,"withdrawalFee":0.02}
+{"_id":{"$oid":"5d5268c17c1ce45855d73263"},"coin":"NPXS","name":"Pundi X","minimumWithdrawal":5264,"withdrawalFee":2632}
+{"_id":{"$oid":"5d5268c17c1ce45855d73264"},"coin":"SC","name":"Siacoin","minimumWithdrawal":1,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73265"},"coin":"KEY","name":"Selfkey","minimumWithdrawal":1408,"withdrawalFee":704}
+{"_id":{"$oid":"5d5268c17c1ce45855d73266"},"coin":"EON","name":"EOS Network","minimumWithdrawal":11,"withdrawalFee":10}
+{"_id":{"$oid":"5d5268c17c1ce45855d73267"},"coin":"NAS","name":"Nebulas","minimumWithdrawal":0.2,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73268"},"coin":"ADD","name":"ADD","minimumWithdrawal":200,"withdrawalFee":100}
+{"_id":{"$oid":"5d5268c17c1ce45855d73269"},"coin":"MEETONE","name":"MEETONE","minimumWithdrawal":600,"withdrawalFee":300}
+{"_id":{"$oid":"5d5268c17c1ce45855d7326a"},"coin":"ATD","name":"Atidium","minimumWithdrawal":200,"withdrawalFee":100}
+{"_id":{"$oid":"5d5268c17c1ce45855d7326b"},"coin":"MFT","name":"Mainframe","minimumWithdrawal":2038,"withdrawalFee":1019}
+{"_id":{"$oid":"5d5268c17c1ce45855d7326c"},"coin":"EOP","name":"EOSpace","minimumWithdrawal":10,"withdrawalFee":5}
+{"_id":{"$oid":"5d5268c17c1ce45855d7326d"},"coin":"DENT","name":"DENT","minimumWithdrawal":5152,"withdrawalFee":2576}
+{"_id":{"$oid":"5d5268c17c1ce45855d7326e"},"coin":"ARDR","name":"Ardor","minimumWithdrawal":4,"withdrawalFee":2}
+{"_id":{"$oid":"5d5268c17c1ce45855d7326f"},"coin":"IQ","name":"Everipedia","minimumWithdrawal":100,"withdrawalFee":50}
+{"_id":{"$oid":"5d5268c17c1ce45855d73270"},"coin":"VET","name":"VeChain","minimumWithdrawal":200,"withdrawalFee":100}
+{"_id":{"$oid":"5d5268c17c1ce45855d73271"},"coin":"HOT","name":"Holo","minimumWithdrawal":2722,"withdrawalFee":1361}
+{"_id":{"$oid":"5d5268c17c1ce45855d73272"},"coin":"DOCK","name":"DOCK","minimumWithdrawal":436,"withdrawalFee":218}
+{"_id":{"$oid":"5d5268c17c1ce45855d73273"},"coin":"POLY","name":"Polymath","minimumWithdrawal":60,"withdrawalFee":30}
+{"_id":{"$oid":"5d5268c17c1ce45855d73274"},"coin":"VTHO","name":"VTHO","minimumWithdrawal":42,"withdrawalFee":21}
+{"_id":{"$oid":"5d5268c17c1ce45855d73275"},"coin":"ONG","name":"Ontology Gas","minimumWithdrawal":1,"withdrawalFee":0.1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73276"},"coin":"HC","name":"HyperCash","minimumWithdrawal":0.1,"withdrawalFee":0.005}
+{"_id":{"$oid":"5d5268c17c1ce45855d73277"},"coin":"PAX","name":"Paxos Standard","minimumWithdrawal":2.6,"withdrawalFee":1.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d73278"},"coin":"GO","name":"GoChain","minimumWithdrawal":1,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d73279"},"coin":"RVN","name":"Ravencoin","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d7327a"},"coin":"USDC","name":"USD Coin","minimumWithdrawal":2.6,"withdrawalFee":1.3}
+{"_id":{"$oid":"5d5268c17c1ce45855d7327b"},"coin":"DCR","name":"Decred","minimumWithdrawal":0.02,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d7327c"},"coin":"BCHABC","name":"Bitcoin Cash ABC","minimumWithdrawal":0.002,"withdrawalFee":0.001}
+{"_id":{"$oid":"5d5268c17c1ce45855d7327d"},"coin":"MITH","name":"Mithril","minimumWithdrawal":18.14,"withdrawalFee":9.07}
+{"_id":{"$oid":"5d5268c17c1ce45855d7327e"},"coin":"CBM","name":"Crypto Bonus Miles Token","minimumWithdrawal":400,"withdrawalFee":200}
+{"_id":{"$oid":"5d5268c17c1ce45855d7327f"},"coin":"BTT","name":"BitTorrent","minimumWithdrawal":200,"withdrawalFee":100}
+{"_id":{"$oid":"5d5268c17c1ce45855d73280"},"coin":"FET","name":"Fetch.AI","minimumWithdrawal":10,"withdrawalFee":5}
+{"_id":{"$oid":"5d5268c17c1ce45855d73281"},"coin":"REN","name":"Ren","minimumWithdrawal":22.64,"withdrawalFee":11.32}
+{"_id":{"$oid":"5d5268c17c1ce45855d73282"},"coin":"CELR","name":"Celer Network","minimumWithdrawal":200,"withdrawalFee":100}
+{"_id":{"$oid":"5d5268c17c1ce45855d73283"},"coin":"USDS","name":"StableUSD","minimumWithdrawal":1.28,"withdrawalFee":0.64}
+{"_id":{"$oid":"5d5268c17c1ce45855d73284"},"coin":"MATIC","name":"MATIC Network","minimumWithdrawal":200,"withdrawalFee":100}
+{"_id":{"$oid":"5d5268c17c1ce45855d73285"},"coin":"ATOM","name":"Cosmos","minimumWithdrawal":0.01,"withdrawalFee":0.005}
+{"_id":{"$oid":"5d5268c17c1ce45855d73286"},"coin":"TFUEL","name":"Theta Fuel","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73287"},"coin":"PHB","name":"Red Pulse Phoenix Binance","minimumWithdrawal":10.4,"withdrawalFee":5.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d73288"},"coin":"BOLT","name":"BOLT","minimumWithdrawal":20,"withdrawalFee":10}
+{"_id":{"$oid":"5d5268c17c1ce45855d73289"},"coin":"CAN","name":"CanYaCoin","minimumWithdrawal":10,"withdrawalFee":5}
+{"_id":{"$oid":"5d5268c17c1ce45855d7328a"},"coin":"ONE","name":"Harmony","minimumWithdrawal":40,"withdrawalFee":20}
+{"_id":{"$oid":"5d5268c17c1ce45855d7328b"},"coin":"UND","name":"Unification","minimumWithdrawal":10,"withdrawalFee":5}
+{"_id":{"$oid":"5d5268c17c1ce45855d7328c"},"coin":"HNST","name":"Honest","minimumWithdrawal":20,"withdrawalFee":10}
+{"_id":{"$oid":"5d5268c17c1ce45855d7328d"},"coin":"ENTRP","name":"Hut34 Entropy","minimumWithdrawal":20,"withdrawalFee":10}
+{"_id":{"$oid":"5d5268c17c1ce45855d7328e"},"coin":"VRAB","name":"Verasity","minimumWithdrawal":200,"withdrawalFee":100}
+{"_id":{"$oid":"5d5268c17c1ce45855d7328f"},"coin":"BTCB","name":"Bitcoin BEP2","minimumWithdrawal":6e-06,"withdrawalFee":3e-06}
+{"_id":{"$oid":"5d5268c17c1ce45855d73290"},"coin":"USDSB","name":"StableUSD BEP2","minimumWithdrawal":0.062,"withdrawalFee":0.031}
+{"_id":{"$oid":"5d5268c17c1ce45855d73291"},"coin":"LBA","name":"Lend Borrow Asset","minimumWithdrawal":20,"withdrawalFee":10}
+{"_id":{"$oid":"5d5268c17c1ce45855d73292"},"coin":"CHZ","name":"Chiliz","minimumWithdrawal":100,"withdrawalFee":50}
+{"_id":{"$oid":"5d5268c17c1ce45855d73293"},"coin":"ALGO","name":"Algorand","minimumWithdrawal":1,"withdrawalFee":0.01}
+{"_id":{"$oid":"5d5268c17c1ce45855d73294"},"coin":"COS","name":"Contentos","minimumWithdrawal":100,"withdrawalFee":50}
+{"_id":{"$oid":"5d5268c17c1ce45855d73295"},"coin":"DOGE","name":"Dogecoin","minimumWithdrawal":100,"withdrawalFee":50}
+{"_id":{"$oid":"5d5268c17c1ce45855d73296"},"coin":"ERD","name":"Elrond","minimumWithdrawal":100,"withdrawalFee":50}
+{"_id":{"$oid":"5d5268c17c1ce45855d73297"},"coin":"BGBP","name":"BGBP","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73298"},"coin":"DUSK","name":"Dusk Network","minimumWithdrawal":2,"withdrawalFee":1}
+{"_id":{"$oid":"5d5268c17c1ce45855d73299"},"coin":"WIN","name":"WINK","minimumWithdrawal":100,"withdrawalFee":50}
+{"_id":{"$oid":"5d5268c17c1ce45855d7329a"},"coin":"ANKR","name":"Ankr","minimumWithdrawal":6,"withdrawalFee":3}
+{"_id":{"$oid":"5d5268c17c1ce45855d7329b"},"coin":"BLINK","name":"Blockmason Link","minimumWithdrawal":100,"withdrawalFee":50}
+{"_id":{"$oid":"5d5268c17c1ce45855d7329c"},"coin":"TUSDB","name":"TrueUSD BEP2","minimumWithdrawal":0.062,"withdrawalFee":0.031}
+{"_id":{"$oid":"5d5268c17c1ce45855d7329d"},"coin":"EDO","name":"Eidoo","minimumWithdrawal":5.2,"withdrawalFee":2.6}
+{"_id":{"$oid":"5d5268c17c1ce45855d7329e"},"coin":"WINGS","name":"WINGS","minimumWithdrawal":17.5,"withdrawalFee":17.4}
+{"_id":{"$oid":"5d5268c17c1ce45855d7329f"},"coin":"TRIG","name":"Triggers","minimumWithdrawal":51,"withdrawalFee":50}
+{"_id":{"$oid":"5d5268c17c1ce45855d732a0"},"coin":"NAV","name":"NAV Coin","minimumWithdrawal":0.4,"withdrawalFee":0.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d732a1"},"coin":"PIVX","name":"PIVX","minimumWithdrawal":0.4,"withdrawalFee":0.2}
+{"_id":{"$oid":"5d5268c17c1ce45855d732a2"},"coin":"APPC","name":"AppCoins","minimumWithdrawal":66.6,"withdrawalFee":33.3}
+{"_id":{"$oid":"5d52ccad7c1ce45855d87360"},"coin":"USD","name":"TetherUS","minimumWithdrawal":2.6,"withdrawalFee":1.3}
