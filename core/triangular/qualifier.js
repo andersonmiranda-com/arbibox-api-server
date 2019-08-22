@@ -16,7 +16,7 @@ const initialize = async function() {
     // remove opportunities created some time ago - wich does not have upadates
     ////////
     const minutesAgo = moment()
-        .subtract(configs.quality.removeAfterMinutesOff, "minutes")
+        .subtract(configs.triangular.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
     db.removeOpportunities({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "TR" }] });
@@ -28,11 +28,11 @@ const initialize = async function() {
         $and: [
             // { approved: false },
             { type: "TR" },
-            { $where: "this.lastest.length >= " + configs.quality.removeAfterIterations }
+            { $where: "this.lastest.length >= " + configs.triangular.quality.removeAfterIterations }
         ]
     });
 
-    let opportunities = await db.readTriangularOpportunities({
+    let opportunities = await db.readOpportunities({
         $and: [{ type: "TR", qualified: { $exists: false } }]
     });
 
@@ -63,8 +63,8 @@ function callCheck(opportunity) {
 ///
 
 async function checkOpportunity(opportunity) {
-    let promises = [opportunity.buy_at, opportunity.sell_at].map(async exchange =>
-        Promise.resolve(fetchTrades(exchange, opportunity.symbol))
+    let promises = [opportunity.ticket1, opportunity.ticket2, opportunity.ticket3].map(
+        async symbol => Promise.resolve(fetchTrades(opportunity.exchange, symbol))
     );
 
     Promise.all(promises).then(response => {
@@ -72,50 +72,41 @@ async function checkOpportunity(opportunity) {
         //console.log(response);
         //console.log(opportunity.symbol);
 
-        let quality = { buy: false, sell: false };
+        let quality = {};
         opportunity.approved = false;
 
         console.log("");
 
-        console.log(colors.yellow(">>>> "), opportunity.symbol);
+        console.log(colors.yellow(">>>> "), opportunity.id);
+
+        let symbolsOk = 0;
 
         for (let excTrade of response) {
             //console.log(excTrade);
-
-            if (excTrade.trades.length) {
-                if (excTrade.id === opportunity.buy_at) {
-                    let trades = excTrade.trades.find(trade => trade.side === "buy");
-                    if (trades && trades.length !== 0) {
-                        quality.buy = true;
-                        console.log(excTrade.id, colors.cyan("buy"), excTrade.trades[0].datetime);
-                    } else {
-                        quality.buy = false;
-                        console.log(excTrade.id, colors.magenta("no buy"));
-                    }
-                }
-
-                if (excTrade.id === opportunity.sell_at) {
-                    let trades = excTrade.trades.find(trade => trade.side === "sell");
-                    if (trades && trades.length !== 0) {
-                        quality.sell = true;
-                        console.log(excTrade.id, colors.cyan("sell"), excTrade.trades[0].datetime);
-                    } else {
-                        quality.sell = false;
-                        console.log(excTrade.id, colors.magenta("no sell"));
-                    }
+            if (excTrade.trades && excTrade.trades.length >= 0) {
+                if (excTrade.trades.length !== 0) {
+                    quality[excTrade.symbol] = true;
+                    console.log(excTrade.id, excTrade.symbol, colors.green("active"));
+                    symbolsOk++;
+                } else {
+                    quality[excTrade.symbol] = false;
+                    console.log(excTrade.id, excTrade.symbol, colors.magenta("inactive"));
                 }
             } else {
+                quality = false;
                 console.log(excTrade.id, colors.red("inactive"));
             }
         }
 
         opportunity.qualified = true;
-        opportunity.approved = quality.sell && quality.buy;
+        opportunity.approved = symbolsOk === 3 ? true : false;
         opportunity.quality = quality;
         db.updateOpportunity(opportunity);
 
         if (opportunity.approved) {
             console.log(colors.green(">>>> "), colors.green(opportunity.id));
+        } else {
+            console.log(colors.red(">>>> "), colors.red(opportunity.id));
         }
         // })
         // .catch(error => {
@@ -131,6 +122,7 @@ async function checkOpportunity(opportunity) {
 async function fetchTrades(exchange, symbol) {
     var exchangeInfo = {
         id: exchange,
+        symbol: symbol,
         trades: [],
         wallets: []
     };
@@ -165,7 +157,8 @@ async function fetchTrades(exchange, symbol) {
             exchangeInfo.wallets = [];
         }
 
-        let since = _exchange.milliseconds() - configs.quality.lastTradeTimeLimit * 60 * 1000; //
+        let since =
+            _exchange.milliseconds() - configs.triangular.quality.lastTradeTimeLimit * 60 * 1000; //
         let limit = 1;
         exchangeInfo.trades = await _exchange.fetchTrades(symbol, since, limit);
 

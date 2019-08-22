@@ -151,20 +151,15 @@ async function findChains(targetAssets, exchange, markets) {
         console.error(colors.red("Error2:"), error.message);
     }
 
-    exchangeMarket = markets.find(market => market.id === exchange);
+    exchangeMarkets = markets.find(market => market.id === exchange).markets;
     for (let targetAsset of targetAssets) {
         console.log(colors.yellow(">>>"), colors.magenta(targetAsset), colors.cyan(exchange));
 
-        let chains = prepareChains(targetAsset, exchangeMarket.markets);
+        let chains = prepareChains(targetAsset, exchangeMarkets);
 
         for (const chain of chains) {
             try {
-                chainResult = await calculateChainProfit(
-                    exchange,
-                    chain,
-                    tickers,
-                    exchangeMarket.markets
-                );
+                chainResult = await calculateChainProfit(exchange, chain, tickers, exchangeMarkets);
 
                 if (
                     chain.triagePercentage >= configs.triangular.finder.minimumProfit &&

@@ -25,18 +25,7 @@
     "poloniex",
     "gateio",
     "livecoin",
-    "exmo",
-    "bleutrade",
-    "foxbit",
-    "mercado",
-    "negociecoins",
-    "braziliex",
-    "bitfinex2",
-    "exx",
-    "hitbtc2",
-    "coinexchange",
-    "binanceje",
-    "bitmex"
+    "exmo"
   ],
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"
@@ -104,8 +93,8 @@
   "triangular": {
     "finder": {
       "checkInterval": 15,
-      "minimumProfit": 0.05,
-      "targetAssets": ["BTC", "ETH"]
+      "minimumProfit": 0.1,
+      "targetAssets": ["BTC"]
     },
     "quality": {
       "checkInterval": 15,

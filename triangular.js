@@ -6,8 +6,8 @@ const configs = require("./config/settings");
 
 /// agent 1 - opportunities finder
 const finder = require("./core/triangular/finder");
-//const qualifier = require("./core/arbitrage/qualifier");
-//const execution = require("./core/arbitrage/execution");
+const qualifier = require("./core/triangular/qualifier");
+const execution = require("./core/triangular/execution");
 
 global.verbose = true;
 
@@ -62,7 +62,6 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         );
     }, interval);
 
-    /*
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 2 - Qualifier
     /// Read opportunities from "opportunities" mongoDB collection and check quality. Remove bad ones
@@ -75,9 +74,9 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
                 "\n>> Qualifier agent >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.triangular.quality.checkInterval > 0 ? 
-    }, (configs.triangular.quality.checkInterval : 30) * 1000);
-
+    }, (configs.triangular.quality.checkInterval > 0
+        ? configs.triangular.quality.checkInterval
+        : 30) * 1000);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 3 - Execution
     ///
@@ -90,9 +89,9 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
         execution.initialize();
-    }, (
-    }, (configs.triangular.execution.checkInterval > 0 ? 
-    }, (configs.triangular.execution.checkInterval : 30) * 1000);
+    }, (configs.triangular.execution.checkInterval > 0
+        ? configs.triangular.execution.checkInterval
+        : 30) * 1000);
 
     /// started
     verbose &&
@@ -100,6 +99,4 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
             "\n>> Bot started at",
             colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
         );
-
-*/
 })();

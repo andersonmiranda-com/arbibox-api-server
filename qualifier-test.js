@@ -1,6 +1,6 @@
 "use strict";
 
-const qualifier = require("./core/arbitrage/qualifier");
+const qualifier = require("./core/triangular/qualifier");
 
 (async function() {
     console.log("");

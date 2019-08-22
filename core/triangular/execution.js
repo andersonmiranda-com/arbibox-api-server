@@ -14,7 +14,7 @@ const db = require("../db");
 
 const initialize = async function() {
     let opportunities = await db.readOpportunities({
-        $and: [{ type: "AP", approved: true }]
+        $and: [{ type: "TR", approved: true }]
     });
 
     for (let opportunity of opportunities) {
@@ -31,7 +31,7 @@ const initialize = async function() {
 
 async function prepareOrder(opportunity) {
     // remove from opportunities
-    db.removeOpportunity({ id: opportunity.id });
+    db.removeOpportunities({ id: opportunity.id });
     opportunity.created_at = moment().toDate();
     // add to orders collection
     db.createOrder(opportunity);
