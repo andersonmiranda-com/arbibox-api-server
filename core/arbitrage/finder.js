@@ -259,12 +259,12 @@ async function fetchTickersByExchange(exchange) {
                 timeout: configs.apiTimeout * 1000,
                 enableRateLimit: true
             });
-            exchangeTickets.wallets = await _exchange.fetchBalance();
-            db.saveWallets(exchangeTickets.id, {
-                id: exchangeTickets.id,
-                free: exchangeTickets.wallets.free,
-                total: exchangeTickets.wallets.total
-            });
+            //exchangeTickets.wallets = await _exchange.fetchBalance();
+            //db.saveWallets(exchangeTickets.id, {
+            //    id: exchangeTickets.id,
+            //    free: exchangeTickets.wallets.free,
+            //    total: exchangeTickets.wallets.total
+            //});
         } else {
             _exchange = new ccxt[exchange.id]({
                 timeout: configs.apiTimeout * 1000,

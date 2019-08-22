@@ -1,6 +1,6 @@
 "use strict";
 
-const execution = require("./core/arbitrage/execution");
+const execution = require("./core/triangular/execution");
 
 (async function() {
     console.log("");
@@ -8,5 +8,5 @@ const execution = require("./core/arbitrage/execution");
     console.log("Arbibox Execution test");
     console.log("======================");
 
-    execution.initialize();
+    execution.test();
 })();

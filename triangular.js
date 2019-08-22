@@ -95,7 +95,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     setInterval(function() {
         verbose &&
             console.info(
-                "\nE >> Starting >",
+                "E >> Starting >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
         execution.initialize();

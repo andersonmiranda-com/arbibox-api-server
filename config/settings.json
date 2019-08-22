@@ -93,13 +93,13 @@
   "triangular": {
     "finder": {
       "checkInterval": 10,
-      "minimumProfit": 0.1,
+      "minimumProfit": -1,
       "targetAssets": ["BTC"]
     },
     "quality": {
-      "checkInterval": 9,
+      "checkInterval": 8,
       "filter": {
-        "lowVolume": false,
+        "lowVolume": true,
         "baseLowVolumeLimit": 0.1,
         "quoteLowVolumeLimit": {
           "BTC": 0.1,
@@ -113,7 +113,7 @@
       "removeAfterIterations": 5
     },
     "execution": {
-      "checkInterval": 8
+      "checkInterval": 6
     }
   },
 

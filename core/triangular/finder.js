@@ -2,7 +2,7 @@ const ccxt = require("ccxt");
 var moment = require("moment");
 const lodash = require("lodash");
 const configs = require("../../config/settings");
-const { getConnectingAsset, getMultiplier } = require("../util");
+const { calculateChainProfit } = require("../util");
 const colors = require("colors");
 const z = require("zero-fill");
 const n = require("numbro");
@@ -111,7 +111,7 @@ async function findOpportunities(exchanges, markets, targetAssets, finderCounter
 
     Promise.all(promises).then(response => {
         console.info(
-            "\nF >> Scan " + finderCounter + " finished >",
+            "F >> Scan " + finderCounter + " finished >",
             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
         );
         //console.info(">>> Triangular scan finished at", new Date());
@@ -153,13 +153,13 @@ async function findChains(targetAssets, exchange, markets) {
 
     exchangeMarkets = markets.find(market => market.id === exchange).markets;
     for (let targetAsset of targetAssets) {
-        console.log("F >>", colors.magenta(targetAsset), colors.cyan(exchange));
+        console.log("F >>", targetAsset, colors.cyan(exchange));
 
         let chains = prepareChains(targetAsset, exchangeMarkets);
 
         for (const chain of chains) {
             try {
-                chainResult = await calculateChainProfit(exchange, chain, tickers, exchangeMarkets);
+                chainResult = await calculateChainProfit(exchange, chain, tickers);
 
                 if (
                     chain.triagePercentage >= configs.triangular.finder.minimumProfit &&
@@ -182,6 +182,7 @@ async function findChains(targetAssets, exchange, markets) {
                                 chain.symbols[2].symbol,
                             type: "TR",
                             created_at: new Date(),
+                            chain: chain,
                             exchange: exchange,
                             base: targetAsset,
                             ticket1: chain.symbols[0].symbol,
@@ -193,7 +194,7 @@ async function findChains(targetAssets, exchange, markets) {
                         db.upsertOpportunity(opportunity);
 
                         console.log(
-                            "F >> ",
+                            colors.green("F >> "),
                             exchange,
                             "|",
                             targetAsset,
@@ -350,43 +351,6 @@ function matchSymbol(targetAsset, symbol1, symbol2, symbol3) {
     }
 
     return false;
-}
-
-const substractFee = fee => amount => {
-    let res = amount - amount * fee;
-    return res;
-};
-
-function calculateChainProfit(exchange, chain, tickers, markets) {
-    const target = chain.targetAsset;
-    const [symbol1, symbol2, symbol3] = chain.symbols;
-
-    let ticker1 = tickers[symbol1.symbol];
-    let ticker2 = tickers[symbol2.symbol];
-    let ticker3 = tickers[symbol3.symbol];
-
-    const a = Number(getMultiplier(symbol1, target, ticker1), 10);
-
-    // Get second multiplier
-    const connectingAsset1 = getConnectingAsset(symbol1, target);
-    const b = getMultiplier(symbol2, connectingAsset1, ticker2);
-
-    // Get third multiplier
-    const connectingAsset2 = getConnectingAsset(symbol2, connectingAsset1);
-    const c = getMultiplier(symbol3, connectingAsset2, ticker3);
-
-    let market1 = markets[symbol1.symbol];
-    let market2 = markets[symbol2.symbol];
-    let market3 = markets[symbol3.symbol];
-
-    const fee1 = market1.taker;
-    const fee2 = market2.taker;
-    const fee3 = market3.taker;
-
-    const difference = 100 * a * (1 - fee1) * b * (1 - fee2) * c * (1 - fee3) - 100;
-
-    chain.triagePercentage = difference;
-    return chain;
 }
 
 module.exports = {

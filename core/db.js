@@ -352,3 +352,19 @@ exports.createOrder = function(data) {
         });
     });
 };
+
+exports.readOrders = function(query) {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            var db = client.db("arbibox");
+            db.collection("orders")
+                .find(query)
+                .toArray(function(err, res) {
+                    if (err) throw err;
+                    resolve(res);
+                    client.close();
+                });
+        });
+    });
+};
