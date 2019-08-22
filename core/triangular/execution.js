@@ -20,7 +20,7 @@ const initialize = async function() {
     for (let opportunity of opportunities) {
         //await callCheck(opportunity);
         prepareOrder(opportunity);
-        console.log(colors.green("Executing..."), colors.cyan(opportunity.id));
+        console.log(colors.green("E >> Executing..."), colors.cyan(opportunity.id));
     }
 };
 

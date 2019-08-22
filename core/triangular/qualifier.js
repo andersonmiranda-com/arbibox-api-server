@@ -77,7 +77,7 @@ async function checkOpportunity(opportunity) {
 
         console.log("");
 
-        console.log(colors.yellow(">>>> "), opportunity.id);
+        console.log(colors.yellow("Q >> "), opportunity.id);
 
         let symbolsOk = 0;
 
@@ -86,15 +86,15 @@ async function checkOpportunity(opportunity) {
             if (excTrade.trades && excTrade.trades.length >= 0) {
                 if (excTrade.trades.length !== 0) {
                     quality[excTrade.symbol] = true;
-                    console.log(excTrade.id, excTrade.symbol, colors.green("active"));
+                    console.log("Q >> ", excTrade.id, excTrade.symbol, colors.green("active"));
                     symbolsOk++;
                 } else {
                     quality[excTrade.symbol] = false;
-                    console.log(excTrade.id, excTrade.symbol, colors.magenta("inactive"));
+                    console.log("Q >> ", excTrade.id, excTrade.symbol, colors.magenta("inactive"));
                 }
             } else {
                 quality = false;
-                console.log(excTrade.id, colors.red("inactive"));
+                console.log("Q >> ", excTrade.id, colors.red("inactive"));
             }
         }
 
@@ -104,9 +104,9 @@ async function checkOpportunity(opportunity) {
         db.updateOpportunity(opportunity);
 
         if (opportunity.approved) {
-            console.log(colors.green(">>>> "), colors.green(opportunity.id));
+            console.log(colors.green("Q >>"), colors.green(opportunity.id));
         } else {
-            console.log(colors.red(">>>> "), colors.red(opportunity.id));
+            console.log(colors.red("Q >>"), colors.red(opportunity.id));
         }
         // })
         // .catch(error => {
@@ -164,7 +164,7 @@ async function fetchTrades(exchange, symbol) {
 
         //tickets.map(ticket => verbose && console.log(ticket));
     } catch (error) {
-        console.error(colors.red("Error fetchTrades:"), error.message);
+        console.error(colors.red("Q >> Error fetchTrades:"), error.message);
         return exchangeInfo;
     } finally {
         return exchangeInfo;

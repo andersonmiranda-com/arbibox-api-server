@@ -20,7 +20,7 @@
     "coinbasepro",
     "bitmart",
     "bittrex",
-    "bitfinex",
+
     "kraken",
     "poloniex",
     "gateio",
@@ -92,12 +92,12 @@
 
   "triangular": {
     "finder": {
-      "checkInterval": 15,
+      "checkInterval": 10,
       "minimumProfit": 0.1,
       "targetAssets": ["BTC"]
     },
     "quality": {
-      "checkInterval": 15,
+      "checkInterval": 9,
       "filter": {
         "lowVolume": false,
         "baseLowVolumeLimit": 0.1,
@@ -110,10 +110,10 @@
       },
       "lastTradeTimeLimit": 5,
       "removeAfterMinutesOff": 5,
-      "removeAfterIterations": 10
+      "removeAfterIterations": 5
     },
     "execution": {
-      "checkInterval": 10
+      "checkInterval": 8
     }
   },
 

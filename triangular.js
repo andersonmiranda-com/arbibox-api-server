@@ -13,6 +13,8 @@ global.verbose = true;
 
 const args = process.argv;
 
+let finderCounter = 1;
+
 const interval =
     1000 *
     (args[3]
@@ -40,6 +42,13 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     console.log(colors.cyan("\nStarting Triangular Arbitrage..."));
     verbose && console.info("\nLoading exchanges and tickets...");
 
+    /// started
+    verbose &&
+        console.info(
+            "\n>> Bot started at",
+            colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
+        );
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 1 - Finder
     /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
@@ -48,16 +57,17 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     let targetAssets = configs.triangular.finder.targetAssets;
     const { exchanges, markets } = await finder.initialize();
     console.info(
-        "\n>> Finder agent started >",
+        "F >> Scan " + finderCounter + " >",
         colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
     );
-    finder.findOpportunities(exchanges, markets, targetAssets);
+    finder.findOpportunities(exchanges, markets, targetAssets, finderCounter);
 
     // loop every x seconds
     setInterval(function() {
-        finder.findOpportunities(exchanges, markets, targetAssets);
+        finderCounter++;
+        finder.findOpportunities(exchanges, markets, targetAssets, finderCounter);
         console.info(
-            "\n>> Finder agent new scan >",
+            "F >> Scan " + finderCounter + " >",
             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
         );
     }, interval);
@@ -71,7 +81,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         qualifier.initialize();
         verbose &&
             console.info(
-                "\n>> Qualifier agent >",
+                "Q >> Starting >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
     }, (configs.triangular.quality.checkInterval > 0
@@ -85,18 +95,11 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     setInterval(function() {
         verbose &&
             console.info(
-                "\n>> Execution agent >",
+                "\nE >> Starting >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
         execution.initialize();
     }, (configs.triangular.execution.checkInterval > 0
         ? configs.triangular.execution.checkInterval
         : 30) * 1000);
-
-    /// started
-    verbose &&
-        console.info(
-            "\n>> Bot started at",
-            colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
-        );
 })();
