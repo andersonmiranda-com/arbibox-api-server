@@ -3,6 +3,8 @@ var moment = require("moment");
 const lodash = require("lodash");
 const configs = require("../../config/settings");
 const { calculateChainProfit } = require("../util");
+const { fetchTickers } = require("../exchange");
+
 const colors = require("colors");
 const z = require("zero-fill");
 const n = require("numbro");
@@ -128,28 +130,8 @@ async function findOpportunities(exchanges, markets, targetAssets, finderCounter
 
 async function findChains(targetAssets, exchange, markets) {
     //return new Promise(async (resolve, reject) => {
-    var _exchange;
 
-    try {
-        if (configs.keys[exchange]) {
-            _exchange = new ccxt[exchange]({
-                apiKey: configs.keys[exchange].apiKey,
-                secret: configs.keys[exchange].secret,
-                timeout: configs.apiTimeout * 1000
-                //enableRateLimit: true
-            });
-        } else {
-            _exchange = new ccxt[exchange]({
-                timeout: configs.apiTimeout * 1000
-                //enableRateLimit: true
-            });
-        }
-
-        tickers = await _exchange.fetchTickers();
-    } catch (error) {
-        console.error(colors.red("F >> Error fetchTickers on:"), exchange);
-        console.error(colors.red("F >> Error2:"), error.message);
-    }
+    tickers = await fetchTickers(exchange);
 
     exchangeMarkets = markets.find(market => market.id === exchange).markets;
     for (let targetAsset of targetAssets) {

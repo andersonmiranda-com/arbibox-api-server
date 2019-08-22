@@ -6,6 +6,38 @@ const colors = require("colors");
 
 ///////////////
 
+const fecthTickers = async exchange => {
+    let tickers = {};
+
+    try {
+        var _exchange;
+
+        if (configs.keys[exchange]) {
+            _exchange = new ccxt[exchange]({
+                apiKey: configs.keys[exchange].apiKey,
+                secret: configs.keys[exchange].secret,
+                timeout: configs.apiTimeout * 1000
+                //enableRateLimit: true
+            });
+        } else {
+            _exchange = new ccxt[exchange]({
+                timeout: configs.apiTimeout * 1000
+                //enableRateLimit: true
+            });
+        }
+
+        tickers = await _exchange.fetchTickers();
+    } catch (error) {
+        console.error(colors.red("X >> Error fetchTickers on:"), exchange);
+        console.error(colors.red("X >> Error:"), error.message);
+        return tickers;
+    } finally {
+        return tickers;
+    }
+};
+
+///////////////
+
 const fetchOrderBook = async (exchange, symbol) => {
     var orderBook = {};
     try {
@@ -36,7 +68,7 @@ const fetchOrderBook = async (exchange, symbol) => {
         orderBook.exchange = exchange;
         orderBook.symbol = symbol;
     } catch (error) {
-        console.error(colors.red("E >> Error fetchOrderBook:"), error.message);
+        console.error(colors.red("X >> Error fetchOrderBook:"), error.message);
         return orderBook;
     } finally {
         return orderBook;
