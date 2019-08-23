@@ -6,7 +6,7 @@ const colors = require("colors");
 
 ///////////////
 
-const fecthTickers = async exchange => {
+const fetchTickers = async exchange => {
     let tickers = {};
 
     try {
@@ -16,13 +16,13 @@ const fecthTickers = async exchange => {
             _exchange = new ccxt[exchange]({
                 apiKey: configs.keys[exchange].apiKey,
                 secret: configs.keys[exchange].secret,
-                timeout: configs.apiTimeout * 1000
-                //enableRateLimit: true
+                timeout: configs.apiTimeout * 1000,
+                enableRateLimit: true
             });
         } else {
             _exchange = new ccxt[exchange]({
-                timeout: configs.apiTimeout * 1000
-                //enableRateLimit: true
+                timeout: configs.apiTimeout * 1000,
+                enableRateLimit: true
             });
         }
 
@@ -116,6 +116,7 @@ const fetchBalance = async exchange => {
 };
 
 module.exports = {
+    fetchTickers,
     fetchOrderBook,
     fetchBalance
 };

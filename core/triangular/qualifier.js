@@ -63,7 +63,7 @@ function callCheck(opportunity) {
 ///
 
 async function checkOpportunity(opportunity) {
-    let promises = [opportunity.ticket1, opportunity.ticket2, opportunity.ticket3].map(
+    let promises = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3].map(
         async symbol => Promise.resolve(fetchTrades(opportunity.exchange, symbol))
     );
 

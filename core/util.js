@@ -69,6 +69,31 @@ const getMultiplier = (symbol, inputTarget, ticker) => {
     }
 };
 
+const getSide = (symbol, target) => {
+    const base = getBase(symbol);
+    const quote = getQuote(symbol);
+
+    if (base === target) {
+        return "sell";
+    } else if (quote === target) {
+        return "buy";
+    } else {
+        throw "the target asset " + target + " does not occur in symbol " + symbol.symbol;
+    }
+};
+
+const getSides = chain => {
+    chain.symbols[0].side = getSide(chain.symbols[0], chain.targetAsset);
+    let connectingAsset1 = getConnectingAsset(chain.symbols[0], chain.targetAsset);
+
+    chain.symbols[1].side = getSide(chain.symbols[1], connectingAsset1);
+    let connectingAsset2 = getConnectingAsset(chain.symbols[1], connectingAsset1);
+
+    chain.symbols[2].side = getSide(chain.symbols[2], connectingAsset2);
+
+    return chain;
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// Calculate the profit for tha chain
@@ -107,5 +132,6 @@ module.exports = {
     inversePrice,
     getMultiplier,
     getConnectingAsset,
+    getSides,
     calculateChainProfit
 };

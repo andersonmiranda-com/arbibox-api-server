@@ -1,7 +1,6 @@
 var moment = require("moment");
 const lodash = require("lodash");
 const configs = require("../../config/settings");
-const { getConnectingAsset, getMultiplier } = require("../util");
 const { fetchBalance, fetchOrderBook } = require("../exchange");
 
 const colors = require("colors");
@@ -20,8 +19,9 @@ const initialize = async function() {
     });
 
     for (let opportunity of opportunities) {
-        //await callCheck(opportunity);
-        prepareOrder(opportunity);
+        db.removeOpportunities({ id: opportunity.id });
+        delete opportunity._id;
+        checkOrder(opportunity);
         console.log(colors.green("E >> Executing..."), colors.cyan(opportunity.id));
     }
 };
@@ -36,12 +36,12 @@ const test = async function() {
         $and: [{ type: "TR" }]
     });
 
-    // for (let order of orders) {
-    //     //await callCheck(opportunity);
-    //     console.log(colors.green("E >> Testing..."), colors.cyan(order.id));
-    //     checkOrder(order);
-    // }
-    checkOrder(orders[0]);
+    for (let order of orders) {
+        //await callCheck(opportunity);
+        console.log(colors.green("E >> Testing..."), colors.cyan(order.id));
+        checkOrder(order);
+    }
+    //checkOrder(orders[0]);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,13 +49,13 @@ const test = async function() {
 /// Prepara Order To be executed
 ///
 
-async function prepareOrder(opportunity) {
-    // remove from opportunities
-    db.removeOpportunities({ id: opportunity.id });
-    opportunity.created_at = moment().toDate();
-    // add to orders collection
-    db.createOrder(opportunity);
-}
+// async function prepareOrder(opportunity) {
+//     // remove from opportunities
+//     db.removeOpportunities({ id: opportunity.id });
+//     opportunity.created_at = moment().toDate();
+//     // add to orders collection
+//     db.createOrder(opportunity);
+// }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -64,22 +64,69 @@ async function prepareOrder(opportunity) {
 
 async function checkOrder(order) {
     let wallets = await fetchBalance(order.exchange);
-    console.log("wallets", wallets);
+    //console.log("wallets", wallets);
 
-    let promises = [order.ticket1, order.ticket2, order.ticket3].map(async symbol =>
+    let limit = 3;
+
+    let coinChain = [order.symbol1, order.symbol2, order.symbol3];
+
+    let promises = coinChain.map(async symbol =>
         Promise.resolve(await fetchOrderBook(order.exchange, symbol))
     );
-
     Promise.all(promises).then(response => {
-        console.log("order", order);
-        for (let orders of response) {
-            console.log("orders", orders);
-            // })
-            // .catch(error => {
-            //     console.error(colors.red("Error2:"), error.message);
-        }
+        //console.log(response);
+
+        console.log("coinChain", coinChain);
+        console.log("0-ask1", response[0].asks[0]);
+        console.log("0-ask2", response[0].asks[1]);
+
+        console.log("1-ask1", response[1].asks[0]);
+        console.log("1-ask2", response[1].asks[1]);
+        console.log("2-bid1", response[2].bids[0]);
+        console.log("2-bid2", response[2].bids[1]);
+
+        console.log("1a fila", calculateProfit(order.chain, response, 0));
+        console.log("2a fila", calculateProfit(order.chain, response, 1));
+
+        order.profit_queue1 = calculateProfit(order.chain, response, 0);
+        order.profit_queue2 = calculateProfit(order.chain, response, 1);
+
+        order.created_at = moment().toDate();
+        // add to orders collection
+        db.createOrder(order);
+
+        //arbitrage.checkOpportunity(response);
     });
 }
+
+const calculateProfit = (chain, orders, index) => {
+    const target = chain.targetAsset;
+    const [symbol1, symbol2, symbol3] = chain.symbols;
+
+    const a = getPrice(symbol1, orders, index);
+    const b = getPrice(symbol2, orders, index);
+    const c = getPrice(symbol3, orders, index);
+
+    const fee1 = symbol1.taker;
+    const fee2 = symbol2.taker;
+    const fee3 = symbol3.taker;
+    const profit = 100 * a * (1 - fee1) * b * (1 - fee2) * c * (1 - fee3) - 100;
+
+    return profit;
+};
+
+const getPrice = (symbol, orders, index) => {
+    let price = 0;
+
+    if (symbol.side === "buy") {
+        let order = orders.find(o => o.symbol === symbol.symbol);
+        price = 1 / order.asks[index][0];
+    } else if (symbol.side === "sell") {
+        price = orders.find(o => o.symbol === symbol.symbol).bids[index][0];
+    }
+
+    return price;
+};
 
 module.exports = {
     initialize,

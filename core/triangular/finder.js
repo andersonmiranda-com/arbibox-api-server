@@ -2,7 +2,7 @@ const ccxt = require("ccxt");
 var moment = require("moment");
 const lodash = require("lodash");
 const configs = require("../../config/settings");
-const { calculateChainProfit } = require("../util");
+const { calculateChainProfit, getConnectingAsset, getSides } = require("../util");
 const { fetchTickers } = require("../exchange");
 
 const colors = require("colors");
@@ -141,39 +141,44 @@ async function findChains(targetAssets, exchange, markets) {
 
         for (const chain of chains) {
             try {
-                chainResult = await calculateChainProfit(exchange, chain, tickers);
+                chainResult = calculateChainProfit(exchange, chain, tickers);
 
                 if (
-                    chain.triagePercentage >= configs.triangular.finder.minimumProfit &&
-                    chain.triagePercentage <= 200 &&
-                    chain.triagePercentage !== Infinity
+                    chainResult.triagePercentage >= configs.triangular.finder.minimumProfit &&
+                    chainResult.triagePercentage <= 200 &&
+                    chainResult.triagePercentage !== Infinity
                 ) {
                     //console.log(chain + "; triage: " + colorProfit(chain.triagePercentage) + " %");
 
                     try {
+                        let finalChain = getSides(chainResult);
+
                         let opportunity = {
                             id:
                                 exchange.toLowerCase() +
                                 "_" +
                                 targetAsset +
                                 "_" +
-                                chain.symbols[0].symbol +
+                                finalChain.symbols[0].symbol +
                                 "-" +
-                                chain.symbols[1].symbol +
+                                finalChain.symbols[1].symbol +
                                 "-" +
-                                chain.symbols[2].symbol,
+                                finalChain.symbols[2].symbol,
                             type: "TR",
                             created_at: new Date(),
-                            chain: chain,
+                            chain: finalChain,
                             exchange: exchange,
                             base: targetAsset,
-                            ticket1: chain.symbols[0].symbol,
-                            ticket2: chain.symbols[1].symbol,
-                            ticket3: chain.symbols[2].symbol,
-                            profit: Number(chain.triagePercentage.toFixed(4))
+                            side1: finalChain.symbols[0].side,
+                            side2: finalChain.symbols[1].side,
+                            side3: finalChain.symbols[2].side,
+                            symbol1: finalChain.symbols[0].symbol,
+                            symbol2: finalChain.symbols[1].symbol,
+                            symbol3: finalChain.symbols[2].symbol,
+                            profit: Number(finalChain.triagePercentage.toFixed(4))
                         };
 
-                        db.upsertOpportunity(opportunity);
+                        await db.upsertOpportunity(opportunity);
 
                         console.log(
                             colors.green("F >> "),
@@ -181,14 +186,14 @@ async function findChains(targetAssets, exchange, markets) {
                             "|",
                             targetAsset,
                             "|",
-                            chain.symbols[0].symbol,
+                            finalChain.symbols[0].symbol,
                             ">",
-                            chain.symbols[1].symbol,
+                            finalChain.symbols[1].symbol,
                             ">",
-                            chain.symbols[2].symbol,
+                            finalChain.symbols[2].symbol,
                             "|",
                             "profit:",
-                            colorProfit(chain.triagePercentage) + " %"
+                            colorProfit(finalChain.triagePercentage) + " %"
                         );
                     } catch (error) {
                         console.error(colors.red("F >> Error4:"), error.message);

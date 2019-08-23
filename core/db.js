@@ -60,28 +60,31 @@ exports.readOpportunities = function(query) {
 };
 
 exports.upsertOpportunity = function(data) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        // avoid update different _id
-        var db = client.db("arbibox");
-        db.collection("opportunities").updateOne(
-            { id: data.id },
-            {
-                $set: data,
-                $addToSet: {
-                    lastest: {
-                        created_at: data.created_at,
-                        profit: data.profit
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            // avoid update different _id
+            var db = client.db("arbibox");
+            db.collection("opportunities").updateOne(
+                { id: data.id },
+                {
+                    $set: data,
+                    $addToSet: {
+                        lastest: {
+                            created_at: data.created_at,
+                            profit: data.profit
+                        }
                     }
+                },
+                { upsert: true },
+                function(err, res) {
+                    if (err) throw err;
+                    //console.log(res.result);
+                    client.close();
+                    resolve(true);
                 }
-            },
-            { upsert: true },
-            function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                client.close();
-            }
-        );
+            );
+        });
     });
 };
 
