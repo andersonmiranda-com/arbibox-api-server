@@ -76,17 +76,9 @@ async function checkOrder(order) {
     Promise.all(promises).then(response => {
         //console.log(response);
 
-        console.log("coinChain", coinChain);
-        console.log("0-ask1", response[0].asks[0]);
-        console.log("0-ask2", response[0].asks[1]);
-
-        console.log("1-ask1", response[1].asks[0]);
-        console.log("1-ask2", response[1].asks[1]);
-        console.log("2-bid1", response[2].bids[0]);
-        console.log("2-bid2", response[2].bids[1]);
-
-        console.log("1a fila", calculateProfit(order.chain, response, 0));
-        console.log("2a fila", calculateProfit(order.chain, response, 1));
+        console.log("E >> coinChain", order.exchange);
+        console.log("E >> Profit Line 1", calculateProfit(order.chain, response, 0));
+        console.log("E >> Profit Line 2", calculateProfit(order.chain, response, 1));
 
         order.profit_queue1 = calculateProfit(order.chain, response, 0);
         order.profit_queue2 = calculateProfit(order.chain, response, 1);

@@ -1,6 +1,6 @@
 {
   "checkInterval": 0.5,
-  "apiTimeout": 10,
+  "apiTimeout": 20,
   "marketFilter": {
     "exchanges": true,
     "exchangesBlacklist": true,
@@ -93,7 +93,7 @@
   "triangular": {
     "finder": {
       "checkInterval": 10,
-      "minimumProfit": 0.1,
+      "minimumProfit": 0.05,
       "targetAssets": ["BTC"]
     },
     "quality": {
