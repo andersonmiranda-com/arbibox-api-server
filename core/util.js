@@ -123,6 +123,29 @@ const calculateChainProfit = (exchange, chain, tickers) => {
     const difference = 100 * a * (1 - fee1) * b * (1 - fee2) * c * (1 - fee3) - 100;
 
     chain.triagePercentage = difference;
+
+    try {
+        chain.tickers = {
+            1: {
+                symbol: symbol1.symbol,
+                ask: ticker1.info.askPrice || ticker1.info.ask || ticker1.ask,
+                bid: ticker1.info.bidPrice || ticker1.info.bid || ticker1.bid
+            },
+            2: {
+                symbol: symbol2.symbol,
+                ask: ticker2.info.askPrice || ticker2.info.ask || ticker2.ask,
+                bid: ticker2.info.bidPrice || ticker2.info.bid || ticker2.bid
+            },
+            3: {
+                symbol: symbol3.symbol,
+                ask: ticker3.info.askPrice || ticker3.info.ask || ticker3.ask,
+                bid: ticker3.info.bidPrice || ticker3.info.bid || ticker3.bid
+            }
+        };
+    } catch (error) {
+        //
+    }
+
     return chain;
 };
 

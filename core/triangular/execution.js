@@ -38,6 +38,7 @@ const test = async function() {
 
     for (let order of orders) {
         //await callCheck(opportunity);
+        delete order._id;
         console.log(colors.green("E >> Testing..."), colors.cyan(order.id));
         checkOrder(order);
     }
@@ -63,7 +64,7 @@ const test = async function() {
 ///
 
 async function checkOrder(order) {
-    let wallets = await fetchBalance(order.exchange);
+    //let wallets = await fetchBalance(order.exchange);
     //console.log("wallets", wallets);
 
     let limit = 3;
@@ -73,6 +74,7 @@ async function checkOrder(order) {
     let promises = coinChain.map(async symbol =>
         Promise.resolve(await fetchOrderBook(order.exchange, symbol))
     );
+
     Promise.all(promises).then(response => {
         //console.log(response);
 
@@ -84,6 +86,28 @@ async function checkOrder(order) {
         order.profit_queue2 = calculateProfit(order.chain, response, 1);
 
         order.created_at = moment().toDate();
+
+        order.ordersBook = {
+            1: {
+                symbol: order.symbol1,
+                side: order.side1,
+                ask: response[0].asks[0],
+                bid: response[0].bids[0]
+            },
+            2: {
+                symbol: order.symbol2,
+                side: order.side2,
+                ask: response[1].asks[0],
+                bid: response[1].bids[0]
+            },
+            3: {
+                symbol: order.symbol3,
+                side: order.side3,
+                ask: response[2].asks[0],
+                bid: response[2].bids[0]
+            }
+        };
+
         // add to orders collection
         db.createOrder(order);
 
@@ -110,14 +134,18 @@ const calculateProfit = (chain, orders, index) => {
 const getPrice = (symbol, orders, index) => {
     let price = 0;
 
-    if (symbol.side === "buy") {
-        let order = orders.find(o => o.symbol === symbol.symbol);
-        price = 1 / order.asks[index][0];
-    } else if (symbol.side === "sell") {
-        price = orders.find(o => o.symbol === symbol.symbol).bids[index][0];
-    }
+    let order = orders.find(o => o.symbol === symbol.symbol);
 
-    return price;
+    if (order) {
+        if (symbol.side === "buy") {
+            price = 1 / order.asks[index][0];
+        } else if (symbol.side === "sell") {
+            price = order.bids[index][0];
+        }
+        return price;
+    } else {
+        return 0;
+    }
 };
 
 module.exports = {

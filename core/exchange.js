@@ -38,41 +38,42 @@ const fetchTickers = async exchange => {
 
 ///////////////
 
-const fetchOrderBook = async (exchange, symbol) => {
-    var orderBook = {};
-    try {
-        var _exchange;
+const fetchOrderBook = (exchange, symbol) => {
+    return new Promise(async (resolve, reject) => {
+        var orderBook = {};
+        try {
+            var _exchange;
 
-        if (configs.keys[exchange]) {
-            _exchange = new ccxt[exchange]({
-                apiKey: configs.keys[exchange].apiKey,
-                secret: configs.keys[exchange].secret,
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
-        } else {
-            _exchange = new ccxt[exchange]({
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
+            if (configs.keys[exchange]) {
+                _exchange = new ccxt[exchange]({
+                    apiKey: configs.keys[exchange].apiKey,
+                    secret: configs.keys[exchange].secret,
+                    timeout: configs.apiTimeout * 1000,
+                    enableRateLimit: true,
+                    nonce: function() {
+                        return this.milliseconds();
+                    }
+                });
+            } else {
+                _exchange = new ccxt[exchange]({
+                    timeout: configs.apiTimeout * 1000,
+                    enableRateLimit: true,
+                    nonce: function() {
+                        return this.milliseconds();
+                    }
+                });
+            }
+
+            let limit = 5;
+            orderBook = await _exchange.fetchOrderBook(symbol, limit);
+            orderBook.exchange = exchange;
+            orderBook.symbol = symbol;
+            resolve(orderBook);
+        } catch (error) {
+            console.error(colors.red("X >> Error fetchOrderBook:"), error.message);
+            resolve(orderBook);
         }
-
-        let limit = 3;
-        orderBook = await _exchange.fetchOrderBook(symbol, limit);
-        orderBook.exchange = exchange;
-        orderBook.symbol = symbol;
-    } catch (error) {
-        console.error(colors.red("X >> Error fetchOrderBook:"), error.message);
-        return orderBook;
-    } finally {
-        return orderBook;
-    }
+    });
 };
 
 ///////////////
