@@ -85,7 +85,7 @@ async function checkOrder(order) {
         order.profit_queue1 = calculateProfit(order.chain, response, 0);
         order.profit_queue2 = calculateProfit(order.chain, response, 1);
 
-        order.created_at = moment().toDate();
+        order.created_at_order = moment().toDate();
 
         order.ordersBook = {
             1: {

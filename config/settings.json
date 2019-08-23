@@ -8,23 +8,14 @@
     "quoteCurrencies": true
   },
   "exchanges": [
-    "okex",
-    "bibox",
-    "zb",
-    "binance",
     "kucoin",
     "hitbtc",
-    "bithumb",
-    "coinex",
     "cointiger",
-    "coinbasepro",
     "bitmart",
-    "bittrex",
-    "kraken",
+    "exmo",
     "poloniex",
     "gateio",
-    "livecoin",
-    "exmo"
+    "livecoin"
   ],
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"
