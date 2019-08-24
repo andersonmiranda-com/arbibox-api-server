@@ -99,7 +99,7 @@
       "targetAssets": ["BTC"]
     },
     "quality": {
-      "checkInterval": 30,
+      "checkInterval": 60,
       "filter": {
         "lowVolume": true,
         "baseLowVolumeLimit": 0.1,
@@ -111,7 +111,7 @@
         }
       },
       "lastTradeTimeLimit": 5,
-      "removeAfterMinutesOff": 5,
+      "removeAfterMinutesOff": 10,
       "removeAfterIterations": 100
     },
     "execution": {

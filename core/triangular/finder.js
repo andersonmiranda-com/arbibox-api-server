@@ -177,7 +177,7 @@ async function findChains(targetAssets, exchange, markets) {
                                 "-" +
                                 finalChain.symbols[2].symbol,
                             type: "TR",
-                            created_at: new Date(),
+                            opp_created_at: new Date(),
                             chain: finalChain,
                             exchange: exchange,
                             base: targetAsset,
