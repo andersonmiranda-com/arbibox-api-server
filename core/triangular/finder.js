@@ -1,14 +1,16 @@
 const ccxt = require("ccxt");
 var moment = require("moment");
 const lodash = require("lodash");
-const configs = require("../../config/settings");
-const { calculateChainProfit, getConnectingAsset, getSides } = require("../util");
-const { fetchTickers } = require("../exchange");
-
 const colors = require("colors");
 const z = require("zero-fill");
 const n = require("numbro");
+
+const configs = require("../../config/settings");
+const qualifier = require("./qualifier");
+
 const db = require("../db");
+const { calculateChainProfit, getConnectingAsset, getSides } = require("../util");
+const { fetchTickers } = require("../exchange");
 
 const args = process.argv;
 
@@ -106,8 +108,8 @@ const initialize = async function() {
 ///
 /// Build a Queue
 ///
-async function findOpportunities(exchanges, markets, targetAssets, finderCounter) {
-    let promises = exchanges.map(async exchange =>
+function findOpportunities(exchanges, markets, targetAssets, finderCounter) {
+    let promises = exchanges.map(exchange =>
         Promise.resolve(findChains(targetAssets, exchange, markets))
     );
 
@@ -179,6 +181,14 @@ async function findChains(targetAssets, exchange, markets) {
                         };
 
                         await db.upsertOpportunity(opportunity);
+
+                        ////
+                        ////
+
+                        qualifier.checkOpportunity(opportunity);
+
+                        ////
+                        ////
 
                         console.log(
                             colors.green("F >> "),

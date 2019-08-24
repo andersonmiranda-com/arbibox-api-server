@@ -1,9 +1,12 @@
 const ccxt = require("ccxt");
 var moment = require("moment");
 const lodash = require("lodash");
-const configs = require("../../config/settings");
 const colors = require("colors");
 const util = require("util");
+
+const configs = require("../../config/settings");
+const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
+const execution = require("./execution");
 
 const db = require("../db");
 
@@ -44,6 +47,33 @@ const initialize = async function() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
+/// Remove old and stucked opportunities
+///
+
+const cleanup = async function() {
+    ////////
+    // remove opportunities created some time ago - wich does not have upadates
+    ////////
+    const minutesAgo = moment()
+        .subtract(configs.triangular.quality.removeAfterMinutesOff, "minutes")
+        .toDate();
+
+    db.removeOpportunities({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "TR" }] });
+
+    ////////
+    // remove poportunities with more than X iterractions and approved = false
+    ////////
+    db.removeOpportunities({
+        $and: [
+            // { approved: false },
+            { type: "TR" },
+            { $where: "this.lastest.length >= " + configs.triangular.quality.removeAfterIterations }
+        ]
+    });
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
 /// Delays execution 300ms to avoid reject Access Denied (Too many requests)
 ///
 
@@ -72,7 +102,7 @@ async function checkOpportunity(opportunity) {
         //console.log(response);
         //console.log(opportunity.symbol);
 
-        let quality = {};
+        let activity = {};
         opportunity.approved = false;
 
         console.log("");
@@ -85,27 +115,28 @@ async function checkOpportunity(opportunity) {
             //console.log(excTrade);
             if (excTrade.trades && excTrade.trades.length >= 0) {
                 if (excTrade.trades.length !== 0) {
-                    quality[excTrade.symbol] = true;
+                    activity[excTrade.symbol] = true;
                     console.log("Q >> ", excTrade.id, excTrade.symbol, colors.green("active"));
                     symbolsOk++;
                 } else {
-                    quality[excTrade.symbol] = false;
+                    activity[excTrade.symbol] = false;
                     console.log("Q >> ", excTrade.id, excTrade.symbol, colors.magenta("inactive"));
                 }
             } else {
-                quality = false;
+                activity = false;
                 console.log("Q >> ", excTrade.id, colors.red("inactive"));
             }
         }
 
-        opportunity.qualified = true;
-        opportunity.approved = symbolsOk === 3 ? true : false;
-        opportunity.quality = quality;
-        db.updateOpportunity(opportunity);
+        opportunity.activity = activity;
 
-        if (opportunity.approved) {
-            console.log(colors.green("Q >>"), colors.green(opportunity.id));
+        if (symbolsOk === 3) {
+            // Approved on trading Activity, lets check orderBook
+            checkOrderBook(opportunity);
         } else {
+            opportunity.qualified = true;
+            opportunity.approved = false;
+            db.updateOpportunity(opportunity);
             console.log(colors.red("Q >>"), colors.red(opportunity.id));
         }
         // })
@@ -119,58 +150,104 @@ async function checkOpportunity(opportunity) {
 ///
 ///
 
-async function fetchTrades(exchange, symbol) {
-    var exchangeInfo = {
-        id: exchange,
-        symbol: symbol,
-        trades: [],
-        wallets: []
-    };
+async function checkOrderBook(opportunity) {
+    //let wallets = await fetchBalance(order.exchange);
+    //console.log("wallets", wallets);
 
-    try {
-        var _exchange;
+    console.log(colors.yellow("Q >> Checking orderBook..."), opportunity.id);
 
-        if (configs.keys[exchange]) {
-            _exchange = new ccxt[exchange]({
-                apiKey: configs.keys[exchange].apiKey,
-                secret: configs.keys[exchange].secret,
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
-            // exchangeInfo.wallets = await _exchange.fetchBalance();
-            // db.saveWallets(exchangeTickets.id, {
-            //     id: exchangeTickets.id,
-            //     free: exchangeTickets.wallets.free,
-            //     total: exchangeTickets.wallets.total
-            // });
+    let limit = 3;
+
+    let coinChain = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3];
+
+    let promises = coinChain.map(async symbol =>
+        Promise.resolve(await fetchOrderBook(opportunity.exchange, symbol))
+    );
+
+    Promise.all(promises).then(response => {
+        //console.log(response);
+
+        console.log("Q >> Profit Line 1", calculateProfit(opportunity.chain, response, 0));
+        console.log("Q >> Profit Line 2", calculateProfit(opportunity.chain, response, 1));
+
+        opportunity.profit_queue1 = calculateProfit(opportunity.chain, response, 0);
+        opportunity.profit_queue2 = calculateProfit(opportunity.chain, response, 1);
+
+        opportunity.qualified = true;
+
+        opportunity.ordersBook = {
+            cheched_at: moment().toDate(),
+            1: {
+                symbol: opportunity.symbol1,
+                side: opportunity.side1,
+                ask: response[0].asks[0],
+                bid: response[0].bids[0]
+            },
+            2: {
+                symbol: opportunity.symbol2,
+                side: opportunity.side2,
+                ask: response[1].asks[0],
+                bid: response[1].bids[0]
+            },
+            3: {
+                symbol: opportunity.symbol3,
+                side: opportunity.side3,
+                ask: response[2].asks[0],
+                bid: response[2].bids[0]
+            }
+        };
+
+        if (opportunity.profit_queue1 >= configs.triangular.finder.minimumProfit) {
+            opportunity.approved = true;
+            console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
+            // call execution
+            execution.initialize(opportunity);
         } else {
-            _exchange = new ccxt[exchange]({
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
-            exchangeInfo.wallets = [];
+            opportunity.qualified = true;
+            opportunity.approved = false;
+            console.log(colors.red("Q >> Not approved"), colors.red(opportunity.id));
+            db.updateOpportunity(opportunity);
         }
 
-        let since =
-            _exchange.milliseconds() - configs.triangular.quality.lastTradeTimeLimit * 60 * 1000; //
-        let limit = 1;
-        exchangeInfo.trades = await _exchange.fetchTrades(symbol, since, limit);
-
-        //tickets.map(ticket => verbose && console.log(ticket));
-    } catch (error) {
-        console.error(colors.red("Q >> Error fetchTrades:"), error.message);
-        return exchangeInfo;
-    } finally {
-        return exchangeInfo;
-    }
+        //arbitrage.checkOpportunity(response);
+    });
 }
 
+const calculateProfit = (chain, orders, index) => {
+    const target = chain.targetAsset;
+    const [symbol1, symbol2, symbol3] = chain.symbols;
+
+    const a = getPrice(symbol1, orders, index);
+    const b = getPrice(symbol2, orders, index);
+    const c = getPrice(symbol3, orders, index);
+
+    const fee1 = symbol1.taker;
+    const fee2 = symbol2.taker;
+    const fee3 = symbol3.taker;
+    const profit = 100 * a * (1 - fee1) * b * (1 - fee2) * c * (1 - fee3) - 100;
+
+    return profit;
+};
+
+const getPrice = (symbol, orders, index) => {
+    let price = 0;
+
+    let order = orders.find(o => o.symbol === symbol.symbol);
+
+    if (order) {
+        if (symbol.side === "buy") {
+            price = 1 / order.asks[index][0];
+        } else if (symbol.side === "sell") {
+            price = order.bids[index][0];
+        }
+        return price;
+    } else {
+        return 0;
+    }
+};
+
 module.exports = {
-    initialize
+    initialize,
+    cleanup,
+    checkOpportunity
 };

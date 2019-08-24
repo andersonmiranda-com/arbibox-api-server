@@ -2,9 +2,9 @@
 
 var moment = require("moment");
 const colors = require("colors");
+
 const configs = require("./config/settings");
 
-/// agent 1 - opportunities finder
 const finder = require("./core/triangular/finder");
 const qualifier = require("./core/triangular/qualifier");
 const execution = require("./core/triangular/execution");
@@ -74,32 +74,33 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 2 - Qualifier
-    /// Read opportunities from "opportunities" mongoDB collection and check quality. Remove bad ones
+    /// Remove old and stucked opportunities
 
     // loop every x seconds
     setInterval(function() {
-        qualifier.initialize();
+        qualifier.cleanup();
         verbose &&
             console.info(
-                "Q >> Starting >",
+                "Q >> Cleaning >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
     }, (configs.triangular.quality.checkInterval > 0
         ? configs.triangular.quality.checkInterval
         : 30) * 1000);
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 3 - Execution
     ///
 
     // loop every x seconds
-    setInterval(function() {
-        verbose &&
-            console.info(
-                "E >> Starting >",
-                colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
-            );
-        execution.initialize();
-    }, (configs.triangular.execution.checkInterval > 0
-        ? configs.triangular.execution.checkInterval
-        : 30) * 1000);
+    // setInterval(function() {
+    //     verbose &&
+    //         console.info(
+    //             "E >> Starting >",
+    //             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+    //         );
+    //     execution.initialize();
+    // }, (configs.triangular.execution.checkInterval > 0
+    //     ? configs.triangular.execution.checkInterval
+    //     : 30) * 1000);
 })();

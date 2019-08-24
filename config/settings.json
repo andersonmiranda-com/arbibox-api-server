@@ -8,14 +8,20 @@
     "quoteCurrencies": true
   },
   "exchanges": [
+    "okex",
+
+    "binance",
     "kucoin",
     "hitbtc",
-    "cointiger",
-    "bitmart",
-    "exmo",
+    "bithumb",
+    "coinex",
+    "bittrex",
+    "bitfinex",
+    "kraken",
     "poloniex",
     "gateio",
-    "livecoin"
+    "livecoin",
+    "exmo"
   ],
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"
@@ -87,7 +93,7 @@
       "targetAssets": ["BTC"]
     },
     "quality": {
-      "checkInterval": 8,
+      "checkInterval": 30,
       "filter": {
         "lowVolume": true,
         "baseLowVolumeLimit": 0.1,
