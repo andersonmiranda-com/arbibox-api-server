@@ -90,7 +90,7 @@ async function test(name, chain) {
 
     var start3 = new Date();
     console.info("Start 3", start3);
-    let limit = 3;
+    let limit = 5;
     let promises2 = chain.map(async symbol =>
         Promise.resolve(await _instance.fetchOrderBook(symbol, limit))
     );
@@ -98,18 +98,21 @@ async function test(name, chain) {
         response => {
             //console.log("OrderBook", response);
             console.log("0-ask1", response[0].asks[0]);
-            console.log("0-ask2", response[0].asks[1]);
+            console.log("0-bid1", response[0].bids[0]);
 
             console.log("1-ask1", response[1].asks[0]);
-            console.log("1-ask2", response[1].asks[1]);
+            console.log("1-bid1", response[1].bids[0]);
+
+            console.log("2-ask1", response[2].asks[0]);
             console.log("2-bid1", response[2].bids[0]);
-            console.log("2-bid2", response[2].bids[1]);
             var end3 = new Date() - start3;
+
             console.info("Execution time3: %dms", end3);
         }
         //arbitrage.checkOpportunity(response);
     );
 }
 
-test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
+test("binance", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);
+//test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
 //test("cointiger", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);
