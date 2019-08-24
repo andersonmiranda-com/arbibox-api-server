@@ -343,14 +343,14 @@ function filterOpportunities(prices) {
             let quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
 
             let percentageAfterWdFees1 = getPercentageAfterWdFees(
-                configs.arbitrage.finder.quoteCurrencyFunds[quoteCurrency],
+                configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency],
                 bestAsk,
                 bestBid
             );
 
             //console.log("percentageAfterWdFees1", percentageAfterWdFees1);
 
-            if (percentageAfterWdFees1 >= configs.arbitrage.finder.minimumProfit) {
+            if (percentageAfterWdFees1 >= configs.arbitrage.search.minimumProfit) {
                 let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
                 let percentageAfterWdFees2 = getPercentageAfterWdFees(minQuote, bestAsk, bestBid);
                 let opportunity = {
@@ -384,7 +384,7 @@ function filterOpportunities(prices) {
                         profit_min: Number(percentageAfterWdFees2.toFixed(4))
                     },
                     //bids: bidOrders.bids,
-                    invest: configs.arbitrage.finder.quoteCurrencyFunds[quoteCurrency]
+                    invest: configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency]
                 };
 
                 verbose &&
@@ -424,7 +424,7 @@ function getWithdrawalFee(currency) {
 function getPercentage(bestAsk, bestBid) {
     let { baseCurrency, quoteCurrency } = getCurrencies(bestAsk);
 
-    let funds = configs.arbitrage.finder.quoteCurrencyFunds[quoteCurrency];
+    let funds = configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency];
     let amount = funds / bestAsk.ask;
 
     let bought = bestAsk.ask * amount;
@@ -489,7 +489,7 @@ function getMinimunInversion(bestAsk, bestBid) {
             100 * bestAsk.ask * bestBid.bid * baseWithdrawalFee +
             100 * bestAsk.ask * quoteWithdrawalFee) /
         (100 * bestBid.bid * bestAsk.cost * bestBid.cost -
-            bestAsk.ask * configs.arbitrage.finder.minimumProfitInvest -
+            bestAsk.ask * configs.arbitrage.search.minimumProfitInvest -
             100 * bestBid.bid * bestAsk.cost -
             100 * bestBid.bid * bestBid.cost -
             100 * bestAsk.ask +

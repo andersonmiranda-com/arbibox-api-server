@@ -197,7 +197,7 @@ async function checkOrderBook(opportunity) {
             }
         };
 
-        if (opportunity.profit_queue1 >= configs.triangular.finder.minimumProfit) {
+        if (opportunity.profit_queue1 >= configs.triangular.search.minimumProfit) {
             opportunity.approved = true;
             console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
             // call execution

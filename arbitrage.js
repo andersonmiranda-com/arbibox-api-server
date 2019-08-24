@@ -4,9 +4,9 @@ var moment = require("moment");
 const colors = require("colors");
 const configs = require("./config/settings");
 
-/// agent 1 - opportunities finder
-const finder = require("./core/arbitrage/finder");
-const qualifier = require("./core/arbitrage/qualifier");
+/// agent 1 - opportunities search
+const search = require("./core/arbitrage/search");
+const quality = require("./core/arbitrage/quality");
 const execution = require("./core/arbitrage/execution");
 
 global.verbose = true;
@@ -33,33 +33,33 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     verbose && console.info("\nLoading exchanges and tickets...");
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Agent 1 - Finder
+    /// Agent 1 - search
     /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
 
-    const { tickets, exchangesSymbols } = await finder.initialize();
-    finder.findOpportunities(tickets, exchangesSymbols);
+    const { tickets, exchangesSymbols } = await search.initialize();
+    search.findOpportunities(tickets, exchangesSymbols);
 
     // loop every x seconds
     setInterval(function() {
-        finder.findOpportunities(tickets, exchangesSymbols);
+        search.findOpportunities(tickets, exchangesSymbols);
         verbose &&
             console.info(
-                ">>> Finder agent >",
+                ">>> Search agent >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.arbitrage.finder.checkInterval > 0 ? configs.arbitrage.finder.checkInterval : 30) *
+    }, (configs.arbitrage.search.checkInterval > 0 ? configs.arbitrage.search.checkInterval : 30) *
         1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Agent 2 - Qualifier
+    /// Agent 2 - Quality
     /// Read opportunities from "opportunities" mongoDB collection and check quality. Remove bad ones
 
     // loop every x seconds
     setInterval(function() {
-        qualifier.initialize();
+        quality.initialize();
         verbose &&
             console.info(
-                ">>> Qualifier agent >",
+                ">>> Quality agent >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
     }, (configs.arbitrage.quality.checkInterval > 0

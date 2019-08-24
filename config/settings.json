@@ -8,11 +8,8 @@
     "quoteCurrencies": true
   },
   "exchanges": [
-    "bitmex",
-    "fcoin",
     "bitz",
     "bibox",
-    "negociecoins",
     "lbank",
     "bitmart",
     "huobipro",
@@ -93,7 +90,7 @@
   },
 
   "triangular": {
-    "finder": {
+    "search": {
       "checkInterval": 10,
       "minimumProfit": 0.05,
       "targetAssets": ["BTC"]
@@ -120,7 +117,7 @@
   },
 
   "arbitrage": {
-    "finder": {
+    "search": {
       "checkInterval": 20,
       "minimumProfit": 0.5,
       "minimumProfitInvest": 0.5,

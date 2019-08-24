@@ -133,7 +133,7 @@ async function findChains(targetAssets, tickers, markets) {
                 chainResult = await calculateChainProfit(chain, tickers, markets);
 
                 if (
-                    chain.triagePercentage >= configs.triangular.finder.minimumProfit &&
+                    chain.triagePercentage >= configs.triangular.search.minimumProfit &&
                     chain.triagePercentage <= 100 &&
                     chain.triagePercentage !== Infinity
                 ) {
@@ -198,7 +198,7 @@ async function findChains(targetAssets, tickers, markets) {
 }
 
 function prepareChains(targetAsset, markets) {
-    let { sourceSymbols, compatibleSymbols } = symbolFinder(targetAsset, markets);
+    let { sourceSymbols, compatibleSymbols } = symbolSearch(targetAsset, markets);
 
     let chains = [];
 
@@ -220,7 +220,7 @@ function prepareChains(targetAsset, markets) {
     return chains;
 }
 
-function symbolFinder(targetAsset, markets) {
+function symbolSearch(targetAsset, markets) {
     verbose &&
         console.log(
             "There are " +

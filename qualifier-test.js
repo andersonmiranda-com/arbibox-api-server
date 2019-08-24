@@ -1,12 +1,12 @@
 "use strict";
 
-const qualifier = require("./core/triangular/qualifier");
+const quality = require("./core/triangular/quality");
 
 (async function() {
     console.log("");
     console.log("======================");
-    console.log("Arbibox Qualifier test");
+    console.log("Arbibox Quality test");
     console.log("======================");
 
-    qualifier.initialize();
+    quality.initialize();
 })();

@@ -6,7 +6,7 @@ const z = require("zero-fill");
 const n = require("numbro");
 
 const configs = require("../../config/settings");
-const qualifier = require("./qualifier");
+const quality = require("./quality");
 
 const db = require("../db");
 const { calculateChainProfit, getConnectingAsset, getSides } = require("../util");
@@ -88,14 +88,13 @@ const initialize = async function() {
 
             //CCXT API Exchange validation
             if (!_instance.has["fetchTickers"]) {
-                verbose && console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
+                console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else if (!_instance.has["fetchOrderBook"]) {
-                verbose &&
-                    console.error(colors.red("Error: Exchange has no fetchOrderBook:"), name);
+                console.error(colors.red("Error: Exchange has no fetchOrderBook:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else if (!_instance.has["fetchTrades"]) {
-                verbose && console.error(colors.red("Error: Exchange has no fetchTrades:"), name);
+                console.error(colors.red("Error: Exchange has no fetchTrades:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else {
                 markets.push({ id: name, markets: _instance.markets });
@@ -118,14 +117,14 @@ const initialize = async function() {
 ///
 /// Build a Queue
 ///
-function findOpportunities(exchanges, markets, targetAssets, finderCounter) {
+function findOpportunities(exchanges, markets, targetAssets, searchCounter) {
     let promises = exchanges.map(exchange =>
         Promise.resolve(findChains(targetAssets, exchange, markets))
     );
 
     Promise.all(promises).then(response => {
         console.info(
-            "F >> Scan " + finderCounter + " finished >",
+            "S >> Scan " + searchCounter + " finished >",
             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
         );
         //console.info(">>> Triangular scan finished at", new Date());
@@ -147,7 +146,7 @@ async function findChains(targetAssets, exchange, markets) {
 
     exchangeMarkets = markets.find(market => market.id === exchange).markets;
     for (let targetAsset of targetAssets) {
-        console.log("F >>", targetAsset, colors.cyan(exchange));
+        console.log("S >>", targetAsset, colors.cyan(exchange));
 
         let chains = prepareChains(targetAsset, exchangeMarkets);
 
@@ -156,7 +155,7 @@ async function findChains(targetAssets, exchange, markets) {
                 chainResult = calculateChainProfit(exchange, chain, tickers);
 
                 if (
-                    chainResult.triagePercentage >= configs.triangular.finder.minimumProfit &&
+                    chainResult.triagePercentage >= configs.triangular.search.minimumProfit &&
                     chainResult.triagePercentage <= 200 &&
                     chainResult.triagePercentage !== Infinity
                 ) {
@@ -195,13 +194,13 @@ async function findChains(targetAssets, exchange, markets) {
                         ////
                         ////
 
-                        qualifier.checkOpportunity(opportunity);
+                        quality.checkOpportunity(opportunity);
 
                         ////
                         ////
 
                         console.log(
-                            colors.green("F >> "),
+                            colors.green("S >>"),
                             exchange,
                             "|",
                             targetAsset,
@@ -216,7 +215,7 @@ async function findChains(targetAssets, exchange, markets) {
                             colorProfit(finalChain.triagePercentage) + " %"
                         );
                     } catch (error) {
-                        console.error(colors.red("F >> Error4:"), error.message);
+                        console.error(colors.red("S >> Error4:"), error.message);
                         //return false;
                     }
                 }
@@ -229,11 +228,11 @@ async function findChains(targetAssets, exchange, markets) {
                 //);
             } catch (error) {
                 console.error(
-                    colors.red("F >> Error on:"),
+                    colors.red("S >> Error on:"),
                     colors.magenta(targetAsset),
                     colors.cyan(exchange)
                 );
-                console.error(colors.red("F >> Error3"), error.message);
+                console.error(colors.red("S >> Error3"), error.message);
                 //console.error(colors.red("Error3"), error);
                 //return false
             }
@@ -245,7 +244,7 @@ async function findChains(targetAssets, exchange, markets) {
 }
 
 function prepareChains(targetAsset, markets) {
-    let { sourceSymbols, compatibleSymbols } = symbolFinder(targetAsset, markets);
+    let { sourceSymbols, compatibleSymbols } = symbolSearch(targetAsset, markets);
 
     let chains = [];
 
@@ -266,7 +265,7 @@ function prepareChains(targetAsset, markets) {
     return chains;
 }
 
-function symbolFinder(targetAsset, markets) {
+function symbolSearch(targetAsset, markets) {
     verbose &&
         console.log(
             "There are " +

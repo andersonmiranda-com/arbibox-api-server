@@ -122,7 +122,7 @@
     },
 
     "triangular": {
-        "finder": {
+        "search": {
             "checkInterval": 15,
             "minimumProfit": 0.05,
             "targetAssets": ["BTC", "ETH"]
@@ -149,7 +149,7 @@
     },
 
     "arbitrage": {
-        "finder": {
+        "search": {
             "checkInterval": 20,
             "minimumProfit": 0.5,
             "minimumProfitInvest": 0.5,
