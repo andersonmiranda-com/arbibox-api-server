@@ -8,15 +8,21 @@
     "quoteCurrencies": true
   },
   "exchanges": [
+    "bitmex",
+    "fcoin",
+    "bitz",
+    "bibox",
+    "negociecoins",
+    "lbank",
+    "bitmart",
+    "huobipro",
     "okex",
-
     "binance",
     "kucoin",
     "hitbtc",
     "bithumb",
     "coinex",
     "bittrex",
-    "bitfinex",
     "kraken",
     "poloniex",
     "gateio",
@@ -106,7 +112,7 @@
       },
       "lastTradeTimeLimit": 5,
       "removeAfterMinutesOff": 5,
-      "removeAfterIterations": 5
+      "removeAfterIterations": 100
     },
     "execution": {
       "checkInterval": 6

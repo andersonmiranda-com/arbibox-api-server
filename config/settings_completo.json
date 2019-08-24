@@ -8,6 +8,16 @@
     },
 
     "exchanges": [
+        "bitmex",
+        "fcoin",
+        "bitz",
+        "bibox",
+        "negociecoins",
+        "lbank",
+        "bitmart",
+        "huobipro",
+        "okex",
+
         "okex",
         "bibox",
         "zb",
@@ -28,7 +38,6 @@
         "exmo",
 
         "mercado",
-        "negociecoins",
         "bitfinex2",
         "exx",
         "hitbtc2",

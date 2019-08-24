@@ -355,7 +355,7 @@ function filterOpportunities(prices) {
                 let percentageAfterWdFees2 = getPercentageAfterWdFees(minQuote, bestAsk, bestBid);
                 let opportunity = {
                     id: bestAsk.symbol.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
-                    created_at: new Date(),
+                    opp_created_at: new Date(),
                     type: "PA",
                     symbol: bestAsk.symbol,
                     buy_at: bestAsk.name,

@@ -40,10 +40,20 @@ class Chain {
 ///
 
 const initialize = async function() {
-    let exchanges = configs.exchanges;
+    let exchanges = [];
+
+    if (configs.marketFilter.exchanges) {
+        exchanges = configs.exchanges;
+    } else {
+        exchanges = ccxt.exchanges;
+    }
 
     if (args[2]) {
         exchanges = [args[2]];
+    }
+
+    if (configs.marketFilter.exchangesBlacklist) {
+        exchanges = lodash.difference(exchanges, configs.exchangesBlacklist);
     }
 
     let markets = [];
