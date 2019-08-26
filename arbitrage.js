@@ -11,6 +11,8 @@ const execution = require("./core/arbitrage/execution");
 
 global.verbose = true;
 
+let searchCounter = 1;
+
 global.withdrawalFees = [];
 
 const logo = ` 
@@ -32,19 +34,32 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     console.log(colors.cyan("\nStarting Parallel Arbitrage..."));
     verbose && console.info("\nLoading exchanges and tickets...");
 
+    /// started
+    verbose &&
+        console.info(
+            "\n>>> Bot started at",
+            colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
+        );
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 1 - search
     /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
 
     const { tickets, exchangesSymbols } = await search.initialize();
-    search.findOpportunities(tickets, exchangesSymbols);
+
+    console.info(
+        "S >> Scan " + searchCounter + " >",
+        colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+    );
+    search.findOpportunities(tickets, exchangesSymbols, searchCounter);
 
     // loop every x seconds
     setInterval(function() {
-        search.findOpportunities(tickets, exchangesSymbols);
+        searchCounter++;
+        search.findOpportunities(tickets, exchangesSymbols, searchCounter);
         verbose &&
             console.info(
-                ">>> Search agent >",
+                "S >> Scan " + searchCounter + " >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
     }, (configs.arbitrage.search.checkInterval > 0 ? configs.arbitrage.search.checkInterval : 30) *

@@ -47,30 +47,31 @@ async function test(name, chain) {
     var start0 = new Date();
     console.info("Start 0", start0);
 
-    axios
-        .get("https://api.binance.com/api/v3/ticker/bookTicker")
-        .then(function(response) {
-            // handle success
-            console.log(response.data.length);
-            var end0 = new Date() - start0;
-            console.info("Execution time0: %dms", end0);
-        })
-        .catch(function(error) {
-            // handle error
-            console.log(error);
-        })
-        .finally(function() {
-            // always executed
-        });
+    // axios
+    //     .get("https://api.binance.com/api/v3/ticker/bookTicker")
+    //     .then(function(response) {
+    //         // handle success
+    //         console.log(response.data.length);
+    //         var end0 = new Date() - start0;
+    //         console.info("Execution time0: %dms", end0);
+    //     })
+    //     .catch(function(error) {
+    //         // handle error
+    //         console.log(error);
+    //     })
+    //     .finally(function() {
+    //         // always executed
+    //     });
 
     var start1 = new Date();
     console.info("Start 1", start1);
 
     axios
-        .get("http://localhost:3000/exchange/binance/markets")
+        .get("http://localhost:3000/exchange/" + name + "/markets")
         .then(function(response) {
             // handle success
             console.log(response.data.length);
+            console.log(response.data);
             var end1 = new Date() - start1;
             console.info("Execution time1: %dms", end1);
         })
@@ -94,16 +95,16 @@ async function test(name, chain) {
     });
 
     /*
-
+    
     var start2 = new Date();
     console.info("Start 2", start2);
-
+    
     let tickers = await _instance.fetchTickers();
     console.log("\tickers", tickers);
-
+    
     var end2 = new Date() - start2;
     console.info("Execution time2: %dms", end2);
-
+    
     //
     //var start2 = new Date();
     //let promises = tickers.map(async symbol =>

@@ -1,27 +1,13 @@
 {
-  "checkInterval": 0.5,
   "apiTimeout": 20,
   "marketFilter": {
     "exchanges": true,
     "exchangesBlacklist": true,
-    "baseCurrencies": true,
+    "baseCurrencies": false,
     "quoteCurrencies": true
   },
   "exchanges": [
-    "bibox",
-    "huobipro",
-    "okex",
-    "binance",
-    "kucoin",
-    "hitbtc",
-    "bithumb",
-    "coinex",
-    "bittrex",
-    "kraken",
-    "poloniex",
-    "gateio",
-    "livecoin",
-    "exmo"
+    "binance", "kucoin", "hitbtc", "poloniex", "exmo"
   ],
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"
@@ -61,9 +47,7 @@
     "QTUM"
   ],
 
-  "quoteCurrencies": [
-    "BTC", "ETH", "USDT", "LTC", "BNB"
-  ],
+  "quoteCurrencies": ["BTC"],
 
   "currenciesBlacklist": ["VIA"],
 
@@ -116,7 +100,7 @@
   "arbitrage": {
     "search": {
       "checkInterval": 15,
-      "minimumProfit": 0.5,
+      "minimumProfit": 0.05,
       "minimumProfitInvest": 0.5,
       "quoteCurrencyFunds": {
         "BTC": 0.1,

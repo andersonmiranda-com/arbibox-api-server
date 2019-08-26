@@ -165,11 +165,11 @@ async function checkOrderBook(opportunity) {
     Promise.all(promises).then(response => {
         //console.log(response);
 
-        console.log("Q >> Profit Line 1", calculateProfit(opportunity.chain, response, 0));
-        console.log("Q >> Profit Line 2", calculateProfit(opportunity.chain, response, 1));
+        console.log("Q >> Profit Row 1", calculateProfit(opportunity.chain, response, 0));
+        console.log("Q >> Profit Row 2", calculateProfit(opportunity.chain, response, 1));
 
-        opportunity.profit_queue1 = calculateProfit(opportunity.chain, response, 0);
-        opportunity.profit_queue2 = calculateProfit(opportunity.chain, response, 1);
+        opportunity.profit_row1 = calculateProfit(opportunity.chain, response, 0);
+        opportunity.profit_row2 = calculateProfit(opportunity.chain, response, 1);
 
         opportunity.qualified = true;
 
@@ -195,7 +195,7 @@ async function checkOrderBook(opportunity) {
             }
         };
 
-        if (opportunity.profit_queue1 >= configs.triangular.search.minimumProfit) {
+        if (opportunity.profit_row1 >= configs.triangular.search.minimumProfit) {
             opportunity.approved = true;
             console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
             // call execution

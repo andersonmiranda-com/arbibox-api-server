@@ -137,9 +137,14 @@ async function checkOpportunity(opportunity) {
 
         opportunity.activity = activity;
 
-        if (quality.sell && quality.buy) {
+        if (activity.sell && activity.buy) {
             // Approved on trading Activity, lets check orderBook
             checkOrderBook(opportunity);
+
+            opportunity.qualified = true;
+            opportunity.approved = true;
+            db.updateOpportunity(opportunity);
+            console.log(colors.green("Q >>"), colors.green(opportunity.id));
         } else {
             opportunity.qualified = true;
             opportunity.approved = false;
@@ -173,33 +178,38 @@ async function checkOrderBook(opportunity) {
     Promise.all(promises).then(response => {
         //console.log(response);
 
-        console.log("Q >> Profit Line 1", calculateProfit(opportunity.chain, response, 0));
-        console.log("Q >> Profit Line 2", calculateProfit(opportunity.chain, response, 1));
+        let bestAsk1 = { ...opportunity.bestAsk };
+        let bestAsk2 = { ...opportunity.bestAsk };
+        bestAsk1.ask = response[0].asks[0][0];
+        bestAsk2.ask = response[0].asks[1][0];
 
-        opportunity.profit_queue1 = calculateProfit(opportunity.chain, response, 0);
-        opportunity.profit_queue2 = calculateProfit(opportunity.chain, response, 1);
+        let bestBid1 = { ...opportunity.bestBid };
+        let bestBid2 = { ...opportunity.bestBid };
+        bestBid1.bid = response[1].bids[0][0];
+        bestBid2.bid = response[1].bids[1][0];
+
+        getPercentageAfterWdFees = (funds, bestAsk1, bestBid1);
+        getPercentageAfterWdFees = (funds, bestAsk2, bestBid2);
+
+        console.log("Q >> Profit Row 1", calculateProfit(opportunity.chain, response, 0));
+        console.log("Q >> Profit Row 2", calculateProfit(opportunity.chain, response, 1));
+
+        opportunity.profit_row1 = calculateProfit(opportunity.chain, response, 0);
+        opportunity.profit_row2 = calculateProfit(opportunity.chain, response, 1);
 
         opportunity.qualified = true;
 
         opportunity.ordersBook = {
             cheched_at: moment().toDate(),
-            1: {
-                symbol: opportunity.symbol1,
-                side: opportunity.side1,
-                ask: response[0].asks[0],
-                bid: response[0].bids[0]
+            buy: {
+                exchange: opportunity.buy_at,
+                ask1: response[0].asks[0],
+                ask2: response[0].asks[1]
             },
-            2: {
-                symbol: opportunity.symbol2,
-                side: opportunity.side2,
-                ask: response[1].asks[0],
-                bid: response[1].bids[0]
-            },
-            3: {
-                symbol: opportunity.symbol3,
-                side: opportunity.side3,
-                ask: response[2].asks[0],
-                bid: response[2].bids[0]
+            sell: {
+                exchange: opportunity.sell_at,
+                bid1: response[1].bids[0],
+                bid2: response[1].bids[1]
             }
         };
 

@@ -1,4 +1,6 @@
 const ccxt = require("ccxt");
+var moment = require("moment");
+
 const lodash = require("lodash");
 const colors = require("colors");
 const util = require("util");
@@ -171,7 +173,7 @@ const initialize = async function() {
 ///
 ///
 
-async function findOpportunities(tickets, exchangesSymbols) {
+async function findOpportunities(tickets, exchangesSymbols, searchCounter) {
     try {
         let promises = exchangesSymbols.map(async exchange =>
             Promise.resolve(await fetchTickersByExchange(exchange))
@@ -228,6 +230,11 @@ async function findOpportunities(tickets, exchangesSymbols) {
                         //verbose && console.log(prices);
                         filterOpportunities(prices);
                     }
+
+                    console.info(
+                        "S >> Scan " + searchCounter + " finished >",
+                        colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+                    );
                 }
 
                 //arbitrage.checkOpportunity(response);
@@ -314,7 +321,13 @@ function filterOpportunities(prices) {
                 bestBid
             );
 
-            //console.log("percentageAfterWdFees1", percentageAfterWdFees1);
+            console.log(
+                "S >> ",
+                bestAsk.symbol,
+                bestAsk.name,
+                bestBid.name,
+                percentageAfterWdFees1
+            );
 
             if (percentageAfterWdFees1 >= configs.arbitrage.search.minimumProfit) {
                 let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
@@ -328,22 +341,8 @@ function filterOpportunities(prices) {
                     sell_at: bestBid.name,
                     profit0: Number(percentage.toFixed(4)),
                     profit: Number(percentageAfterWdFees1.toFixed(4)),
-                    buy: {
-                        at: bestAsk.name,
-                        ask: bestAsk.ask,
-                        volume_base: bestAsk.baseVolume,
-                        volume_quote: bestAsk.quoteVolume,
-                        wd_fee_quote: quoteWithdrawalFee
-                    },
-
-                    sell: {
-                        at: bestBid.name,
-                        bid: bestBid.bid,
-                        volume_base: bestBid.baseVolume,
-                        volume_quote: bestBid.quoteVolume,
-                        wd_fee_base: baseWithdrawalFee
-                    },
-
+                    bestAsk: bestAsk,
+                    bestBid: bestBid,
                     invest_min: {
                         base: minBase,
                         quote: minQuote,
@@ -405,7 +404,7 @@ function getPercentage(bestAsk, bestBid) {
     return percentage;
 }
 
-function getPercentageAfterWdFees(funds, bestAsk, bestBid) {
+const getPercentageAfterWdFees = (funds, bestAsk, bestBid) => {
     let { baseCurrency, quoteCurrency } = getCurrencies(bestAsk);
 
     let baseWithdrawalFee = getWithdrawalFee(baseCurrency);
@@ -427,7 +426,7 @@ function getPercentageAfterWdFees(funds, bestAsk, bestBid) {
                 funds)) /
         funds;
     return percentage;
-}
+};
 
 function getMinimunInversion(bestAsk, bestBid) {
     let { baseCurrency, quoteCurrency } = getCurrencies(bestAsk);
@@ -477,5 +476,6 @@ function getCurrencies(price) {
 
 module.exports = {
     initialize,
-    findOpportunities
+    findOpportunities,
+    getPercentageAfterWdFees
 };
