@@ -1,4 +1,6 @@
 const ccxt = require("ccxt");
+const axios = require("axios");
+
 const configs = require("./config/settings");
 var moment = require("moment");
 
@@ -42,16 +44,65 @@ async function test(name, chain) {
 
     ///
 
+    var start0 = new Date();
+    console.info("Start 0", start0);
+
+    axios
+        .get("https://api.binance.com/api/v3/ticker/bookTicker")
+        .then(function(response) {
+            // handle success
+            console.log(response.data.length);
+            var end0 = new Date() - start0;
+            console.info("Execution time0: %dms", end0);
+        })
+        .catch(function(error) {
+            // handle error
+            console.log(error);
+        })
+        .finally(function() {
+            // always executed
+        });
+
     var start1 = new Date();
     console.info("Start 1", start1);
 
-    _instance.fetchTickers().then(exc_tickers => {
-        let endtickers = chain.map(symbol => exc_tickers[symbol]);
-        console.log("\nEndtickers", endtickers);
+    axios
+        .get("http://localhost:3000/exchange/binance/markets")
+        .then(function(response) {
+            // handle success
+            console.log(response.data.length);
+            var end1 = new Date() - start1;
+            console.info("Execution time1: %dms", end1);
+        })
+        .catch(function(error) {
+            // handle error
+            console.log(error);
+        })
+        .finally(function() {
+            // always executed
+        });
 
-        var end1 = new Date() - start1;
-        console.info("Execution time1: %dms", end1);
+    var start1a = new Date();
+    console.info("Start 1a", start1a);
+
+    _instance.fetchTickers().then(exc_tickers => {
+        //let endtickers = chain.map(symbol => exc_tickers[symbol]);
+        //console.log("\nEndtickers", exc_tickers);
+
+        var end1a = new Date() - start1a;
+        console.info("Execution time1a: %dms", end1a);
     });
+
+    /*
+
+    var start2 = new Date();
+    console.info("Start 2", start2);
+
+    let tickers = await _instance.fetchTickers();
+    console.log("\tickers", tickers);
+
+    var end2 = new Date() - start2;
+    console.info("Execution time2: %dms", end2);
 
     //
     //var start2 = new Date();
@@ -123,6 +174,8 @@ async function test(name, chain) {
         }
         //arbitrage.checkOpportunity(response);
     );
+
+    */
 }
 
 test("binance", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);
