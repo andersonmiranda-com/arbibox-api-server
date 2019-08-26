@@ -58,7 +58,7 @@ const cleanup = async function() {
         .subtract(configs.triangular.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
-    db.removeOpportunities({ $and: [{ opp_created_at: { $lt: minutesAgo } }, { type: "TR" }] });
+    db.removeOpportunities({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "TR" }] });
 
     ////////
     // remove poportunities with more than X iterractions and approved = false
@@ -197,7 +197,7 @@ async function checkOrderBook(opportunity) {
             }
         };
 
-        if (opportunity.profit_queue1 >= configs.triangular.search.minimumProfit) {
+        if (opportunity.profit_queue1 >= configs.triangular.finder.minimumProfit) {
             opportunity.approved = true;
             console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
             // call execution

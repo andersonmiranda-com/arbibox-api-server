@@ -97,14 +97,26 @@ async function test(name, chain) {
     Promise.all(promises2).then(
         response => {
             //console.log("OrderBook", response);
-            console.log("0-ask1", response[0].asks[0]);
-            console.log("0-bid1", response[0].bids[0]);
+            console.log("\n", chain[0]);
+            console.log("ask1", response[0].asks[0]);
+            console.log("bid1", response[0].bids[0]);
 
-            console.log("1-ask1", response[1].asks[0]);
-            console.log("1-bid1", response[1].bids[0]);
+            console.log("ask2", response[0].asks[1]);
+            console.log("bid2", response[0].bids[1]);
 
-            console.log("2-ask1", response[2].asks[0]);
-            console.log("2-bid1", response[2].bids[0]);
+            console.log("\n", chain[1]);
+            console.log("ask1", response[1].asks[0]);
+            console.log("bid1", response[1].bids[0]);
+
+            console.log("ask2", response[1].asks[1]);
+            console.log("bid2", response[1].bids[1]);
+
+            console.log("\n", chain[2]);
+            console.log("ask1", response[2].asks[0]);
+            console.log("bid1", response[2].bids[0]);
+
+            console.log("ask2", response[2].asks[1]);
+            console.log("bid2", response[2].bids[1]);
             var end3 = new Date() - start3;
 
             console.info("Execution time3: %dms", end3);
