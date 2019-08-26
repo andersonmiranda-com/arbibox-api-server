@@ -56,7 +56,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 
     // loop every x seconds
     setInterval(function() {
-        quality.initialize();
+        quality.cleanup();
         verbose &&
             console.info(
                 ">>> Quality agent >",
@@ -70,22 +70,22 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Agent 3 - Execution
     ///
 
-    // loop every x seconds
-    setInterval(function() {
-        verbose &&
-            console.info(
-                ">>> Execution agent >",
-                colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
-            );
-        execution.initialize();
-    }, (configs.arbitrage.execution.checkInterval > 0
-        ? configs.arbitrage.execution.checkInterval
-        : 30) * 1000);
+    // // loop every x seconds
+    // setInterval(function() {
+    //     verbose &&
+    //         console.info(
+    //             ">>> Execution agent >",
+    //             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+    //         );
+    //     execution.initialize();
+    // }, (configs.arbitrage.execution.checkInterval > 0
+    //     ? configs.arbitrage.execution.checkInterval
+    //     : 30) * 1000);
 
-    /// started
-    verbose &&
-        console.info(
-            "\n>>> Bot started at",
-            colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
-        );
+    // /// started
+    // verbose &&
+    //     console.info(
+    //         "\n>>> Bot started at",
+    //         colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
+    //     );
 })();

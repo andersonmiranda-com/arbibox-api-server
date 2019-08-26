@@ -1,10 +1,9 @@
-const ccxt = require("ccxt");
 var moment = require("moment");
-const lodash = require("lodash");
-const configs = require("../../config/settings");
 const colors = require("colors");
 const util = require("util");
 
+const configs = require("../../config/settings");
+const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
 const db = require("../db");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +58,33 @@ function callCheck(opportunity) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
+/// Remove old and stucked opportunities
+///
+
+const cleanup = async function() {
+    ////////
+    // remove opportunities created some time ago - wich does not have upadates
+    ////////
+    const minutesAgo = moment()
+        .subtract(configs.arbitrage.quality.removeAfterMinutesOff, "minutes")
+        .toDate();
+
+    db.removeOpportunities({ $and: [{ opp_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
+
+    ////////
+    // remove poportunities with more than X iterractions and approved = false
+    ////////
+    db.removeOpportunities({
+        $and: [
+            // { approved: false },
+            { type: "PA" },
+            { $where: "this.lastest.length >= " + configs.arbitrage.quality.removeAfterIterations }
+        ]
+    });
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
 ///
 ///
 
@@ -72,12 +98,12 @@ async function checkOpportunity(opportunity) {
         //console.log(response);
         //console.log(opportunity.symbol);
 
-        let quality = { buy: false, sell: false };
+        let activity = { buy: false, sell: false };
         opportunity.approved = false;
 
         console.log("");
 
-        console.log(colors.yellow(">>>> "), opportunity.symbol);
+        console.log(colors.yellow("Q >>"), opportunity.symbol);
 
         for (let excTrade of response) {
             //console.log(excTrade);
@@ -86,10 +112,10 @@ async function checkOpportunity(opportunity) {
                 if (excTrade.id === opportunity.buy_at) {
                     let trades = excTrade.trades.find(trade => trade.side === "buy");
                     if (trades && trades.length !== 0) {
-                        quality.buy = true;
+                        activity.buy = true;
                         console.log(excTrade.id, colors.cyan("buy"), excTrade.trades[0].datetime);
                     } else {
-                        quality.buy = false;
+                        activity.buy = false;
                         console.log(excTrade.id, colors.magenta("no buy"));
                     }
                 }
@@ -97,10 +123,10 @@ async function checkOpportunity(opportunity) {
                 if (excTrade.id === opportunity.sell_at) {
                     let trades = excTrade.trades.find(trade => trade.side === "sell");
                     if (trades && trades.length !== 0) {
-                        quality.sell = true;
+                        activity.sell = true;
                         console.log(excTrade.id, colors.cyan("sell"), excTrade.trades[0].datetime);
                     } else {
-                        quality.sell = false;
+                        activity.sell = false;
                         console.log(excTrade.id, colors.magenta("no sell"));
                     }
                 }
@@ -109,14 +135,18 @@ async function checkOpportunity(opportunity) {
             }
         }
 
-        opportunity.qualified = true;
-        opportunity.approved = quality.sell && quality.buy;
-        opportunity.quality = quality;
-        db.updateOpportunity(opportunity);
+        opportunity.activity = activity;
 
-        if (opportunity.approved) {
-            console.log(colors.green(">>>> "), colors.green(opportunity.id));
+        if (quality.sell && quality.buy) {
+            // Approved on trading Activity, lets check orderBook
+            checkOrderBook(opportunity);
+        } else {
+            opportunity.qualified = true;
+            opportunity.approved = false;
+            db.updateOpportunity(opportunity);
+            console.log(colors.red("Q >>"), colors.red(opportunity.id));
         }
+
         // })
         // .catch(error => {
         //     console.error(colors.red("Error2:"), error.message);
@@ -128,57 +158,69 @@ async function checkOpportunity(opportunity) {
 ///
 ///
 
-async function fetchTrades(exchange, symbol) {
-    var exchangeInfo = {
-        id: exchange,
-        trades: [],
-        wallets: []
-    };
+async function checkOrderBook(opportunity) {
+    //let wallets = await fetchBalance(order.exchange);
+    //console.log("wallets", wallets);
 
-    try {
-        var _exchange;
+    console.log(colors.yellow("Q >> Checking orderBook..."), opportunity.id);
 
-        if (configs.keys[exchange]) {
-            _exchange = new ccxt[exchange]({
-                apiKey: configs.keys[exchange].apiKey,
-                secret: configs.keys[exchange].secret,
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
-            // exchangeInfo.wallets = await _exchange.fetchBalance();
-            // db.saveWallets(exchangeTickets.id, {
-            //     id: exchangeTickets.id,
-            //     free: exchangeTickets.wallets.free,
-            //     total: exchangeTickets.wallets.total
-            // });
+    let limit = 3;
+
+    let promises = [opportunity.buy_at, opportunity.sell_at].map(async exchange =>
+        Promise.resolve(await fetchOrderBook(exchange, opportunity.symbol))
+    );
+
+    Promise.all(promises).then(response => {
+        //console.log(response);
+
+        console.log("Q >> Profit Line 1", calculateProfit(opportunity.chain, response, 0));
+        console.log("Q >> Profit Line 2", calculateProfit(opportunity.chain, response, 1));
+
+        opportunity.profit_queue1 = calculateProfit(opportunity.chain, response, 0);
+        opportunity.profit_queue2 = calculateProfit(opportunity.chain, response, 1);
+
+        opportunity.qualified = true;
+
+        opportunity.ordersBook = {
+            cheched_at: moment().toDate(),
+            1: {
+                symbol: opportunity.symbol1,
+                side: opportunity.side1,
+                ask: response[0].asks[0],
+                bid: response[0].bids[0]
+            },
+            2: {
+                symbol: opportunity.symbol2,
+                side: opportunity.side2,
+                ask: response[1].asks[0],
+                bid: response[1].bids[0]
+            },
+            3: {
+                symbol: opportunity.symbol3,
+                side: opportunity.side3,
+                ask: response[2].asks[0],
+                bid: response[2].bids[0]
+            }
+        };
+
+        if (opportunity.profit_queue1 >= configs.triangular.search.minimumProfit) {
+            opportunity.approved = true;
+            console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
+            // call execution
+            execution.initialize(opportunity);
         } else {
-            _exchange = new ccxt[exchange]({
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
-            exchangeInfo.wallets = [];
+            opportunity.qualified = true;
+            opportunity.approved = false;
+            console.log(colors.red("Q >> Not approved"), colors.red(opportunity.id));
+            db.updateOpportunity(opportunity);
         }
 
-        let since =
-            _exchange.milliseconds() - configs.arbitrage.quality.lastTradeTimeLimit * 60 * 1000; //
-        let limit = 1;
-        exchangeInfo.trades = await _exchange.fetchTrades(symbol, since, limit);
-
-        //tickets.map(ticket => verbose && console.log(ticket));
-    } catch (error) {
-        console.error(colors.red("Error fetchTrades:"), error.message);
-        return exchangeInfo;
-    } finally {
-        return exchangeInfo;
-    }
+        //arbitrage.checkOpportunity(response);
+    });
 }
 
 module.exports = {
-    initialize
+    initialize,
+    cleanup,
+    checkOpportunity
 };

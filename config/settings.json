@@ -8,10 +8,7 @@
     "quoteCurrencies": true
   },
   "exchanges": [
-    "bitz",
     "bibox",
-    "lbank",
-    "bitmart",
     "huobipro",
     "okex",
     "binance",
@@ -118,7 +115,7 @@
 
   "arbitrage": {
     "search": {
-      "checkInterval": 20,
+      "checkInterval": 15,
       "minimumProfit": 0.5,
       "minimumProfitInvest": 0.5,
       "quoteCurrencyFunds": {
@@ -130,7 +127,7 @@
     },
 
     "quality": {
-      "checkInterval": 15,
+      "checkInterval": 60,
 
       "filter": {
         "lowVolume": true,

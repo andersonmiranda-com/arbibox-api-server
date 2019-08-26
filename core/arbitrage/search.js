@@ -1,10 +1,13 @@
 const ccxt = require("ccxt");
 const lodash = require("lodash");
-const configs = require("../../config/settings");
 const colors = require("colors");
 const util = require("util");
 const z = require("zero-fill");
 
+const configs = require("../../config/settings");
+const quality = require("./quality");
+
+const { fetchTickers } = require("../exchange");
 const db = require("../db");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -230,10 +233,10 @@ async function findOpportunities(tickets, exchangesSymbols) {
                 //arbitrage.checkOpportunity(response);
             )
             .catch(error => {
-                verbose && console.error(colors.red("Error2:"), error.message);
+                verbose && console.error(colors.red("S >> Error2:"), error.message);
             });
     } catch (error) {
-        verbose && console.error(colors.red("Error3:"), error.message);
+        verbose && console.error(colors.red("S >> Error3:"), error.message);
     }
 }
 
@@ -249,45 +252,8 @@ async function fetchTickersByExchange(exchange) {
         wallets: []
     };
 
-    try {
-        var _exchange;
-
-        if (configs.keys[exchange.id]) {
-            _exchange = new ccxt[exchange.id]({
-                apiKey: configs.keys[exchange.id].apiKey,
-                secret: configs.keys[exchange.id].secret,
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true
-            });
-            //exchangeTickets.wallets = await _exchange.fetchBalance();
-            //db.saveWallets(exchangeTickets.id, {
-            //    id: exchangeTickets.id,
-            //    free: exchangeTickets.wallets.free,
-            //    total: exchangeTickets.wallets.total
-            //});
-        } else {
-            _exchange = new ccxt[exchange.id]({
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true
-            });
-            exchangeTickets.wallets = [];
-        }
-
-        exchangeTickets.tickets = await _exchange.fetchTickers(exchange.symbols);
-
-        //db.saveTickets(exchangeTickets.id, {
-        //    id: exchangeTickets.id,
-        //    tickets: exchangeTickets.tickets
-        //});
-
-        //tickets.map(ticket => verbose && console.log(ticket));
-    } catch (error) {
-        verbose && console.error(exchange.id);
-        verbose && console.error(colors.red("Error:"), error.message);
-        return exchangeTickets;
-    } finally {
-        return exchangeTickets;
-    }
+    exchangeTickets.tickets = await fetchTickers(exchange.id);
+    return exchangeTickets;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,7 +355,7 @@ function filterOpportunities(prices) {
 
                 verbose &&
                     console.info(
-                        "✔".cyan,
+                        "S >> ".cyan,
                         colors.green(percentageAfterWdFees1.toFixed(4)),
                         "% ",
                         colors.yellow(z(9, opportunity.symbol, " ")),
@@ -405,6 +371,8 @@ function filterOpportunities(prices) {
                 //         })
                 //     );
                 db.upsertOpportunity(opportunity);
+
+                quality.checkOpportunity(opportunity);
             }
         }
         resolve();

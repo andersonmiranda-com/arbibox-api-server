@@ -1,6 +1,4 @@
-const ccxt = require("ccxt");
 var moment = require("moment");
-const lodash = require("lodash");
 const colors = require("colors");
 const util = require("util");
 
