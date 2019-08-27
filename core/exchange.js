@@ -2,6 +2,7 @@
 
 const ccxt = require("ccxt");
 const colors = require("colors");
+const moment = require("moment");
 
 const configs = require("../config/settings");
 ///////////////
@@ -10,23 +11,7 @@ const fetchTickers = async exchange => {
     let tickers = {};
 
     try {
-        var _exchange;
-
-        if (configs.keys[exchange]) {
-            _exchange = new ccxt[exchange]({
-                apiKey: configs.keys[exchange].apiKey,
-                secret: configs.keys[exchange].secret,
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true
-            });
-        } else {
-            _exchange = new ccxt[exchange]({
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true
-            });
-        }
-
-        tickers = await _exchange.fetchTickers();
+        tickers = await api[exchange].fetchTickers();
     } catch (error) {
         console.error(colors.red("X >> Error fetchTickers on:"), exchange);
         console.error(colors.red("X >> Error:"), error.message);
@@ -42,30 +27,8 @@ const fetchOrderBook = (exchange, symbol) => {
     return new Promise(async (resolve, reject) => {
         var orderBook = {};
         try {
-            var _exchange;
-
-            if (configs.keys[exchange]) {
-                _exchange = new ccxt[exchange]({
-                    apiKey: configs.keys[exchange].apiKey,
-                    secret: configs.keys[exchange].secret,
-                    timeout: configs.apiTimeout * 1000,
-                    enableRateLimit: true,
-                    nonce: function() {
-                        return this.milliseconds();
-                    }
-                });
-            } else {
-                _exchange = new ccxt[exchange]({
-                    timeout: configs.apiTimeout * 1000,
-                    enableRateLimit: true,
-                    nonce: function() {
-                        return this.milliseconds();
-                    }
-                });
-            }
-
             let limit = 5;
-            orderBook = await _exchange.fetchOrderBook(symbol, limit);
+            orderBook = await api[exchange].fetchOrderBook(symbol, limit);
             orderBook.exchange = exchange;
             orderBook.symbol = symbol;
             resolve(orderBook);
@@ -90,39 +53,9 @@ async function fetchTrades(exchange, symbol) {
     };
 
     try {
-        var _exchange;
-
-        if (configs.keys[exchange]) {
-            _exchange = new ccxt[exchange]({
-                apiKey: configs.keys[exchange].apiKey,
-                secret: configs.keys[exchange].secret,
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
-            // exchangeInfo.wallets = await _exchange.fetchBalance();
-            // db.saveWallets(exchangeTickets.id, {
-            //     id: exchangeTickets.id,
-            //     free: exchangeTickets.wallets.free,
-            //     total: exchangeTickets.wallets.total
-            // });
-        } else {
-            _exchange = new ccxt[exchange]({
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
-            exchangeInfo.wallets = [];
-        }
-
-        let since =
-            _exchange.milliseconds() - configs.triangular.quality.lastTradeTimeLimit * 60 * 1000; //
+        let since = moment().unix() - configs.triangular.quality.lastTradeTimeLimit * 60 * 1000; //
         let limit = 1;
-        exchangeInfo.trades = await _exchange.fetchTrades(symbol, since, limit);
+        exchangeInfo.trades = await api[exchange].fetchTrades(symbol, since, limit);
 
         //tickets.map(ticket => verbose && console.log(ticket));
     } catch (error) {
@@ -142,19 +75,8 @@ const fetchBalance = async exchange => {
     };
 
     try {
-        var _exchange;
-
         if (configs.keys[exchange]) {
-            _exchange = new ccxt[exchange]({
-                apiKey: configs.keys[exchange].apiKey,
-                secret: configs.keys[exchange].secret,
-                timeout: configs.apiTimeout * 1000,
-                enableRateLimit: true,
-                nonce: function() {
-                    return this.milliseconds();
-                }
-            });
-            exchangeInfo.wallets = await _exchange.fetchBalance();
+            exchangeInfo.wallets = await api[exchange].fetchBalance();
             //db.saveWallets(exchangeTickets.id, {
             //    id: exchangeTickets.id,
             //    free: exchangeTickets.wallets.free,
