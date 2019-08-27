@@ -3,11 +3,27 @@
   "marketFilter": {
     "exchanges": true,
     "exchangesBlacklist": true,
-    "baseCurrencies": false,
+    "baseCurrencies": true,
     "quoteCurrencies": true
   },
   "exchanges": [
-    "binance", "kucoin", "hitbtc", "poloniex", "exmo"
+    "poloniex",
+    "kraken",
+    "binance",
+    "bithumb",
+    "bibox",
+    "huobipro",
+    "okex",
+    "kucoin",
+    "hitbtc",
+    "bittrex",
+    "gateio",
+    "livecoin",
+    "exmo",
+    "cointiger",
+    "bibox",
+    "latoken",
+    "coss"
   ],
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"

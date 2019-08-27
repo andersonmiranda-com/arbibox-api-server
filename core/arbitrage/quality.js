@@ -235,7 +235,7 @@ async function checkOrderBook(opportunity) {
             opportunity.approved = true;
             opportunity.quality = { volume1: true };
             opportunity.amount_base = amount1;
-            opportunity.amount_quote = amount1 / bestAsk1.ask;
+            opportunity.amount_quote = amount1 * bestAsk1.ask;
             console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
@@ -243,7 +243,7 @@ async function checkOrderBook(opportunity) {
             opportunity.approved = true;
             opportunity.quality = { volume2: true };
             opportunity.amount_base = amount2;
-            opportunity.amount_quote = amount2 / bestAsk2.ask;
+            opportunity.amount_quote = amount2 * bestAsk2.ask;
             console.log(colors.green("Q >> Aproved Row 2"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
