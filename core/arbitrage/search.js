@@ -3,7 +3,6 @@ var moment = require("moment");
 
 const lodash = require("lodash");
 const colors = require("colors");
-const util = require("util");
 const z = require("zero-fill");
 
 const configs = require("../../config/settings");
@@ -20,6 +19,8 @@ const {
 const { fetchTickers } = require("../exchange");
 const db = require("../db");
 
+global.api = {};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// Prepare Tickets
@@ -33,7 +34,6 @@ const initialize = async function() {
     db.getWithdrawalFees(function(response) {
         global.withdrawalFees = response;
     });
-    let api = {};
     let exchanges = [];
 
     if (configs.marketFilter.exchanges) {

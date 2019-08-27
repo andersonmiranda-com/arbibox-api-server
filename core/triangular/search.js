@@ -12,10 +12,10 @@ const db = require("../db");
 const { calculateChainProfit, getConnectingAsset, getSides } = require("../util");
 const { fetchTickers } = require("../exchange");
 
+global.api = {};
+
 const args = process.argv;
-
 const verbose = false;
-
 const colorProfit = percentage => (percentage > 0 ? `${percentage}`.green : `${percentage}`.red);
 
 class Chain {
@@ -98,6 +98,7 @@ const initialize = async function() {
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else {
                 markets.push({ id: name, markets: _instance.markets });
+                api[name] = _instance;
                 //db.saveExchange(name, { symbols: _instance.symbols, markets: _instance.markets });
             }
         } catch (error) {
