@@ -1,8 +1,10 @@
 var moment = require("moment");
 const colors = require("colors");
-const util = require("util");
 
 const configs = require("../../config/settings");
+const execution = require("./execution");
+
+const { getPercentageAfterWdFees } = require("./common");
 const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
 const db = require("../db");
 
@@ -98,7 +100,7 @@ async function checkOpportunity(opportunity) {
         //console.log(response);
         //console.log(opportunity.symbol);
 
-        let activity = { buy: false, sell: false };
+        let quality = { buy: false, sell: false };
         opportunity.approved = false;
 
         console.log("");
@@ -112,10 +114,10 @@ async function checkOpportunity(opportunity) {
                 if (excTrade.id === opportunity.buy_at) {
                     let trades = excTrade.trades.find(trade => trade.side === "buy");
                     if (trades && trades.length !== 0) {
-                        activity.buy = true;
+                        quality.buy = true;
                         console.log(excTrade.id, colors.cyan("buy"), excTrade.trades[0].datetime);
                     } else {
-                        activity.buy = false;
+                        quality.buy = false;
                         console.log(excTrade.id, colors.magenta("no buy"));
                     }
                 }
@@ -123,10 +125,10 @@ async function checkOpportunity(opportunity) {
                 if (excTrade.id === opportunity.sell_at) {
                     let trades = excTrade.trades.find(trade => trade.side === "sell");
                     if (trades && trades.length !== 0) {
-                        activity.sell = true;
+                        quality.sell = true;
                         console.log(excTrade.id, colors.cyan("sell"), excTrade.trades[0].datetime);
                     } else {
-                        activity.sell = false;
+                        quality.sell = false;
                         console.log(excTrade.id, colors.magenta("no sell"));
                     }
                 }
@@ -135,16 +137,11 @@ async function checkOpportunity(opportunity) {
             }
         }
 
-        opportunity.activity = activity;
+        opportunity.quality = quality;
 
-        if (activity.sell && activity.buy) {
+        if (quality.sell && quality.buy) {
             // Approved on trading Activity, lets check orderBook
             checkOrderBook(opportunity);
-
-            opportunity.qualified = true;
-            opportunity.approved = true;
-            db.updateOpportunity(opportunity);
-            console.log(colors.green("Q >>"), colors.green(opportunity.id));
         } else {
             opportunity.qualified = true;
             opportunity.approved = false;
@@ -183,19 +180,38 @@ async function checkOrderBook(opportunity) {
         bestAsk1.ask = response[0].asks[0][0];
         bestAsk2.ask = response[0].asks[1][0];
 
+        bestAsk1.amount = response[0].asks[0][1];
+        bestAsk2.amount = response[0].asks[1][1];
+
         let bestBid1 = { ...opportunity.bestBid };
         let bestBid2 = { ...opportunity.bestBid };
         bestBid1.bid = response[1].bids[0][0];
         bestBid2.bid = response[1].bids[1][0];
 
-        getPercentageAfterWdFees = (funds, bestAsk1, bestBid1);
-        getPercentageAfterWdFees = (funds, bestAsk2, bestBid2);
+        bestBid1.amount = response[1].bids[0][1];
+        bestBid2.amount = response[1].bids[1][1];
 
-        console.log("Q >> Profit Row 1", calculateProfit(opportunity.chain, response, 0));
-        console.log("Q >> Profit Row 2", calculateProfit(opportunity.chain, response, 1));
+        //get max amount of investiment
+        // Row 1
+        let amount1 = bestAsk1.amount;
 
-        opportunity.profit_row1 = calculateProfit(opportunity.chain, response, 0);
-        opportunity.profit_row2 = calculateProfit(opportunity.chain, response, 1);
+        if (bestAsk1.amount > bestBid1.amount) {
+            amount1 = bestBid1.amount;
+        }
+
+        let profit1 = getPercentageAfterWdFees(amount1 * bestAsk1.ask, bestAsk1, bestBid1);
+
+        // Row 2
+        let amount2 = bestAsk2.amount;
+
+        if (bestAsk2.amount > bestBid2.amount) {
+            amount2 = bestBid2.amount;
+        }
+
+        let profit2 = getPercentageAfterWdFees(amount2 * bestAsk2.ask, bestAsk2, bestBid2);
+
+        console.log("Q >> Profit Row 1", profit1);
+        console.log("Q >> Profit Row 2", profit2);
 
         opportunity.qualified = true;
 
@@ -213,13 +229,26 @@ async function checkOrderBook(opportunity) {
             }
         };
 
-        if (opportunity.profit_queue1 >= configs.triangular.search.minimumProfit) {
+        opportunity.qualified = true;
+
+        if (profit1 >= configs.arbitrage.search.minimumProfit) {
             opportunity.approved = true;
-            console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
+            opportunity.quality = { volume1: true };
+            opportunity.amount_base = amount1;
+            opportunity.amount_quote = amount1 / bestAsk1.ask;
+            console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(opportunity.id));
+            // call execution
+            execution.initialize(opportunity);
+        } else if (profit2 >= configs.arbitrage.search.minimumProfit) {
+            opportunity.approved = true;
+            opportunity.quality = { volume2: true };
+            opportunity.amount_base = amount2;
+            opportunity.amount_quote = amount2 / bestAsk2.ask;
+            console.log(colors.green("Q >> Aproved Row 2"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
         } else {
-            opportunity.qualified = true;
+            opportunity.quality = { volume: false };
             opportunity.approved = false;
             console.log(colors.red("Q >> Not approved"), colors.red(opportunity.id));
             db.updateOpportunity(opportunity);

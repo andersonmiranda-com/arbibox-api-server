@@ -100,7 +100,7 @@
   "arbitrage": {
     "search": {
       "checkInterval": 15,
-      "minimumProfit": 0.05,
+      "minimumProfit": 0,
       "minimumProfitInvest": 0.5,
       "quoteCurrencyFunds": {
         "BTC": 0.1,
