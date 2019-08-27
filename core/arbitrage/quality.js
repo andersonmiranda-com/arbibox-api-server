@@ -4,7 +4,7 @@ const colors = require("colors");
 const configs = require("../../config/settings");
 const execution = require("./execution");
 
-const { getPercentageAfterWdFees } = require("./common");
+const { getPercentageAfterWdFees, getMinimunInversion } = require("./common");
 const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
 const db = require("../db");
 
@@ -234,16 +234,18 @@ async function checkOrderBook(opportunity) {
         if (profit1 >= configs.arbitrage.search.minimumProfit) {
             opportunity.approved = true;
             opportunity.quality = { volume1: true };
-            opportunity.amount_base = amount1;
-            opportunity.amount_quote = amount1 * bestAsk1.ask;
+            let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
+            opportunity.invest.min = { base: minBase, quote: minQuote };
+            opportunity.invest.max = { base: amount1, quote: amount1 * bestAsk1.ask };
             console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
         } else if (profit2 >= configs.arbitrage.search.minimumProfit) {
             opportunity.approved = true;
             opportunity.quality = { volume2: true };
-            opportunity.amount_base = amount2;
-            opportunity.amount_quote = amount2 * bestAsk2.ask;
+            let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
+            opportunity.invest.min = { base: minBase, quote: minQuote };
+            opportunity.invest.max = { base: amount2, quote: amount2 * bestAsk2.ask };
             console.log(colors.green("Q >> Aproved Row 2"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);

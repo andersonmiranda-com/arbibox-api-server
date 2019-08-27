@@ -345,10 +345,12 @@ function filterOpportunities(prices) {
                     profit: Number(percentageAfterWdFees1.toFixed(4)),
                     bestAsk: bestAsk,
                     bestBid: bestBid,
-                    invest_min: {
-                        base: minBase,
-                        quote: minQuote,
-                        profit_min: Number(percentageAfterWdFees2.toFixed(4))
+                    invest: {
+                        min: {
+                            base: minBase,
+                            quote: minQuote,
+                            profit_min: Number(percentageAfterWdFees2.toFixed(4))
+                        }
                     },
                     //bids: bidOrders.bids,
                     invest: configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency]

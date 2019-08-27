@@ -21,9 +21,7 @@
     "livecoin",
     "exmo",
     "cointiger",
-    "bibox",
-    "latoken",
-    "coss"
+    "bibox"
   ],
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"
