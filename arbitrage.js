@@ -74,7 +74,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         quality.cleanup();
         verbose &&
             console.info(
-                ">>> Quality agent >",
+                "Q >> Cleaning >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
     }, (configs.arbitrage.quality.checkInterval > 0
