@@ -346,14 +346,13 @@ function filterOpportunities(prices) {
                     bestAsk: bestAsk,
                     bestBid: bestBid,
                     invest: {
+                        calc: configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency],
                         min: {
                             base: minBase,
                             quote: minQuote,
                             profit_min: Number(percentageAfterWdFees2.toFixed(4))
                         }
-                    },
-                    //bids: bidOrders.bids,
-                    invest: configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency]
+                    }
                 };
 
                 verbose &&
