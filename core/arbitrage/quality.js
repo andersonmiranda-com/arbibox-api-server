@@ -91,16 +91,25 @@ const cleanup = async function() {
 ///
 
 async function checkOpportunity(opportunity) {
-    let promises = [opportunity.buy_at, opportunity.sell_at].map(async exchange =>
+    //checkOrderBook(opportunity);
+    //return;
+
+    let checkedOpportunity = await db.readOpportunities({
+        $and: [{ id: opportunity.id, qualified: { $exists: false } }]
+    });
+
+    if (checkedOpportunity.length === 0) return false;
+
+    let promises = [opportunity.buy_at, opportunity.sell_at].map(exchange =>
         Promise.resolve(fetchTrades(exchange, opportunity.symbol))
     );
 
-    Promise.all(promises).then(response => {
+    Promise.all(promises).then(async response => {
         //console.log(opportunity);
         //console.log(response);
         //console.log(opportunity.symbol);
 
-        let quality = { buy: false, sell: false };
+        let quality = { buy: false, sell: false, checked_at: moment().toDate() };
         opportunity.approved = false;
 
         console.log("");
@@ -160,7 +169,7 @@ async function checkOpportunity(opportunity) {
 ///
 ///
 
-async function checkOrderBook(opportunity) {
+function checkOrderBook(opportunity) {
     //let wallets = await fetchBalance(order.exchange);
     //console.log("wallets", wallets);
 
@@ -168,11 +177,11 @@ async function checkOrderBook(opportunity) {
 
     let limit = 3;
 
-    let promises = [opportunity.buy_at, opportunity.sell_at].map(async exchange =>
-        Promise.resolve(await fetchOrderBook(exchange, opportunity.symbol))
+    let promises = [opportunity.buy_at, opportunity.sell_at].map(exchange =>
+        Promise.resolve(fetchOrderBook(exchange, opportunity.symbol))
     );
 
-    Promise.all(promises).then(response => {
+    Promise.all(promises).then(async response => {
         //console.log(response);
 
         let bestAsk1 = { ...opportunity.bestAsk };
@@ -210,6 +219,10 @@ async function checkOrderBook(opportunity) {
 
         let profit2 = getPercentageAfterWdFees(amount2 * bestAsk2.ask, bestAsk2, bestBid2);
 
+        console.log("Q >> Invest Min", opportunity.invest.min);
+        console.log("Q >> Amount 1", amount1);
+        console.log("Q >> Amount 2", amount2);
+
         console.log("Q >> Profit Row 1", profit1);
         console.log("Q >> Profit Row 2", profit2);
 
@@ -233,24 +246,24 @@ async function checkOrderBook(opportunity) {
 
         if (profit1 >= configs.arbitrage.search.minimumProfit) {
             opportunity.approved = true;
-            opportunity.quality = { volume1: true };
-            let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
-            opportunity.invest.min = { base: minBase, quote: minQuote };
+            opportunity.quality = { volume1: true, checked_at: moment().toDate() };
+            //let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
+            //opportunity.invest.min = { base: minBase, quote: minQuote };
             opportunity.invest.max = { base: amount1, quote: amount1 * bestAsk1.ask };
             console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
         } else if (profit2 >= configs.arbitrage.search.minimumProfit) {
             opportunity.approved = true;
-            opportunity.quality = { volume2: true };
-            let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
-            opportunity.invest.min = { base: minBase, quote: minQuote };
+            opportunity.quality = { volume2: true, checked_at: moment().toDate() };
+            //let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
+            //opportunity.invest.min = { base: minBase, quote: minQuote };
             opportunity.invest.max = { base: amount2, quote: amount2 * bestAsk2.ask };
             console.log(colors.green("Q >> Aproved Row 2"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
         } else {
-            opportunity.quality = { volume: false };
+            opportunity.quality = { volume: false, checked_at: moment().toDate() };
             opportunity.approved = false;
             console.log(colors.red("Q >> Not approved"), colors.red(opportunity.id));
             db.updateOpportunity(opportunity);

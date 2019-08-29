@@ -21,7 +21,8 @@
     "livecoin",
     "exmo",
     "cointiger",
-    "bibox"
+    "bibox",
+    "bitlish"
   ],
   "exchangesBlacklist": [
     "coinmarketcap", "dx", "crex24"
@@ -87,7 +88,7 @@
   "triangular": {
     "search": {
       "checkInterval": 10,
-      "minimumProfit": 0.05,
+      "minimumProfit": -0.3,
       "targetAssets": ["BTC"]
     },
     "quality": {
@@ -113,8 +114,8 @@
 
   "arbitrage": {
     "search": {
-      "checkInterval": 15,
-      "minimumProfit": 0,
+      "checkInterval": 10,
+      "minimumProfit": 0.1,
       "minimumProfitInvest": 0.5,
       "quoteCurrencyFunds": {
         "BTC": 0.1,
@@ -125,11 +126,10 @@
     },
 
     "quality": {
-      "checkInterval": 60,
-
+      "checkInterval": 30,
       "filter": {
         "lowVolume": true,
-        "baseLowVolumeLimit": 0.1,
+        "baseLowVolumeLimit": 0.01,
         "quoteLowVolumeLimit": {
           "BTC": 0.1,
           "USD": 1000,
@@ -138,8 +138,8 @@
         }
       },
       "lastTradeTimeLimit": 5,
-      "removeAfterMinutesOff": 5,
-      "removeAfterIterations": 10
+      "removeAfterMinutesOff": 3,
+      "removeAfterIterations": 8
     },
 
     "execution": {

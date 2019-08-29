@@ -90,7 +90,7 @@ function callCheck(opportunity) {
 ///
 ///
 
-async function checkOpportunity(opportunity) {
+function checkOpportunity(opportunity) {
     let promises = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3].map(
         async symbol => Promise.resolve(fetchTrades(opportunity.exchange, symbol))
     );
@@ -105,7 +105,7 @@ async function checkOpportunity(opportunity) {
 
         console.log("");
 
-        console.log(colors.yellow("Q >> "), opportunity.id);
+        console.log(colors.yellow("Q >>"), opportunity.id);
 
         let symbolsOk = 0;
 
@@ -114,15 +114,15 @@ async function checkOpportunity(opportunity) {
             if (excTrade.trades && excTrade.trades.length >= 0) {
                 if (excTrade.trades.length !== 0) {
                     activity[excTrade.symbol] = true;
-                    console.log("Q >> ", excTrade.id, excTrade.symbol, colors.green("active"));
+                    console.log("Q >>", excTrade.id, excTrade.symbol, colors.green("active"));
                     symbolsOk++;
                 } else {
                     activity[excTrade.symbol] = false;
-                    console.log("Q >> ", excTrade.id, excTrade.symbol, colors.magenta("inactive"));
+                    console.log("Q >>", excTrade.id, excTrade.symbol, colors.magenta("inactive"));
                 }
             } else {
                 activity = false;
-                console.log("Q >> ", excTrade.id, colors.red("inactive"));
+                console.log("Q >>", excTrade.id, colors.red("inactive"));
             }
         }
 
@@ -148,7 +148,7 @@ async function checkOpportunity(opportunity) {
 ///
 ///
 
-async function checkOrderBook(opportunity) {
+function checkOrderBook(opportunity) {
     //let wallets = await fetchBalance(order.exchange);
     //console.log("wallets", wallets);
 
@@ -158,8 +158,8 @@ async function checkOrderBook(opportunity) {
 
     let coinChain = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3];
 
-    let promises = coinChain.map(async symbol =>
-        Promise.resolve(await fetchOrderBook(opportunity.exchange, symbol))
+    let promises = coinChain.map(symbol =>
+        Promise.resolve(fetchOrderBook(opportunity.exchange, symbol))
     );
 
     Promise.all(promises).then(response => {

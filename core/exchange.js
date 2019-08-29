@@ -52,10 +52,17 @@ async function fetchTrades(exchange, symbol) {
         wallets: []
     };
 
+    //var start1 = new Date();
+
     try {
-        let since = moment().unix() - configs.triangular.quality.lastTradeTimeLimit * 60 * 1000; //
+        let since =
+            api[exchange].milliseconds() -
+            configs.triangular.quality.lastTradeTimeLimit * 60 * 1000; //
         let limit = 1;
         exchangeInfo.trades = await api[exchange].fetchTrades(symbol, since, limit);
+
+        //   var end1 = new Date() - start1;
+        //   console.info("Execution fetchTrades: %dms", end1, exchange, symbol);
 
         //tickets.map(ticket => verbose && console.log(ticket));
     } catch (error) {

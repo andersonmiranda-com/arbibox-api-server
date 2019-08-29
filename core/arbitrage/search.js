@@ -89,8 +89,8 @@ const initialize = async function() {
                 //db.saveExchange(name, { symbols: _instance.symbols, markets: _instance.markets });
             }
         } catch (error) {
-            //verbose && console.error(colors.red("Error:"), error.message);
             verbose && console.error(colors.red("Error initiating:"), name);
+            verbose && console.error(colors.red("Error:"), error.message);
             checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
         }
     }
