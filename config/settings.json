@@ -88,7 +88,7 @@
   "triangular": {
     "search": {
       "checkInterval": 10,
-      "minimumProfit": -0.3,
+      "minimumProfit": 0.05,
       "targetAssets": ["BTC"]
     },
     "quality": {

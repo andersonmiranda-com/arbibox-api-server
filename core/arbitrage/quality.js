@@ -219,13 +219,6 @@ function checkOrderBook(opportunity) {
 
         let profit2 = getPercentageAfterWdFees(amount2 * bestAsk2.ask, bestAsk2, bestBid2);
 
-        console.log("Q >> Invest Min", opportunity.invest.min);
-        console.log("Q >> Amount 1", amount1);
-        console.log("Q >> Amount 2", amount2);
-
-        console.log("Q >> Profit Row 1", profit1);
-        console.log("Q >> Profit Row 2", profit2);
-
         opportunity.qualified = true;
 
         opportunity.ordersBook = {
@@ -247,18 +240,25 @@ function checkOrderBook(opportunity) {
         if (profit1 >= configs.arbitrage.search.minimumProfit) {
             opportunity.approved = true;
             opportunity.quality = { volume1: true, checked_at: moment().toDate() };
+            // min
             //let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
             //opportunity.invest.min = { base: minBase, quote: minQuote };
             opportunity.invest.max = { base: amount1, quote: amount1 * bestAsk1.ask };
+            console.log("Q >> Invest Min", opportunity.invest.min);
+            console.log("Q >> Amount 1", amount1);
+            console.log("Q >> Profit Row 1", profit1);
             console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
         } else if (profit2 >= configs.arbitrage.search.minimumProfit) {
             opportunity.approved = true;
             opportunity.quality = { volume2: true, checked_at: moment().toDate() };
+            // min
             //let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
             //opportunity.invest.min = { base: minBase, quote: minQuote };
             opportunity.invest.max = { base: amount2, quote: amount2 * bestAsk2.ask };
+            console.log("Q >> Invest Min", opportunity.invest.min);
+            console.log("Q >> Profit Row 2", profit2);
             console.log(colors.green("Q >> Aproved Row 2"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
