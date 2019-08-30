@@ -50,7 +50,7 @@ const initialize = async function() {
 
     for (let i = 0; i < exchanges.length; i++) {
         let name = exchanges[i];
-        verbose && console.log("Loading markets for", colors.green(name));
+        var start1 = new Date();
         try {
             var _instance;
 
@@ -69,7 +69,9 @@ const initialize = async function() {
             }
 
             await _instance.loadMarkets();
+            var end1 = new Date() - start1;
 
+            verbose && console.log("Loading markets for", colors.green(name), "-", end1, "ms");
             //CCXT API Exchange validation
             if (!_instance.has["fetchTickers"]) {
                 verbose && console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
