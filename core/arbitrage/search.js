@@ -289,24 +289,27 @@ function filterOpportunities(prices) {
 
         for (let priceAsk of prices) {
             if (
-                configs.arbitrage.quality.filter.lowVolume &&
+                configs.arbitrage.quality.filter.tickerVolume &&
                 (!priceAsk.baseVolume ||
                     !priceAsk.quoteVolume ||
-                    priceAsk.baseVolume <= configs.arbitrage.quality.filter.baseLowVolumeLimit ||
+                    priceAsk.baseVolume <=
+                        configs.arbitrage.quality.filter.tickerLowVolumeLimit.base ||
                     priceAsk.quoteVolume <=
-                        configs.arbitrage.quality.filter.quoteLowVolumeLimit[quoteCurrency])
+                        configs.arbitrage.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
             ) {
                 continue;
             }
             for (let priceBid of prices) {
                 if (
-                    configs.arbitrage.quality.filter.lowVolume &&
+                    configs.arbitrage.quality.filter.tickerVolume &&
                     (!priceBid.baseVolume ||
                         !priceBid.quoteVolume ||
                         priceBid.baseVolume <=
-                            configs.arbitrage.quality.filter.baseLowVolumeLimit ||
+                            configs.arbitrage.quality.filter.tickerLowVolumeLimit.base ||
                         priceBid.quoteVolume <=
-                            configs.arbitrage.quality.filter.quoteLowVolumeLimit[quoteCurrency])
+                            configs.arbitrage.quality.filter.tickerLowVolumeLimit.quote[
+                                quoteCurrency
+                            ])
                 ) {
                     continue;
                 }

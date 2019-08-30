@@ -96,13 +96,17 @@
     "quality": {
       "checkInterval": 60,
       "filter": {
-        "lowVolume": true,
-        "baseLowVolumeLimit": 0.1,
-        "quoteLowVolumeLimit": {
-          "BTC": 0.1,
-          "USD": 1000,
-          "USDT": 1000,
-          "ETH": 5
+        "tradeActivity": true,
+        "orderBookVolume": true,
+        "tickerVolume": false,
+        "tickerLowVolumeLimit": {
+          "base": 0.01,
+          "quote": {
+            "BTC": 0.1,
+            "USD": 1000,
+            "USDT": 1000,
+            "ETH": 5
+          }
         }
       },
       "lastTradeTimeLimit": 5,
@@ -131,13 +135,17 @@
     "quality": {
       "checkInterval": 30,
       "filter": {
-        "lowVolume": false,
-        "baseLowVolumeLimit": 0.01,
-        "quoteLowVolumeLimit": {
-          "BTC": 0.1,
-          "USD": 1000,
-          "USDT": 1000,
-          "ETH": 5
+        "tradeActivity": true,
+        "orderBookVolume": true,
+        "tickerVolume": false,
+        "tickerLowVolumeLimit": {
+          "base": 0.01,
+          "quote": {
+            "BTC": 0.1,
+            "USD": 1000,
+            "USDT": 1000,
+            "ETH": 5
+          }
         }
       },
       "lastTradeTimeLimit": 5,
