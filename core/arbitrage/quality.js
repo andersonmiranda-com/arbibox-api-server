@@ -241,8 +241,8 @@ function checkOrderBook(opportunity) {
             opportunity.approved = true;
             opportunity.quality = { volume1: true, checked_at: moment().toDate() };
             // min
-            //let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
-            //opportunity.invest.min = { base: minBase, quote: minQuote };
+            let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
+            opportunity.invest.min = { base: minBase, quote: minQuote };
             opportunity.invest.max = { base: amount1, quote: amount1 * bestAsk1.ask };
             console.log("Q >> Invest Min", opportunity.invest.min);
             console.log("Q >> Amount 1", amount1);
@@ -254,8 +254,8 @@ function checkOrderBook(opportunity) {
             opportunity.approved = true;
             opportunity.quality = { volume2: true, checked_at: moment().toDate() };
             // min
-            //let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
-            //opportunity.invest.min = { base: minBase, quote: minQuote };
+            let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
+            opportunity.invest.min = { base: minBase, quote: minQuote };
             opportunity.invest.max = { base: amount2, quote: amount2 * bestAsk2.ask };
             console.log("Q >> Invest Min", opportunity.invest.min);
             console.log("Q >> Profit Row 2", profit2);

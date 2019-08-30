@@ -286,6 +286,7 @@ function filterOpportunities(prices) {
     return new Promise(async (resolve, reject) => {
         let opportunities = [];
         let { baseCurrency, quoteCurrency } = getCurrencies(prices[0]);
+
         for (let priceAsk of prices) {
             if (
                 configs.arbitrage.quality.filter.lowVolume &&
@@ -309,6 +310,16 @@ function filterOpportunities(prices) {
                 ) {
                     continue;
                 }
+
+                /*  console.log(
+                    "S >>>",
+                    priceAsk.symbol,
+                    priceAsk.name,
+                    priceAsk.ask,
+                    priceBid.name,
+                    priceBid.bid
+                ); */
+
                 if (priceAsk.ask < priceBid.bid) {
                     opportunities.push({ bestAsk: priceAsk, bestBid: priceBid });
                     //verbose && console.log("\n\nbestBid:", priceBid);
@@ -331,9 +342,13 @@ function filterOpportunities(prices) {
                 bestBid
             );
 
-            //console.log("S >>", bestAsk.symbol, bestAsk.name, bestBid.name, percentageAfterWdFees1);
+            ///console.log("S >>", bestAsk.symbol, bestAsk.name, bestBid.name, percentageAfterWdFees1);
 
-            if (percentageAfterWdFees1 >= configs.arbitrage.search.minimumProfit) {
+            if (
+                percentageAfterWdFees1 >= configs.arbitrage.search.minimumProfit &&
+                percentageAfterWdFees1 < 100 &&
+                percentageAfterWdFees1 !== Infinity
+            ) {
                 let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
                 let percentageAfterWdFees2 = getPercentageAfterWdFees(minQuote, bestAsk, bestBid);
                 let opportunity = {

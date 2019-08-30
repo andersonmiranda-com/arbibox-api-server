@@ -62,7 +62,9 @@
     "QTUM"
   ],
 
-  "quoteCurrencies": ["BTC"],
+  "quoteCurrencies": [
+    "BTC", "ETH", "USDT"
+  ],
 
   "currenciesBlacklist": ["VIA"],
 
@@ -113,10 +115,11 @@
   },
 
   "arbitrage": {
+    "loop": true,
     "search": {
-      "checkInterval": 10,
+      "checkInterval": 5,
       "minimumProfit": 0.1,
-      "minimumProfitInvest": 0.5,
+      "minimumProfitInvest": 0.1,
       "quoteCurrencyFunds": {
         "BTC": 0.1,
         "USD": 1000,
@@ -128,7 +131,7 @@
     "quality": {
       "checkInterval": 30,
       "filter": {
-        "lowVolume": true,
+        "lowVolume": false,
         "baseLowVolumeLimit": 0.01,
         "quoteLowVolumeLimit": {
           "BTC": 0.1,
