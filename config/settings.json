@@ -8,7 +8,6 @@
   },
   "exchanges": [
     "poloniex",
-    "kraken",
     "binance",
     "bithumb",
     "bibox",
@@ -90,15 +89,15 @@
   "triangular": {
     "search": {
       "checkInterval": 10,
-      "minimumProfit": 0.05,
-      "targetAssets": ["BTC"]
+      "minimumProfit": 0,
+      "targetAssets": ["BTC", "ETH", "USDT"]
     },
     "quality": {
       "checkInterval": 60,
       "filter": {
         "tradeActivity": true,
         "orderBookVolume": true,
-        "tickerVolume": false,
+        "tickerVolume": true,
         "tickerLowVolumeLimit": {
           "base": 0.01,
           "quote": {
@@ -110,8 +109,8 @@
         }
       },
       "lastTradeTimeLimit": 5,
-      "removeAfterMinutesOff": 10,
-      "removeAfterIterations": 100
+      "removeAfterMinutesOff": 1,
+      "removeAfterIterations": 6
     },
     "execution": {
       "checkInterval": 6
@@ -122,7 +121,7 @@
     "loop": true,
     "search": {
       "checkInterval": 5,
-      "minimumProfit": 0.1,
+      "minimumProfit": 0.05,
       "minimumProfitInvest": 0.1,
       "quoteCurrencyFunds": {
         "BTC": 0.1,
@@ -149,8 +148,8 @@
         }
       },
       "lastTradeTimeLimit": 5,
-      "removeAfterMinutesOff": 3,
-      "removeAfterIterations": 8
+      "removeAfterMinutesOff": 1,
+      "removeAfterIterations": 6
     },
 
     "execution": {

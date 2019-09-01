@@ -40,6 +40,9 @@ class Chain {
 ///
 
 const initialize = async function() {
+    //initialize oppotunities table
+    db.removeOpportunities({ type: "TR" });
+
     let exchanges = [];
 
     if (configs.marketFilter.exchanges) {

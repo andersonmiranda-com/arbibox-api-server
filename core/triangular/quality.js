@@ -90,7 +90,16 @@ function callCheck(opportunity) {
 ///
 ///
 
-function checkOpportunity(opportunity) {
+async function checkOpportunity(opportunity) {
+    //checkOrderBook(opportunity);
+    //return;
+
+    let checkedOpportunity = await db.readOpportunities({
+        $and: [{ id: opportunity.id, qualified: { $exists: false } }]
+    });
+
+    if (checkedOpportunity.length === 0) return false;
+
     let promises = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3].map(
         async symbol => Promise.resolve(fetchTrades(opportunity.exchange, symbol))
     );
