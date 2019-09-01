@@ -4,7 +4,7 @@ const axios = require("axios");
 const configs = require("./config/settings");
 var moment = require("moment");
 
-async function test(name, chain) {
+async function test(name, symbol) {
     var _instance;
 
     if (configs.keys[name]) {
@@ -63,7 +63,7 @@ async function test(name, chain) {
     //         // always executed
     //     });
 
-    var start1 = new Date();
+    /*     var start1 = new Date();
     console.info("Start 1", start1);
 
     axios
@@ -81,14 +81,14 @@ async function test(name, chain) {
         })
         .finally(function() {
             // always executed
-        });
+        }); */
 
     var start1a = new Date();
     console.info("Start 1a", start1a);
 
-    _instance.fetchTickers().then(exc_tickers => {
+    _instance.loadMarkets().then(exc_tickers => {
         //let endtickers = chain.map(symbol => exc_tickers[symbol]);
-        //console.log("\nEndtickers", exc_tickers);
+        console.log("exc_tickers", exc_tickers);
 
         var end1a = new Date() - start1a;
         console.info("Execution time1a: %dms", end1a);
@@ -179,6 +179,6 @@ async function test(name, chain) {
     */
 }
 
-test("binance", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);
+test("kucoin", "MKR/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
 //test("cointiger", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);

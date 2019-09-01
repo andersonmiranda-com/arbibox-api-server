@@ -8,6 +8,7 @@
   },
   "exchanges": [
     "poloniex",
+    "kraken",
     "binance",
     "bithumb",
     "bibox",
@@ -120,9 +121,9 @@
   "arbitrage": {
     "loop": true,
     "search": {
-      "checkInterval": 5,
+      "checkInterval": 15,
       "minimumProfit": 0.05,
-      "minimumProfitInvest": 0.1,
+      "minimumProfitInvest": 0.05,
       "quoteCurrencyFunds": {
         "BTC": 0.1,
         "USD": 1000,
