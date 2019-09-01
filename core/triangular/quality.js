@@ -220,13 +220,13 @@ function checkOrderBook(opportunity) {
     });
 }
 
-const calculateProfit = (chain, orders, index) => {
+const calculateProfit = (chain, orders, row) => {
     const target = chain.targetAsset;
     const [symbol1, symbol2, symbol3] = chain.symbols;
 
-    const a = getPrice(symbol1, orders, index);
-    const b = getPrice(symbol2, orders, index);
-    const c = getPrice(symbol3, orders, index);
+    const a = getPrice(symbol1, orders, row);
+    const b = getPrice(symbol2, orders, row);
+    const c = getPrice(symbol3, orders, row);
 
     const fee1 = symbol1.taker;
     const fee2 = symbol2.taker;
@@ -236,16 +236,16 @@ const calculateProfit = (chain, orders, index) => {
     return profit;
 };
 
-const getPrice = (symbol, orders, index) => {
+const getPrice = (symbol, orders, row) => {
     let price = 0;
 
     let order = orders.find(o => o.symbol === symbol.symbol);
 
     if (order) {
         if (symbol.side === "buy") {
-            price = 1 / order.asks[index][0];
+            price = 1 / order.asks[row][0];
         } else if (symbol.side === "sell") {
-            price = order.bids[index][0];
+            price = order.bids[row][0];
         }
         return price;
     } else {
