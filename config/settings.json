@@ -109,8 +109,8 @@
         }
       },
       "lastTradeTimeLimit": 5,
-      "removeAfterMinutesOff": 1,
-      "removeAfterIterations": 6
+      "removeAfterMinutesOff": 2,
+      "removeAfterIterations": 10
     },
     "execution": {
       "checkInterval": 6
@@ -148,8 +148,8 @@
         }
       },
       "lastTradeTimeLimit": 5,
-      "removeAfterMinutesOff": 1,
-      "removeAfterIterations": 6
+      "removeAfterMinutesOff": 2,
+      "removeAfterIterations": 10
     },
 
     "execution": {
