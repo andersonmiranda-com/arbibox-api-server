@@ -207,6 +207,7 @@ function checkOrderBook(opportunity) {
         if (opportunity.profit_row1 >= configs.triangular.search.minimumProfit) {
             opportunity.approved = true;
             console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
+            opportunity.invest = { max: { quote: calcMaxInvest(opportunity.ordersBook) } };
             // call execution
             execution.initialize(opportunity);
         } else {
@@ -252,6 +253,51 @@ const getPrice = (symbol, orders, row) => {
         return 0;
     }
 };
+
+function calcMaxInvest(ordersBook) {
+    let investMax1 = 0;
+    let multiplier1 = 0;
+    if (ordersBook["1"].side === "sell") {
+        investMax1 = ordersBook["1"].bid[1];
+        multiplier1 = 1 / ordersBook["1"].bid[0];
+    } else {
+        investMax1 = ordersBook["1"].ask[1] * ordersBook["1"].ask[0];
+        multiplier1 = ordersBook["1"].ask[0];
+    }
+
+    let investMax3 = 0;
+    let multiplier3 = 0;
+
+    if (ordersBook["3"].side === "buy") {
+        investMax3 = ordersBook["3"].ask[1];
+        multiplier3 = 1 / ordersBook["3"].ask[0];
+    } else {
+        investMax3 = ordersBook["3"].bid[1] * ordersBook["3"].bid[0];
+        multiplier3 = ordersBook["3"].bid[0];
+    }
+
+    let investMax2 = 0;
+    if (ordersBook["2"].side === "buy") {
+        investMax2 = ordersBook["2"].ask[1] * ordersBook["2"].ask[0] * multiplier1;
+    } else {
+        investMax2 = ordersBook["2"].bid[1] * ordersBook["2"].bid[0] * multiplier3;
+    }
+
+    let maxInvest = lodash.min([investMax1, investMax2, investMax3]);
+
+    return maxInvest;
+
+    /*
+    console.log(
+        order.id,
+        maxInvest,
+        order.chain.symbols[0].limits.amount.min,
+    );
+    if (maxInvest >= order.chain.symbols[0].limits.amount.min) {
+        console.log(order.id, "approved", maxInvest);
+    }
+    */
+}
 
 module.exports = {
     initialize,

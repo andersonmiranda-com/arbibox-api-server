@@ -90,7 +90,7 @@
   "triangular": {
     "search": {
       "checkInterval": 10,
-      "minimumProfit": 0,
+      "minimumProfit": 0.05,
       "targetAssets": ["BTC", "ETH", "USDT"]
     },
     "quality": {
@@ -137,7 +137,7 @@
       "filter": {
         "tradeActivity": true,
         "orderBookVolume": true,
-        "tickerVolume": false,
+        "tickerVolume": true,
         "tickerLowVolumeLimit": {
           "base": 0.01,
           "quote": {
