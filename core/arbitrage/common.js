@@ -1,4 +1,4 @@
-const configs = require("../../config/settings");
+const configs = require("../../config/settings-arbitrage");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -13,7 +13,7 @@ const getWithdrawalFee = currency => {
 const getPercentage = (bestAsk, bestBid) => {
     let { baseCurrency, quoteCurrency } = getCurrencies(bestAsk);
 
-    let funds = configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency];
+    let funds = configs.search.quoteCurrencyFunds[quoteCurrency];
     let amount = funds / bestAsk.ask;
 
     let bought = bestAsk.ask * amount;
@@ -78,7 +78,7 @@ const getMinimunInversion = (bestAsk, bestBid) => {
             100 * bestAsk.ask * bestBid.bid * baseWithdrawalFee +
             100 * bestAsk.ask * quoteWithdrawalFee) /
         (100 * bestBid.bid * bestAsk.cost * bestBid.cost -
-            bestAsk.ask * configs.arbitrage.search.minimumProfitInvest -
+            bestAsk.ask * configs.search.minimumProfitInvest -
             100 * bestBid.bid * bestAsk.cost -
             100 * bestBid.bid * bestBid.cost -
             100 * bestAsk.ask +

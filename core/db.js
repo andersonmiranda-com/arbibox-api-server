@@ -4,7 +4,6 @@ var moment = require("moment");
 var lodash = require("lodash");
 var MongoClient = require("mongodb").MongoClient;
 var url = "mongodb://localhost:27017/";
-const configs = require("../config/settings");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -117,36 +116,6 @@ exports.removeOpportunities = function(query) {
             //console.log(res.result);
             client.close();
         });
-    });
-};
-
-exports.removeOpportunitiesBySymbol = function(symbol) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        var db = client.db("arbibox");
-        db.collection("opportunities").deleteMany({ symbol: symbol }, function(err, res) {
-            if (err) throw err;
-            //console.log(res.result);
-            client.close();
-        });
-    });
-};
-
-exports.removeOldOpportunitiesBySymbol = function(symbol) {
-    const minutesAgo = moment()
-        .subtract(configs.removeAfterMinutes, "minutes")
-        .toDate();
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        var db = client.db("arbibox");
-        db.collection("opportunities").deleteMany(
-            { symbol: symbol, created_at: { $lt: minutesAgo } },
-            function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                client.close();
-            }
-        );
     });
 };
 

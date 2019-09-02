@@ -5,7 +5,7 @@ const colors = require("colors");
 const z = require("zero-fill");
 const n = require("numbro");
 
-const configs = require("../../config/settings");
+const configs = require("../../config/settings-triangular");
 const quality = require("./quality");
 
 const db = require("../db");
@@ -166,7 +166,7 @@ async function findChains(targetAssets, exchange, markets) {
                 ); */
 
                 if (
-                    chainResult.triagePercentage >= configs.triangular.search.minimumProfit &&
+                    chainResult.triagePercentage >= configs.search.minimumProfit &&
                     chainResult.triagePercentage <= 200 &&
                     chainResult.triagePercentage !== Infinity
                 ) {

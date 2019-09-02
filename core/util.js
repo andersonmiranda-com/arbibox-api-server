@@ -1,6 +1,6 @@
 "use strict";
 
-const configs = require("../config/settings");
+const configs = require("../config/settings-arbitrage");
 
 const colors = require("colors");
 
@@ -44,12 +44,12 @@ const getMultiplier = (symbol, inputTarget, ticker) => {
         //console.log("S >>", symbol.symbol);
 
         if (
-            configs.triangular.quality.filter.tickerVolume &&
+            configs.quality.filter.tickerVolume &&
             (!ticker.baseVolume ||
                 !ticker.quoteVolume ||
-                ticker.baseVolume <= configs.triangular.quality.filter.tickerLowVolumeLimit.base ||
+                ticker.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
                 ticker.quoteVolume <=
-                    configs.triangular.quality.filter.tickerLowVolumeLimit.quote[getQuote(symbol)])
+                    configs.quality.filter.tickerLowVolumeLimit.quote[getQuote(symbol)])
         ) {
             multiplier = 0;
             //console.log(colors.red("S >>"), symbol.symbol, "Low Volume");

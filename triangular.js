@@ -3,7 +3,7 @@
 var moment = require("moment");
 const colors = require("colors");
 
-const configs = require("./config/settings");
+const configs = require("./config/settings-triangular");
 
 const search = require("./core/triangular/search");
 const quality = require("./core/triangular/quality");
@@ -17,11 +17,7 @@ let searchCounter = 1;
 
 const interval =
     1000 *
-    (args[3]
-        ? args[3]
-        : configs.triangular.search.checkInterval > 0
-        ? configs.triangular.search.checkInterval
-        : 60);
+    (args[3] ? args[3] : configs.search.checkInterval > 0 ? configs.search.checkInterval : 60);
 
 const logo = ` 
 ----------------------------------------------------------------
@@ -54,7 +50,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
 
     //db.removeAllOpportunities();
-    let targetAssets = configs.triangular.search.targetAssets;
+    let targetAssets = configs.search.targetAssets;
     const { exchanges, markets } = await search.initialize();
     console.info(
         "S >> Scan " + searchCounter + " >",
@@ -84,9 +80,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
                 "Q >> Cleaning >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.triangular.quality.checkInterval > 0
-        ? configs.triangular.quality.checkInterval
-        : 30) * 1000);
+    }, (configs.quality.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 3 - Execution
@@ -100,7 +94,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     //             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
     //         );
     //     execution.initialize();
-    // }, (configs.triangular.execution.checkInterval > 0
-    //     ? configs.triangular.execution.checkInterval
+    // }, (configs.execution.checkInterval > 0
+    //     ? configs.execution.checkInterval
     //     : 30) * 1000);
 })();

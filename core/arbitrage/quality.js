@@ -1,7 +1,7 @@
 var moment = require("moment");
 const colors = require("colors");
 
-const configs = require("../../config/settings");
+const configs = require("../../config/settings-arbitrage");
 const execution = require("./execution");
 
 const { getPercentageAfterWdFees, getMinimunInversion } = require("./common");
@@ -17,7 +17,7 @@ const initialize = async function() {
     // remove opportunities created some time ago - wich does not have upadates
     ////////
     const minutesAgo = moment()
-        .subtract(configs.arbitrage.quality.removeAfterMinutesOff, "minutes")
+        .subtract(configs.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
     db.removeOpportunities({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "PA" }] });
@@ -29,7 +29,7 @@ const initialize = async function() {
         $and: [
             // { approved: false },
             { type: "PA" },
-            { $where: "this.lastest.length >= " + configs.arbitrage.quality.removeAfterIterations }
+            { $where: "this.lastest.length >= " + configs.quality.removeAfterIterations }
         ]
     });
 
@@ -68,7 +68,7 @@ const cleanup = async function() {
     // remove opportunities created some time ago - wich does not have upadates
     ////////
     const minutesAgo = moment()
-        .subtract(configs.arbitrage.quality.removeAfterMinutesOff, "minutes")
+        .subtract(configs.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
     db.removeOpportunities({ $and: [{ opp_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
@@ -80,25 +80,29 @@ const cleanup = async function() {
         $and: [
             // { approved: false },
             { type: "PA" },
-            { $where: "this.lastest.length >= " + configs.arbitrage.quality.removeAfterIterations }
+            { $where: "this.lastest.length >= " + configs.quality.removeAfterIterations }
         ]
     });
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-///
+/// checkOpportunity
 ///
 
 async function checkOpportunity(opportunity) {
-    //checkOrderBook(opportunity);
-    //return;
-
     let checkedOpportunity = await db.readOpportunities({
         $and: [{ id: opportunity.id, qualified: { $exists: false } }]
     });
-
     if (checkedOpportunity.length === 0) return false;
+
+    opportunity.qualified = true;
+    db.updateOpportunity(opportunity);
+
+    if (!configs.quality.filter.tradeActivity) {
+        checkOrderBook(opportunity);
+        return;
+    }
 
     let promises = [opportunity.buy_at, opportunity.sell_at].map(exchange =>
         Promise.resolve(fetchTrades(exchange, opportunity.symbol))
@@ -166,7 +170,7 @@ async function checkOpportunity(opportunity) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-///
+/// checkOrderBook
 ///
 
 function checkOrderBook(opportunity) {
@@ -235,9 +239,9 @@ function checkOrderBook(opportunity) {
             }
         };
 
-        opportunity.qualified = true;
+        console.log("profit1", opportunity.id, profit1);
 
-        if (profit1 >= configs.arbitrage.search.minimumProfit) {
+        if (profit1 >= configs.search.minimumProfit) {
             opportunity.approved = true;
             opportunity.quality = { volume1: true, checked_at: moment().toDate() };
             // min
@@ -250,7 +254,7 @@ function checkOrderBook(opportunity) {
             console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
-        } else if (profit2 >= configs.arbitrage.search.minimumProfit) {
+        } else if (profit2 >= configs.search.minimumProfit) {
             opportunity.approved = true;
             opportunity.quality = { volume2: true, checked_at: moment().toDate() };
             // min

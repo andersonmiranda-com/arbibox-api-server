@@ -21,6 +21,8 @@ async function test(name, symbol) {
         });
     }
 
+    await _instance.loadMarkets;
+
     //console.log(_instance);
     //console.log(await _instance.loadMarkets());
     //let markets = await _instance.fetchMarkets();
@@ -44,8 +46,8 @@ async function test(name, symbol) {
 
     ///
 
-    var start0 = new Date();
-    console.info("Start 0", start0);
+    //var start0 = new Date();
+    //console.info("Start 0", start0);
 
     // axios
     //     .get("https://api.binance.com/api/v3/ticker/bookTicker")
@@ -86,13 +88,12 @@ async function test(name, symbol) {
     var start1a = new Date();
     console.info("Start 1a", start1a);
 
-    _instance.loadMarkets().then(exc_tickers => {
-        //let endtickers = chain.map(symbol => exc_tickers[symbol]);
-        console.log("exc_tickers", exc_tickers);
+    let exc_tickers = await _instance.fetchTickers();
+    //let endtickers = chain.map(symbol => exc_tickers[symbol]);
+    console.log("exc_tickers", exc_tickers);
 
-        var end1a = new Date() - start1a;
-        console.info("Execution time1a: %dms", end1a);
-    });
+    var end1a = new Date() - start1a;
+    console.info("Execution time1a: %dms", end1a);
 
     /*
     
@@ -179,6 +180,6 @@ async function test(name, symbol) {
     */
 }
 
-test("kucoin", "MKR/BTC");
+test("bitstamp", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
 //test("cointiger", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);

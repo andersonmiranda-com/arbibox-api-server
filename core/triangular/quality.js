@@ -4,7 +4,7 @@ const lodash = require("lodash");
 
 const util = require("util");
 
-const configs = require("../../config/settings");
+const configs = require("../../config/settings-triangular");
 const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
 const execution = require("./execution");
 
@@ -19,7 +19,7 @@ const initialize = async function() {
     // remove opportunities created some time ago - wich does not have upadates
     ////////
     const minutesAgo = moment()
-        .subtract(configs.triangular.quality.removeAfterMinutesOff, "minutes")
+        .subtract(configs.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
     db.removeOpportunities({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "TR" }] });
@@ -31,7 +31,7 @@ const initialize = async function() {
         $and: [
             // { approved: false },
             { type: "TR" },
-            { $where: "this.lastest.length >= " + configs.triangular.quality.removeAfterIterations }
+            { $where: "this.lastest.length >= " + configs.quality.removeAfterIterations }
         ]
     });
 
@@ -55,7 +55,7 @@ const cleanup = async function() {
     // remove opportunities created some time ago - wich does not have upadates
     ////////
     const minutesAgo = moment()
-        .subtract(configs.triangular.quality.removeAfterMinutesOff, "minutes")
+        .subtract(configs.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
     db.removeOpportunities({ $and: [{ opp_created_at: { $lt: minutesAgo } }, { type: "TR" }] });
@@ -67,7 +67,7 @@ const cleanup = async function() {
         $and: [
             // { approved: false },
             { type: "TR" },
-            { $where: "this.lastest.length >= " + configs.triangular.quality.removeAfterIterations }
+            { $where: "this.lastest.length >= " + configs.quality.removeAfterIterations }
         ]
     });
 };
@@ -93,14 +93,15 @@ function callCheck(opportunity) {
 ///
 
 async function checkOpportunity(opportunity) {
-    //checkOrderBook(opportunity);
-    //return;
-
     let checkedOpportunity = await db.readOpportunities({
         $and: [{ id: opportunity.id, qualified: { $exists: false } }]
     });
-
     if (checkedOpportunity.length === 0) return false;
+
+    if (!configs.quality.filter.tradeActivity) {
+        checkOrderBook(opportunity);
+        return;
+    }
 
     let promises = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3].map(
         async symbol => Promise.resolve(fetchTrades(opportunity.exchange, symbol))
@@ -206,7 +207,7 @@ function checkOrderBook(opportunity) {
             }
         };
 
-        if (opportunity.profit_row1 >= configs.triangular.search.minimumProfit) {
+        if (opportunity.profit_row1 >= configs.search.minimumProfit) {
             opportunity.approved = true;
             console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
             opportunity.invest = { max: { quote: calcMaxInvest(opportunity.ordersBook) } };

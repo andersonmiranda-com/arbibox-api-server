@@ -3,7 +3,7 @@ const lodash = require("lodash");
 const colors = require("colors");
 const util = require("util");
 
-const configs = require("../../config/settings");
+const configs = require("../../config/settings-triangular");
 const db = require("../db");
 const { fetchBalance, fetchOrderBook } = require("../exchange");
 

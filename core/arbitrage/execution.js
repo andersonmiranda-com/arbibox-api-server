@@ -1,5 +1,5 @@
 var moment = require("moment");
-const configs = require("../../config/settings");
+const configs = require("../../config/settings-arbitrage");
 const colors = require("colors");
 
 const db = require("../db");
@@ -21,7 +21,7 @@ const initialize = async function(opportunity) {
 
 const prepareOrder = order => {
     // remove from opportunities
-    db.removeOpportunities({ id: order.id });
+    //db.removeOpportunities({ id: order.id });
     delete order._id;
     order.ord_created_at = moment().toDate();
     // add to orders collection

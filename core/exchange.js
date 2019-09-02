@@ -1,10 +1,8 @@
 "use strict";
 
-const ccxt = require("ccxt");
 const colors = require("colors");
-const moment = require("moment");
 
-const configs = require("../config/settings");
+const configs = require("../config/settings-triangular");
 ///////////////
 
 const fetchTickers = async exchange => {
@@ -55,9 +53,7 @@ async function fetchTrades(exchange, symbol) {
     //var start1 = new Date();
 
     try {
-        let since =
-            api[exchange].milliseconds() -
-            configs.triangular.quality.lastTradeTimeLimit * 60 * 1000; //
+        let since = api[exchange].milliseconds() - configs.quality.lastTradeTimeLimit * 60 * 1000; //
         let limit = 1;
         exchangeInfo.trades = await api[exchange].fetchTrades(symbol, since, limit);
 

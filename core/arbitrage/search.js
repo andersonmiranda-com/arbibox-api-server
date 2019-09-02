@@ -5,7 +5,7 @@ const lodash = require("lodash");
 const colors = require("colors");
 const z = require("zero-fill");
 
-const configs = require("../../config/settings");
+const configs = require("../../config/settings-arbitrage");
 const quality = require("./quality");
 
 const {
@@ -289,27 +289,23 @@ function filterOpportunities(prices) {
 
         for (let priceAsk of prices) {
             if (
-                configs.arbitrage.quality.filter.tickerVolume &&
+                configs.quality.filter.tickerVolume &&
                 (!priceAsk.baseVolume ||
                     !priceAsk.quoteVolume ||
-                    priceAsk.baseVolume <=
-                        configs.arbitrage.quality.filter.tickerLowVolumeLimit.base ||
+                    priceAsk.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
                     priceAsk.quoteVolume <=
-                        configs.arbitrage.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
+                        configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
             ) {
                 continue;
             }
             for (let priceBid of prices) {
                 if (
-                    configs.arbitrage.quality.filter.tickerVolume &&
+                    configs.quality.filter.tickerVolume &&
                     (!priceBid.baseVolume ||
                         !priceBid.quoteVolume ||
-                        priceBid.baseVolume <=
-                            configs.arbitrage.quality.filter.tickerLowVolumeLimit.base ||
+                        priceBid.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
                         priceBid.quoteVolume <=
-                            configs.arbitrage.quality.filter.tickerLowVolumeLimit.quote[
-                                quoteCurrency
-                            ])
+                            configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
                 ) {
                     continue;
                 }
@@ -340,7 +336,7 @@ function filterOpportunities(prices) {
             let quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
 
             let percentageAfterWdFees1 = getPercentageAfterWdFees(
-                configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency],
+                configs.search.quoteCurrencyFunds[quoteCurrency],
                 bestAsk,
                 bestBid
             );
@@ -348,7 +344,7 @@ function filterOpportunities(prices) {
             ///console.log("S >>", bestAsk.symbol, bestAsk.name, bestBid.name, percentageAfterWdFees1);
 
             if (
-                percentageAfterWdFees1 >= configs.arbitrage.search.minimumProfit &&
+                percentageAfterWdFees1 >= configs.search.minimumProfit &&
                 percentageAfterWdFees1 < 100 &&
                 percentageAfterWdFees1 !== Infinity
             ) {
@@ -366,7 +362,7 @@ function filterOpportunities(prices) {
                     bestAsk: bestAsk,
                     bestBid: bestBid,
                     invest: {
-                        calc: configs.arbitrage.search.quoteCurrencyFunds[quoteCurrency],
+                        calc: configs.search.quoteCurrencyFunds[quoteCurrency],
                         min: {
                             base: minBase,
                             quote: minQuote,

@@ -2,7 +2,7 @@
 
 var moment = require("moment");
 const colors = require("colors");
-const configs = require("./config/settings");
+const configs = require("./config/settings-arbitrage");
 
 /// agent 1 - opportunities search
 const search = require("./core/arbitrage/search");
@@ -62,8 +62,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
                 "S >> Scan " + searchCounter + " >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.arbitrage.search.checkInterval > 0 ? configs.arbitrage.search.checkInterval : 30) *
-        1000);
+    }, (configs.search.checkInterval > 0 ? configs.search.checkInterval : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 2 - Quality
@@ -77,9 +76,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
                 "Q >> Cleaning >",
                 colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
             );
-    }, (configs.arbitrage.quality.checkInterval > 0
-        ? configs.arbitrage.quality.checkInterval
-        : 30) * 1000);
+    }, (configs.quality.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 3 - Execution
@@ -93,8 +90,8 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     //             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
     //         );
     //     execution.initialize();
-    // }, (configs.arbitrage.execution.checkInterval > 0
-    //     ? configs.arbitrage.execution.checkInterval
+    // }, (configs.execution.checkInterval > 0
+    //     ? configs.execution.checkInterval
     //     : 30) * 1000);
 
     // /// started
