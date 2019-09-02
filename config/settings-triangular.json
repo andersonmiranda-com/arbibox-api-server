@@ -22,8 +22,7 @@
         "bitlish",
         "coss",
         "liquid",
-        "cex",
-        "deribit"
+        "cex"
     ],
     "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
     "baseCurrencies": [

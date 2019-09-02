@@ -57,7 +57,7 @@
         "QTUM"
     ],
 
-    "quoteCurrencies": ["BTC", "ETH", "USDT"],
+    "quoteCurrencies": ["BTC"],
 
     "currenciesBlacklist": ["VIA"],
 
