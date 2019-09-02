@@ -90,7 +90,7 @@
   "triangular": {
     "search": {
       "checkInterval": 10,
-      "minimumProfit": 0.05,
+      "minimumProfit": 0,
       "targetAssets": ["BTC", "ETH", "USDT"]
     },
     "quality": {
@@ -109,9 +109,9 @@
           }
         }
       },
-      "lastTradeTimeLimit": 5,
+      "lastTradeTimeLimit": 10,
       "removeAfterMinutesOff": 2,
-      "removeAfterIterations": 10
+      "removeAfterIterations": 12
     },
     "execution": {
       "checkInterval": 6
@@ -121,7 +121,7 @@
   "arbitrage": {
     "loop": true,
     "search": {
-      "checkInterval": 15,
+      "checkInterval": 10,
       "minimumProfit": 0.05,
       "minimumProfitInvest": 0.05,
       "quoteCurrencyFunds": {
@@ -148,9 +148,9 @@
           }
         }
       },
-      "lastTradeTimeLimit": 5,
+      "lastTradeTimeLimit": 10,
       "removeAfterMinutesOff": 2,
-      "removeAfterIterations": 10
+      "removeAfterIterations": 12
     },
 
     "execution": {

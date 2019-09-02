@@ -161,13 +161,15 @@ async function findChains(targetAssets, exchange, markets) {
             try {
                 chainResult = calculateChainProfit(exchange, chain, tickers);
 
+                /* console.log(
+                    chain + "; triage: " + colorProfit(chainResult.triagePercentage) + " %"
+                ); */
+
                 if (
                     chainResult.triagePercentage >= configs.triangular.search.minimumProfit &&
                     chainResult.triagePercentage <= 200 &&
                     chainResult.triagePercentage !== Infinity
                 ) {
-                    //console.log(chain + "; triage: " + colorProfit(chain.triagePercentage) + " %");
-
                     try {
                         let finalChain = getSides(chainResult);
 

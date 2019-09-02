@@ -1,5 +1,7 @@
 var moment = require("moment");
 const colors = require("colors");
+const lodash = require("lodash");
+
 const util = require("util");
 
 const configs = require("../../config/settings");
