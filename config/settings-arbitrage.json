@@ -57,7 +57,7 @@
         "QTUM"
     ],
 
-    "quoteCurrencies": ["BTC"],
+    "quoteCurrencies": ["BTC", "ETH", "USDT"],
 
     "currenciesBlacklist": ["VIA"],
 
@@ -91,7 +91,7 @@
     "search": {
         "checkInterval": 10,
         "minimumProfit": 0.1,
-        "minimumProfitInvest": 0.05,
+        "minimumProfitInvest": 0.1,
         "quoteCurrencyFunds": {
             "BTC": 0.1,
             "USD": 1000,
