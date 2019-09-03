@@ -168,8 +168,7 @@ function checkOrderBook(opportunity) {
     //let wallets = await fetchBalance(order.exchange);
     //console.log("wallets", wallets);
 
-    console.log(colors.yellow("Q >> Checking orderBook..."), opportunity.id);
-
+    console.log(colors.yellow("Q >>"), "Checking orderBook...", opportunity.id);
     let limit = 3;
 
     let coinChain = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3];
@@ -223,7 +222,8 @@ function checkOrderBook(opportunity) {
             };
 
             console.log(
-                colors.red("Q >> Not approved - Max invest is too low"),
+                colors.red("Q >>"),
+                "Not approved - Max invest is too low",
                 colors.red(opportunity.id)
             );
             db.updateOpportunity(opportunity);
@@ -249,7 +249,8 @@ function checkOrderBook(opportunity) {
             };
             opportunity.approved = false;
             console.log(
-                colors.red("Q >> Not approved - Insuficient volume in orderBook"),
+                colors.red("Q >>"),
+                "Not approved - Insuficient volume in orderBook",
                 colors.red(opportunity.id)
             );
             db.updateOpportunity(opportunity);

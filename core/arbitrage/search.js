@@ -243,7 +243,7 @@ async function findOpportunities(tickets, exchangesSymbols, searchCounter) {
 
                     console.info(
                         "S >> Scan " + searchCounter + " finished >",
-                        colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+                        moment().format("dddd, MMMM D YYYY, h:mm:ss a")
                     );
                 }
 
@@ -310,14 +310,14 @@ function filterOpportunities(prices) {
                     continue;
                 }
 
-                /*  console.log(
-                    "S >>>",
-                    priceAsk.symbol,
-                    priceAsk.name,
-                    priceAsk.ask,
-                    priceBid.name,
-                    priceBid.bid
-                ); */
+                // console.log(
+                //     "S >>>",
+                //     priceAsk.symbol,
+                //     priceAsk.name,
+                //     priceAsk.ask,
+                //     priceBid.name,
+                //     priceBid.bid
+                // );
 
                 if (priceAsk.ask < priceBid.bid) {
                     opportunities.push({ bestAsk: priceAsk, bestBid: priceBid });
@@ -332,8 +332,8 @@ function filterOpportunities(prices) {
 
             let percentage = getPercentage(bestAsk, bestBid);
 
-            let baseWithdrawalFee = getWithdrawalFee(baseCurrency);
-            let quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
+            bestAsk.baseWithdrawalFee = getWithdrawalFee(baseCurrency);
+            bestBid.quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
 
             let percentageAfterWdFees1 = getPercentageAfterWdFees(
                 configs.search.quoteCurrencyFunds[quoteCurrency],
@@ -341,7 +341,7 @@ function filterOpportunities(prices) {
                 bestBid
             );
 
-            ///console.log("S >>", bestAsk.symbol, bestAsk.name, bestBid.name, percentageAfterWdFees1);
+            //console.log("S >>", bestAsk.symbol, bestAsk.name, bestBid.name, percentageAfterWdFees1);
 
             if (
                 percentageAfterWdFees1 >= configs.search.minimumProfit &&
@@ -372,10 +372,10 @@ function filterOpportunities(prices) {
 
                 verbose &&
                     console.info(
-                        "S >>".cyan,
+                        "S >>",
                         colors.green(percentageAfterWdFees1.toFixed(4)),
                         "% ",
-                        colors.yellow(z(9, opportunity.symbol, " ")),
+                        z(9, opportunity.symbol, " "),
                         z(10, opportunity.buy_at, " "),
                         z(10, opportunity.sell_at, " ")
                     );

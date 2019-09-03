@@ -132,7 +132,7 @@ function findOpportunities(exchanges, markets, targetAssets, searchCounter) {
     Promise.all(promises).then(response => {
         console.info(
             "S >> Scan " + searchCounter + " finished >",
-            colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+            moment().format("dddd, MMMM D YYYY, h:mm:ss a")
         );
         //console.info(">>> Triangular scan finished at", new Date());
 

@@ -40,10 +40,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 
     /// started
     verbose &&
-        console.info(
-            "\n>> Bot started at",
-            colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
-        );
+        console.info("\n>> Bot started at", moment().format("dddd, MMMM Do YYYY, h:mm:ss a"));
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 1 - Search
@@ -54,7 +51,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     const { exchanges, markets } = await search.initialize();
     console.info(
         "S >> Scan " + searchCounter + " >",
-        colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+        moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     );
     search.findOpportunities(exchanges, markets, targetAssets, searchCounter);
 
@@ -64,7 +61,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         search.findOpportunities(exchanges, markets, targetAssets, searchCounter);
         console.info(
             "S >> Scan " + searchCounter + " >",
-            colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+            moment().format("dddd, MMMM D YYYY, h:mm:ss a")
         );
     }, interval);
 
@@ -75,11 +72,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     // loop every x seconds
     setInterval(function() {
         quality.cleanup();
-        verbose &&
-            console.info(
-                "Q >> Cleaning >",
-                colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
-            );
+        verbose && console.info("Q >> Cleaning >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
     }, (configs.quality.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +84,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     //     verbose &&
     //         console.info(
     //             "E >> Starting >",
-    //             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+    //             moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     //         );
     //     execution.initialize();
     // }, (configs.execution.checkInterval > 0

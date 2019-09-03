@@ -36,10 +36,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 
     /// started
     verbose &&
-        console.info(
-            "\n>>> Bot started at",
-            colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
-        );
+        console.info("\n>>> Bot started at", moment().format("dddd, MMMM Do YYYY, h:mm:ss a"));
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Agent 1 - search
@@ -49,7 +46,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 
     console.info(
         "S >> Scan " + searchCounter + " >",
-        colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+        moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     );
     search.findOpportunities(tickets, exchangesSymbols, searchCounter);
 
@@ -60,7 +57,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         verbose &&
             console.info(
                 "S >> Scan " + searchCounter + " >",
-                colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+                moment().format("dddd, MMMM D YYYY, h:mm:ss a")
             );
     }, (configs.search.checkInterval > 0 ? configs.search.checkInterval : 30) * 1000);
 
@@ -71,11 +68,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     // loop every x seconds
     setInterval(function() {
         quality.cleanup();
-        verbose &&
-            console.info(
-                "Q >> Cleaning >",
-                colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
-            );
+        verbose && console.info("Q >> Cleaning >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
     }, (configs.quality.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +80,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     //     verbose &&
     //         console.info(
     //             ">>> Execution agent >",
-    //             colors.magenta(moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
+    //             moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
     //         );
     //     execution.initialize();
     // }, (configs.execution.checkInterval > 0
@@ -98,6 +91,6 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     // verbose &&
     //     console.info(
     //         "\n>>> Bot started at",
-    //         colors.magenta(moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
+    //         moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
     //     );
 })();

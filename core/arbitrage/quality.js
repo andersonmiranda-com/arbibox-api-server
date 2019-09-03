@@ -182,7 +182,7 @@ function checkOrderBook(opportunity) {
     //let wallets = await fetchBalance(order.exchange);
     //console.log("wallets", wallets);
 
-    console.log(colors.yellow("Q >> Checking orderBook..."), opportunity.id);
+    console.log(colors.yellow("Q >>"), "Checking orderBook...", opportunity.id);
 
     let limit = 3;
 
@@ -280,7 +280,7 @@ function checkOrderBook(opportunity) {
             };
             opportunity.quality.score = 0;
             opportunity.approved = false;
-            console.log(colors.red("Q >> Not approved"), colors.red(opportunity.id));
+            console.log(colors.red("Q >>"), "Not approved", opportunity.id);
             db.updateOpportunity(opportunity);
         }
 
