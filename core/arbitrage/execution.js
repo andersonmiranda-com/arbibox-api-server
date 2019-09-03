@@ -19,14 +19,14 @@ const initialize = async function(opportunity) {
 /// Prepara Order To be executed
 ///
 
-const prepareOrder = order => {
+const prepareOrder = opportunity => {
     // remove from opportunities
     //db.removeOpportunities({ id: order.id });
-    delete order._id;
-    order.ord_created_at = moment().toDate();
+    delete opportunity._id;
+    opportunity.ord_created_at = moment().toDate();
     // add to orders collection
-    db.createOrder(order);
-    console.log(colors.green("E >> Created..."), colors.cyan(order.id));
+    db.addToQueue(opportunity);
+    console.log(colors.green("E >> Created..."), colors.cyan(opportunity.id));
 };
 
 module.exports = {
