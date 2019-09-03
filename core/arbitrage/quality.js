@@ -154,10 +154,15 @@ async function checkOpportunity(opportunity) {
 
         if (quality.sell && quality.buy) {
             // Approved on trading Activity, lets check orderBook
+            opportunity.quality.score = 3;
             checkOrderBook(opportunity);
         } else {
-            opportunity.qualified = true;
             opportunity.approved = false;
+            opportunity.quality = {
+                note: "Inactive trading",
+                checked_at: moment().toDate()
+            };
+            opportunity.quality.score = 0;
             db.updateOpportunity(opportunity);
             console.log(colors.red("Q >>"), colors.red(opportunity.id));
         }
@@ -223,8 +228,6 @@ function checkOrderBook(opportunity) {
 
         let profit2 = getPercentageAfterWdFees(amount2 * bestAsk2.ask, bestAsk2, bestBid2);
 
-        opportunity.qualified = true;
-
         opportunity.ordersBook = {
             cheched_at: moment().toDate(),
             buy: {
@@ -242,8 +245,10 @@ function checkOrderBook(opportunity) {
         console.log("profit1", opportunity.id, profit1);
 
         if (profit1 >= configs.search.minimumProfit) {
+            opportunity.profit = profit1;
             opportunity.approved = true;
-            opportunity.quality = { volume1: true, checked_at: moment().toDate() };
+            opportunity.quality = { note: "row1", checked_at: moment().toDate() };
+            opportunity.quality.score = 5;
             // min
             let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
             opportunity.invest.min = { base: minBase, quote: minQuote };
@@ -255,8 +260,10 @@ function checkOrderBook(opportunity) {
             // call execution
             execution.initialize(opportunity);
         } else if (profit2 >= configs.search.minimumProfit) {
+            opportunity.profit = profit2;
             opportunity.approved = true;
-            opportunity.quality = { volume2: true, checked_at: moment().toDate() };
+            opportunity.quality = { note: "row2", checked_at: moment().toDate() };
+            opportunity.quality.score = 4;
             // min
             let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
             opportunity.invest.min = { base: minBase, quote: minQuote };
@@ -267,7 +274,11 @@ function checkOrderBook(opportunity) {
             // call execution
             execution.initialize(opportunity);
         } else {
-            opportunity.quality = { volume: false, checked_at: moment().toDate() };
+            opportunity.quality = {
+                note: "Insuficient volume in orderBook",
+                checked_at: moment().toDate()
+            };
+            opportunity.quality.score = 0;
             opportunity.approved = false;
             console.log(colors.red("Q >> Not approved"), colors.red(opportunity.id));
             db.updateOpportunity(opportunity);

@@ -357,12 +357,11 @@ function filterOpportunities(prices) {
                     symbol: bestAsk.symbol,
                     buy_at: bestAsk.name,
                     sell_at: bestBid.name,
-                    profit0: Number(percentage.toFixed(4)),
                     profit: Number(percentageAfterWdFees1.toFixed(4)),
                     bestAsk: bestAsk,
                     bestBid: bestBid,
                     invest: {
-                        calc: configs.search.quoteCurrencyFunds[quoteCurrency],
+                        //calc: configs.search.quoteCurrencyFunds[quoteCurrency],
                         min: {
                             base: minBase,
                             quote: minQuote,

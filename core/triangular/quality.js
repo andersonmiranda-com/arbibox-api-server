@@ -98,6 +98,9 @@ async function checkOpportunity(opportunity) {
     });
     if (checkedOpportunity.length === 0) return false;
 
+    opportunity.qualified = true;
+    db.updateOpportunity(opportunity);
+
     if (!configs.quality.filter.tradeActivity) {
         checkOrderBook(opportunity);
         return;
@@ -111,6 +114,8 @@ async function checkOpportunity(opportunity) {
         //console.log(opportunity);
         //console.log(response);
         //console.log(opportunity.symbol);
+
+        let quality = {};
 
         let activity = {};
         opportunity.approved = false;
@@ -138,13 +143,12 @@ async function checkOpportunity(opportunity) {
             }
         }
 
-        opportunity.activity = activity;
+        opportunity.quality.activity = activity;
 
         if (symbolsOk === 3) {
             // Approved on trading Activity, lets check orderBook
             checkOrderBook(opportunity);
         } else {
-            opportunity.qualified = true;
             opportunity.approved = false;
             db.updateOpportunity(opportunity);
             console.log(colors.red("Q >>"), colors.red(opportunity.id));
@@ -180,8 +184,8 @@ function checkOrderBook(opportunity) {
         console.log("Q >> Profit Row 1", calculateProfit(opportunity.chain, response, 0));
         console.log("Q >> Profit Row 2", calculateProfit(opportunity.chain, response, 1));
 
-        opportunity.profit_row1 = calculateProfit(opportunity.chain, response, 0);
-        opportunity.profit_row2 = calculateProfit(opportunity.chain, response, 1);
+        opportunity.profit1 = calculateProfit(opportunity.chain, response, 0);
+        opportunity.profit2 = calculateProfit(opportunity.chain, response, 1);
 
         opportunity.qualified = true;
 
@@ -207,16 +211,47 @@ function checkOrderBook(opportunity) {
             }
         };
 
-        if (opportunity.profit_row1 >= configs.search.minimumProfit) {
+        let maxInvest = calcMaxInvest(opportunity.ordersBook);
+
+        if (maxInvest < opportunity.chain.symbols[0].limits.amount.min) {
+            opportunity.qualified = true;
+            opportunity.approved = false;
+            opportunity.quality = {
+                score: 0,
+                note: "Max invest is too low",
+                checked_at: moment().toDate()
+            };
+
+            console.log(
+                colors.red("Q >> Not approved - Max invest is too low"),
+                colors.red(opportunity.id)
+            );
+            db.updateOpportunity(opportunity);
+            return false;
+        }
+
+        if (opportunity.profit1 >= configs.search.minimumProfit) {
+            opportunity.profit = profit1;
             opportunity.approved = true;
+            opportunity.quality = {
+                score: 5,
+                checked_at: moment().toDate()
+            };
             console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
-            opportunity.invest = { max: { quote: calcMaxInvest(opportunity.ordersBook) } };
+            opportunity.invest = { max: { quote: maxInvest } };
             // call execution
             execution.initialize(opportunity);
         } else {
-            opportunity.qualified = true;
+            opportunity.quality = {
+                score: 0,
+                note: "Insuficient volume in orderBook",
+                checked_at: moment().toDate()
+            };
             opportunity.approved = false;
-            console.log(colors.red("Q >> Not approved"), colors.red(opportunity.id));
+            console.log(
+                colors.red("Q >> Not approved - Insuficient volume in orderBook"),
+                colors.red(opportunity.id)
+            );
             db.updateOpportunity(opportunity);
         }
 
