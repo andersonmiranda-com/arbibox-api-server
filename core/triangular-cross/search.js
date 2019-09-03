@@ -1,6 +1,6 @@
 const ccxt = require("ccxt");
 const lodash = require("lodash");
-const configs = require("../../config/settings");
+const configs = require("../../config/settings-triangular-cross");
 const { getConnectingAsset, getMultiplier } = require("../util");
 const colors = require("colors");
 const { Parser } = require("json2csv");
@@ -14,7 +14,7 @@ const verbose = false;
 const colorProfit = percentage => (percentage > 0 ? `${percentage}`.green : `${percentage}`.red);
 
 exports.initialize = async function() {
-    let targetAssets = configs.triangular.targetAssets;
+    let targetAssets = configs.search.targetAssets;
     try {
         console.info("\nLoading exchanges and tickets...");
         //db.removeAllOpportunities();
@@ -141,8 +141,9 @@ async function findChains(targetAssets, tickers, markets) {
 
                     try {
                         let opportunity = {
+                            type: "TC",
                             base: targetAsset,
-                            created_at: new Date(),
+                            opp_created_at: new Date(),
                             ticket1: chain.symbols[0].symbol,
                             ticket2: chain.symbols[1].symbol,
                             ticket3: chain.symbols[2].symbol,
@@ -179,12 +180,12 @@ async function findChains(targetAssets, tickers, markets) {
                     //     }
                     //     console.log(".");
                 }
-                // console.log(
-                //     z(13, exchange, " "),
-                //     z(40, chainResult, " "),
-                //     " triage: ",
-                //     chainResult.triagePercentage + " %"
-                // );
+                console.log(
+                    z(13, exchange, " "),
+                    z(40, chainResult, " "),
+                    " triage: ",
+                    chainResult.triagePercentage + " %"
+                );
             } catch (error) {
                 //console.log("Error on ", chain);
                 //console.log(error);

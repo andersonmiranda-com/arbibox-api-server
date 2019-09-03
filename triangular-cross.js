@@ -10,11 +10,40 @@
 
 "use strict";
 
-const triangular = require("./core/triangular-cross/triangular-cross");
+var moment = require("moment");
+const colors = require("colors");
+
+const configs = require("./config/settings-triangular-cross");
+
+const search = require("./core/triangular-cross/search");
+
+global.verbose = true;
+
+const args = process.argv;
+
+let searchCounter = 1;
+
+const interval =
+    1000 *
+    (args[3] ? args[3] : configs.search.checkInterval > 0 ? configs.search.checkInterval : 60);
+
+const logo = ` 
+----------------------------------------------------------------
+
+ $$$$$$\\            $$\\       $$\\ $$\\                           
+$$  __$$\\           $$ |      \\__|$$ |                          
+$$ /  $$ | $$$$$$\\  $$$$$$$\\  $$\\ $$$$$$$\\   $$$$$$\\  $$\\   $$\\ 
+$$$$$$$$ |$$  __$$\\ $$  __$$\\ $$ |$$  __$$\\ $$  __$$\\ \\$$\\ $$  |
+$$  __$$ |$$ |  \\__|$$ |  $$ |$$ |$$ |  $$ |$$ /  $$ | \\$$$$  / 
+$$ |  $$ |$$ |      $$ |  $$ |$$ |$$ |  $$ |$$ |  $$ | $$  $$/  
+$$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\ 
+\\__|  \\__|\\__|      \\_______/ \\__|\\_______/  \\______/ \\__/  \\__|
+                                                                
+------------------- Crypto  Arbitrage  Bot --------------------- `;
 
 (async function() {
-    console.log("Arbibox Triangular Inter Exchange Bot - Show me the money!");
-    console.log("==========================================================");
+    console.log(colors.green(logo));
+    console.log(colors.cyan("\nStarting Cross Triangular Arbitrage..."));
 
-    triangular.initialize();
+    search.initialize();
 })();
