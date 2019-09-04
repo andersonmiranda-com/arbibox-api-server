@@ -48,18 +48,18 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 
     //db.removeAllOpportunities();
     let targetAssets = configs.search.targetAssets;
-    const { exchanges, markets } = await search.initialize();
+    const exchangesChainData = await search.initialize();
     console.info(
         "S >> Scan " + searchCounter + " >",
         moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     );
-    return;
-    search.findOpportunities(exchanges, markets, targetAssets, searchCounter);
+
+    search.findOpportunities(exchangesChainData, searchCounter);
 
     // loop every x seconds
     setInterval(function() {
         searchCounter++;
-        search.findOpportunities(exchanges, markets, targetAssets, searchCounter);
+        search.findOpportunities(exchangesChainData, searchCounter);
         console.info(
             "S >> Scan " + searchCounter + " >",
             moment().format("dddd, MMMM D YYYY, h:mm:ss a")

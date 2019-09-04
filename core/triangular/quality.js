@@ -215,11 +215,7 @@ function checkOrderBook(opportunity) {
                 checked_at: moment().toDate()
             };
 
-            console.log(
-                colors.red("Q >>"),
-                "Not approved - Max invest is too low",
-                colors.red(opportunity.id)
-            );
+            console.log(colors.red("Q >>"), "Not approved - Max invest is too low", opportunity.id);
             db.updateOpportunity(opportunity);
             return false;
         }
@@ -231,7 +227,7 @@ function checkOrderBook(opportunity) {
         console.log("Q >>", "Profit Row 2", opportunity.profit2);
 
         if (opportunity.profit1 >= configs.search.minimumProfit) {
-            opportunity.profit = profit1;
+            opportunity.profit = opportunity.profit1;
             opportunity.approved = true;
             opportunity.quality = {
                 score: 5,

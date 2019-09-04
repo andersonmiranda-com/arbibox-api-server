@@ -1,6 +1,29 @@
 {
     "apiTimeout": 20,
-    "exchanges": ["bittrex", "binance", "cointiger"],
+    "exchanges": [
+        "bittrex",
+        "kraken",
+        "bitfinex",
+        "poloniex",
+        "hitbtc",
+        "huobipro",
+        "binance",
+        "okex",
+        "ethfinex",
+        "upbit",
+        "bithumb",
+        "bibox",
+        "kucoin",
+        "gateio",
+        "livecoin",
+        "exmo",
+        "cointiger",
+        "bibox",
+        "bitlish",
+        "coss",
+        "liquid",
+        "cex"
+    ],
     "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
     "baseCurrencies": [
         "BTC",
@@ -65,9 +88,9 @@
         "quoteCurrencies": true
     },
     "search": {
-        "checkInterval": 5,
+        "checkInterval": 10,
         "minimumProfit": 0.05,
-        "targetAssets": ["BTC"]
+        "targetAssets": ["BTC", "ETH", "USDT"]
     },
     "quality": {
         "checkInterval": 30,

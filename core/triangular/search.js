@@ -54,8 +54,8 @@ const initialize = async function() {
         })
     );
 
-    findOpportunities(exchangesChainData);
-    //return exchangesChainData;
+    //findOpportunities(exchangesChainData, 1);
+    return exchangesChainData;
 };
 
 async function prepareExchanges() {
@@ -139,7 +139,7 @@ async function prepareExchanges() {
 ///
 /// Build a Queue
 ///
-function findOpportunities(exchangesChainData) {
+function findOpportunities(exchangesChainData, searchCounter) {
     let promises = exchangesChainData.map(exchangeData =>
         Promise.resolve(checkChains(exchangeData))
     );
@@ -168,7 +168,7 @@ function buildChains(targetAssets, exchange, markets) {
 
     exchangeMarkets = markets.find(market => market.id === exchange).markets;
     for (let targetAsset of targetAssets) {
-        console.log("S >> Adding", targetAsset, colors.cyan(exchange));
+        console.log("S >> Building chains", targetAsset, colors.cyan(exchange));
         chainsObjects.push(...prepareChains(targetAsset, exchangeMarkets));
     }
     return chainsObjects;
@@ -181,13 +181,13 @@ async function checkChains(exchangeData) {
 
     tickers = await fetchTickers(exchange);
 
+    //console.log("S >>", colors.cyan(exchange));
+
     for (const chain of chains) {
         try {
             chainResult = calculateChainProfit(chain, tickers);
 
-            /* console.log(
-                    chain + "; triage: " + colorProfit(chainResult.triagePercentage) + " %"
-                ); */
+            //console.log(chain + "; triage: " + colorProfit(chainResult.triagePercentage) + " %");
 
             if (
                 chainResult.triagePercentage >= configs.search.minimumProfit &&
@@ -201,7 +201,7 @@ async function checkChains(exchangeData) {
                         id:
                             exchange.toLowerCase() +
                             "_" +
-                            targetAsset +
+                            finalChain.targetAsset +
                             "_" +
                             finalChain.symbols[0].symbol +
                             "-" +
@@ -212,7 +212,7 @@ async function checkChains(exchangeData) {
                         opp_created_at: new Date(),
                         chain: finalChain,
                         exchange: exchange,
-                        base: targetAsset,
+                        base: finalChain.targetAsset,
                         side1: finalChain.symbols[0].side,
                         side2: finalChain.symbols[1].side,
                         side3: finalChain.symbols[2].side,
@@ -236,7 +236,7 @@ async function checkChains(exchangeData) {
                         colors.green("S >>"),
                         exchange,
                         "|",
-                        targetAsset,
+                        finalChain.targetAsset,
                         "|",
                         finalChain.symbols[0].symbol,
                         ">",
