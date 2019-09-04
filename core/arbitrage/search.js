@@ -222,7 +222,7 @@ async function findOpportunities(tickets, exchangesSymbols, markets, searchCount
                             price.quoteVolume = exchangePrices.quoteVolume;
                             price.name = exchange;
                             price.symbol = ticket.symbol;
-                            price.trade_fee = exchangeMarkets[ticket.symbol].taker || 0.0026; // catchall if taker fee is not found
+                            price.tradeFee = exchangeMarkets[ticket.symbol].taker || 0.0026; // catchall if taker fee is not found
                             prices.push(price);
                             /* verbose && console.log(
                                 z(5, counter, " "),

@@ -19,7 +19,7 @@ const getPercentage = (bestAsk, bestBid) => {
     let bought = bestAsk.ask * amount;
     let sould = bestBid.bid * amount;
 
-    let cost = bought * bestAsk.trade_fee + sould * bestBid.trade_fee;
+    let cost = bought * bestAsk.tradeFee + sould * bestBid.tradeFee;
 
     let estimatedGain = sould - (bought + cost);
     let percentage = (estimatedGain / funds) * 100;
@@ -32,9 +32,9 @@ const getPercentageAfterWdFees = (funds, bestAsk, bestBid) => {
     let baseWithdrawalFee = getWithdrawalFee(baseCurrency);
     let quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
 
-    let bought = (funds / bestAsk.ask) * (1 - bestAsk.trade_fee);
+    let bought = (funds / bestAsk.ask) * (1 - bestAsk.tradeFee);
     let sould =
-        (bought - baseWithdrawalFee) * bestBid.bid * (1 - bestBid.trade_fee) - quoteWithdrawalFee;
+        (bought - baseWithdrawalFee) * bestBid.bid * (1 - bestBid.tradeFee) - quoteWithdrawalFee;
 
     let estimatedGain = sould - funds; // Math.abs to make possible interpolation with goalSeek
     let percentage = (estimatedGain / Math.abs(funds)) * 100;
@@ -42,8 +42,8 @@ const getPercentageAfterWdFees = (funds, bestAsk, bestBid) => {
     let perc1 =
         (100 *
             (bestBid.bid *
-                ((funds * (-bestAsk.trade_fee + 1)) / bestAsk.ask - baseWithdrawalFee) *
-                (-bestBid.trade_fee + 1) -
+                ((funds * (-bestAsk.tradeFee + 1)) / bestAsk.ask - baseWithdrawalFee) *
+                (-bestBid.tradeFee + 1) -
                 quoteWithdrawalFee -
                 funds)) /
         funds;
@@ -74,17 +74,17 @@ const getMinimunInversion = (bestAsk, bestBid) => {
     */
 
     let minQuote =
-        (-100 * bestAsk.ask * bestBid.bid * bestBid.trade_fee * baseWithdrawalFee +
+        (-100 * bestAsk.ask * bestBid.bid * bestBid.tradeFee * baseWithdrawalFee +
             100 * bestAsk.ask * bestBid.bid * baseWithdrawalFee +
             100 * bestAsk.ask * quoteWithdrawalFee) /
-        (100 * bestBid.bid * bestAsk.trade_fee * bestBid.trade_fee -
+        (100 * bestBid.bid * bestAsk.tradeFee * bestBid.tradeFee -
             bestAsk.ask * configs.search.minimumProfitInvest -
-            100 * bestBid.bid * bestAsk.trade_fee -
-            100 * bestBid.bid * bestBid.trade_fee -
+            100 * bestBid.bid * bestAsk.tradeFee -
+            100 * bestBid.bid * bestBid.tradeFee -
             100 * bestAsk.ask +
             100 * bestBid.bid);
 
-    let minBase = (minQuote / bestAsk.ask) * (1 - bestAsk.trade_fee) - baseWithdrawalFee;
+    let minBase = (minQuote / bestAsk.ask) * (1 - bestAsk.tradeFee) - baseWithdrawalFee;
 
     return { minQuote, minBase };
 };
