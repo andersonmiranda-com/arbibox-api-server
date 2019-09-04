@@ -338,8 +338,8 @@ function filterOpportunities(prices) {
 
             let percentage = getPercentage(bestAsk, bestBid);
 
-            bestAsk.baseWithdrawalFee = getWithdrawalFee(baseCurrency);
-            bestBid.quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
+            bestAsk.baseWithdrawalFee = getWithdrawalFee(bestAsk.name, baseCurrency);
+            bestBid.quoteWithdrawalFee = getWithdrawalFee(bestBid.name, quoteCurrency);
 
             let percentageAfterWdFees1 = getPercentageAfterWdFees(
                 configs.search.quoteCurrencyFunds[quoteCurrency],

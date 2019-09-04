@@ -182,7 +182,6 @@ exports.getWithdrawalFees = function(cb) {
         var db = client.db("arbibox");
         db.collection("fees")
             .find({})
-            .sort({ coin: 1 })
             .toArray(function(err, res) {
                 if (err) throw err;
                 //console.log(res.result);

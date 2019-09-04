@@ -5,8 +5,8 @@ const configs = require("../../config/settings-arbitrage");
 ///
 ///
 
-const getWithdrawalFee = currency => {
-    let wd = withdrawalFees.find(fee => fee.coin === currency);
+const getWithdrawalFee = (exchange, currency) => {
+    let wd = withdrawalFees.find(fee => fee.exchange === exchange).withdraw[currency];
     return wd ? wd.withdrawalFee : 0;
 };
 
@@ -29,8 +29,8 @@ const getPercentage = (bestAsk, bestBid) => {
 const getPercentageAfterWdFees = (funds, bestAsk, bestBid) => {
     let { baseCurrency, quoteCurrency } = getCurrencies(bestAsk);
 
-    let baseWithdrawalFee = getWithdrawalFee(baseCurrency);
-    let quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
+    let baseWithdrawalFee = getWithdrawalFee(bestAsk.name, baseCurrency);
+    let quoteWithdrawalFee = getWithdrawalFee(bestBid.name, quoteCurrency);
 
     let bought = (funds / bestAsk.ask) * (1 - bestAsk.tradeFee);
     let sould =
@@ -53,8 +53,8 @@ const getPercentageAfterWdFees = (funds, bestAsk, bestBid) => {
 const getMinimunInversion = (bestAsk, bestBid) => {
     let { baseCurrency, quoteCurrency } = getCurrencies(bestAsk);
 
-    let baseWithdrawalFee = getWithdrawalFee(baseCurrency);
-    let quoteWithdrawalFee = getWithdrawalFee(quoteCurrency);
+    let baseWithdrawalFee = getWithdrawalFee(bestAsk.name, baseCurrency);
+    let quoteWithdrawalFee = getWithdrawalFee(bestBid.name, quoteCurrency);
 
     // this formula was generated using HP Prime Calculator solve function
     // P
