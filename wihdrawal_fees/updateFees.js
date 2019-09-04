@@ -2,8 +2,8 @@ const ccxt = require("ccxt");
 const lodash = require("lodash");
 const colors = require("colors");
 
-const configs = require("./config/settings-arbitrage");
-const db = require("./core/db");
+const configs = require("../config/settings-arbitrage");
+const db = require("../core/db");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -29,7 +29,7 @@ const initialize = async function() {
         let name = exchanges[i];
         var start1 = new Date();
         try {
-            let withdraw = await require("./wihdrawal_fees/" + name);
+            let withdraw = await require("./" + name);
 
             let with1 = { ...withdraw };
 

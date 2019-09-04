@@ -192,6 +192,26 @@ exports.getWithdrawalFees = function(cb) {
     });
 };
 
+exports.upsertFees = function(data) {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            // avoid update different _id
+            var db = client.db("arbibox");
+            db.collection("fees").updateOne(
+                { exchange: data.exchange },
+                { $set: data },
+                { upsert: true },
+                function(err, res) {
+                    if (err) throw err;
+                    //console.log(res.result);
+                    client.close();
+                    resolve(true);
+                }
+            );
+        });
+    });
+};
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// Triangular

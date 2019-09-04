@@ -10,7 +10,6 @@
         "binance",
         "okex",
         "ethfinex",
-        "upbit",
         "bithumb",
         "bibox",
         "kucoin",
@@ -18,8 +17,7 @@
         "livecoin",
         "exmo",
         "cointiger",
-        "bibox",
-        "bitlish"
+        "bibox"
     ],
     "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
     "baseCurrencies": [
