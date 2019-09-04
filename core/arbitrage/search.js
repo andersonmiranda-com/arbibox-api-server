@@ -7,6 +7,7 @@ const z = require("zero-fill");
 
 const configs = require("../../config/settings-arbitrage");
 const quality = require("./quality");
+const updateFees = require("./updateFees");
 
 const {
     getWithdrawalFee,
@@ -31,9 +32,10 @@ const initialize = async function() {
     db.removeOpportunities({ type: "PA" });
 
     //get withdrawal fees
-    db.getWithdrawalFees(function(response) {
-        global.withdrawalFees = response;
-    });
+    global.withdrawalFees = await db.getWithdrawalFees();
+    if (withdrawalFees.length === 0) {
+        updateFees.initialize();
+    }
 
     let exchanges = [];
     let markets = [];
@@ -52,6 +54,7 @@ const initialize = async function() {
 
     for (let i = 0; i < exchanges.length; i++) {
         let name = exchanges[i];
+
         var start1 = new Date();
         try {
             var _instance;
@@ -74,8 +77,20 @@ const initialize = async function() {
             var end1 = new Date() - start1;
 
             verbose && console.log("Loading markets for", colors.green(name), "-", end1, "ms");
+
+            //Exchange withdrawal fees validation
+            let wd = withdrawalFees.find(fee => fee.exchange === name);
+            if (!wd) {
+                verbose &&
+                    console.error(
+                        colors.red("Error: Exchange has no withdrawal fees in database:"),
+                        name
+                    );
+                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            }
+
             //CCXT API Exchange validation
-            if (!_instance.has["fetchTickers"]) {
+            else if (!_instance.has["fetchTickers"]) {
                 verbose && console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else if (!_instance.has["fetchOrderBook"]) {

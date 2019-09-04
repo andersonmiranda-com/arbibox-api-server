@@ -2,8 +2,8 @@ const ccxt = require("ccxt");
 const lodash = require("lodash");
 const colors = require("colors");
 
-const configs = require("../config/settings-arbitrage");
-const db = require("../core/db");
+const configs = require("../../config/settings-arbitrage");
+const db = require("../db");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -29,7 +29,7 @@ const initialize = async function() {
         let name = exchanges[i];
         var start1 = new Date();
         try {
-            let withdraw = await require("./" + name);
+            let withdraw = await require("../../wihdrawal_fees/" + name);
 
             let with1 = { ...withdraw };
 
@@ -42,11 +42,15 @@ const initialize = async function() {
                 withdraw: with1
             };
             await db.upsertFees(fees);
+            console.log("Loaded withdrawal fees for", name);
         } catch (error) {
             console.error(colors.red("Error loading Currencies:"), name);
             console.error(colors.red("Error:"), error.message);
         }
+
+        global.withdrawalFees = await db.getWithdrawalFees();
     }
 };
-
-initialize();
+module.exports = {
+    initialize
+};

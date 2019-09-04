@@ -176,18 +176,20 @@ exports.saveWallets = function(id, data) {
 /// Withdrawals Fees
 ///
 
-exports.getWithdrawalFees = function(cb) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        var db = client.db("arbibox");
-        db.collection("fees")
-            .find({})
-            .toArray(function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                client.close();
-                cb(res);
-            });
+exports.getWithdrawalFees = function() {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            var db = client.db("arbibox");
+            db.collection("fees")
+                .find({})
+                .toArray(function(err, res) {
+                    if (err) throw err;
+                    //console.log(res.result);
+                    resolve(res);
+                    client.close();
+                });
+        });
     });
 };
 
