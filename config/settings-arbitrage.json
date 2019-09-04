@@ -116,7 +116,7 @@
         },
         "lastTradeTimeLimit": 10,
         "removeAfterMinutesOff": 2,
-        "removeAfterIterations": 10
+        "removeAfterIterations": 8
     },
 
     "execution": {
