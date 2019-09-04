@@ -44,6 +44,7 @@ const initialize = async function() {
     db.removeOpportunities({ type: "TR" });
 
     let exchanges = [];
+    let markets = [];
 
     if (configs.marketFilter.exchanges) {
         exchanges = configs.exchanges;
@@ -58,8 +59,6 @@ const initialize = async function() {
     if (configs.marketFilter.exchangesBlacklist) {
         exchanges = lodash.difference(exchanges, configs.exchangesBlacklist);
     }
-
-    let markets = [];
 
     if (configs.marketFilter.exchangesBlacklist) {
         exchanges = lodash.difference(exchanges, configs.marketFilter.exchangesBlacklist);

@@ -42,18 +42,18 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Agent 1 - search
     /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
 
-    const { tickets, exchangesSymbols } = await search.initialize();
+    const { tickets, exchangesSymbols, markets } = await search.initialize();
 
     console.info(
         "S >> Scan " + searchCounter + " >",
         moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     );
-    search.findOpportunities(tickets, exchangesSymbols, searchCounter);
+    search.findOpportunities(tickets, exchangesSymbols, markets, searchCounter);
 
     // loop every x seconds
     setInterval(function() {
         searchCounter++;
-        search.findOpportunities(tickets, exchangesSymbols, searchCounter);
+        search.findOpportunities(tickets, exchangesSymbols, markets, searchCounter);
         verbose &&
             console.info(
                 "S >> Scan " + searchCounter + " >",

@@ -34,7 +34,9 @@ const initialize = async function() {
     db.getWithdrawalFees(function(response) {
         global.withdrawalFees = response;
     });
+
     let exchanges = [];
+    let markets = [];
 
     if (configs.marketFilter.exchanges) {
         exchanges = configs.exchanges;
@@ -87,6 +89,7 @@ const initialize = async function() {
                 verbose && console.error(colors.red("Error: Exchange has no withdraw:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else {
+                markets.push({ id: name, markets: _instance.markets });
                 api[name] = _instance;
                 //db.saveExchange(name, { symbols: _instance.symbols, markets: _instance.markets });
             }
@@ -175,7 +178,7 @@ const initialize = async function() {
             "| Tickets:",
             colors.green(tickets.length)
         );
-    return { tickets, exchangesSymbols };
+    return { tickets, exchangesSymbols, markets };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +186,7 @@ const initialize = async function() {
 ///
 ///
 
-async function findOpportunities(tickets, exchangesSymbols, searchCounter) {
+async function findOpportunities(tickets, exchangesSymbols, markets, searchCounter) {
     try {
         let promises = exchangesSymbols.map(async exchange =>
             Promise.resolve(await fetchTickersByExchange(exchange))
@@ -207,6 +210,9 @@ async function findOpportunities(tickets, exchangesSymbols, searchCounter) {
                             let price = {};
 
                             let exchangeData = response.find(exch => exch.id === exchange);
+                            let exchangeMarkets = markets.find(market => market.id === exchange)
+                                .markets;
+
                             let exchangePrices = exchangeData.tickets[ticket.symbol] || {};
                             let exchangeWallets = exchangeData.wallets || [];
 
@@ -216,7 +222,7 @@ async function findOpportunities(tickets, exchangesSymbols, searchCounter) {
                             price.quoteVolume = exchangePrices.quoteVolume;
                             price.name = exchange;
                             price.symbol = ticket.symbol;
-                            price.cost = 0.0025; ///////////TODO: ler maket/taker do exchange
+                            price.trade_fee = exchangeMarkets[ticket.symbol].taker || 0.0026; // catchall if taker fee is not found
                             prices.push(price);
                             /* verbose && console.log(
                                 z(5, counter, " "),
