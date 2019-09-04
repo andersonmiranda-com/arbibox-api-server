@@ -99,7 +99,7 @@ const getSides = chain => {
 /// Calculate the profit for tha chain
 ///
 
-const calculateChainProfit = (exchange, chain, tickers) => {
+const calculateChainProfit = (chain, tickers) => {
     const target = chain.targetAsset;
     const [symbol1, symbol2, symbol3] = chain.symbols;
 

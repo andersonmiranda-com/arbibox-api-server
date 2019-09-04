@@ -40,25 +40,9 @@ class Chain {
 ///
 
 const initialize = async function() {
-    var exchangesChainData = [];
     //initialize oppotunities table
     db.removeOpportunities({ type: "TR" });
 
-    let { exchanges, markets } = await prepareExchanges();
-    let targetAssets = configs.search.targetAssets;
-    //build exchangesData object, with all exhanges and chains
-    exchanges.map(exchange =>
-        exchangesChainData.push({
-            exchange: exchange,
-            chains: buildChains(targetAssets, exchange, markets)
-        })
-    );
-
-    //findOpportunities(exchangesChainData, 1);
-    return exchangesChainData;
-};
-
-async function prepareExchanges() {
     let exchanges = [];
     let markets = [];
 
@@ -133,15 +117,15 @@ async function prepareExchanges() {
 
     verbose && console.info("Exchanges:", colors.green(exchanges.length));
     return { exchanges, markets };
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// Build a Queue
 ///
-function findOpportunities(exchangesChainData, searchCounter) {
-    let promises = exchangesChainData.map(exchangeData =>
-        Promise.resolve(checkChains(exchangeData))
+function findOpportunities(exchanges, markets, targetAssets, searchCounter) {
+    let promises = exchanges.map(exchange =>
+        Promise.resolve(findChains(targetAssets, exchange, markets))
     );
 
     Promise.all(promises).then(response => {
@@ -161,118 +145,110 @@ function findOpportunities(exchangesChainData, searchCounter) {
 /// Find Possible Chains
 ///
 
-function buildChains(targetAssets, exchange, markets) {
+async function findChains(targetAssets, exchange, markets) {
     //return new Promise(async (resolve, reject) => {
-
-    let chainsObjects = [];
-
-    exchangeMarkets = markets.find(market => market.id === exchange).markets;
-    for (let targetAsset of targetAssets) {
-        console.log("S >> Building chains", targetAsset, colors.cyan(exchange));
-        chainsObjects.push(...prepareChains(targetAsset, exchangeMarkets));
-    }
-    return chainsObjects;
-}
-
-async function checkChains(exchangeData) {
-    //return new Promise(async (resolve, reject) => {
-
-    let { exchange, chains } = exchangeData;
 
     tickers = await fetchTickers(exchange);
 
-    //console.log("S >>", colors.cyan(exchange));
+    exchangeMarkets = markets.find(market => market.id === exchange).markets;
+    for (let targetAsset of targetAssets) {
+        console.log("S >>", targetAsset, colors.cyan(exchange));
 
-    for (const chain of chains) {
-        try {
-            chainResult = calculateChainProfit(chain, tickers);
+        let chains = prepareChains(targetAsset, exchangeMarkets);
 
-            //console.log(chain + "; triage: " + colorProfit(chainResult.triagePercentage) + " %");
+        for (const chain of chains) {
+            try {
+                chainResult = calculateChainProfit(exchange, chain, tickers);
 
-            if (
-                chainResult.triagePercentage >= configs.search.minimumProfit &&
-                chainResult.triagePercentage <= 200 &&
-                chainResult.triagePercentage !== Infinity
-            ) {
-                try {
-                    let finalChain = getSides(chainResult);
+                /* console.log(
+                    chain + "; triage: " + colorProfit(chainResult.triagePercentage) + " %"
+                ); */
 
-                    let opportunity = {
-                        id:
-                            exchange.toLowerCase() +
-                            "_" +
-                            finalChain.targetAsset +
-                            "_" +
-                            finalChain.symbols[0].symbol +
-                            "-" +
-                            finalChain.symbols[1].symbol +
-                            "-" +
+                if (
+                    chainResult.triagePercentage >= configs.search.minimumProfit &&
+                    chainResult.triagePercentage <= 200 &&
+                    chainResult.triagePercentage !== Infinity
+                ) {
+                    try {
+                        let finalChain = getSides(chainResult);
+
+                        let opportunity = {
+                            id:
+                                exchange.toLowerCase() +
+                                "_" +
+                                targetAsset +
+                                "_" +
+                                finalChain.symbols[0].symbol +
+                                "-" +
+                                finalChain.symbols[1].symbol +
+                                "-" +
+                                finalChain.symbols[2].symbol,
+                            type: "TR",
+                            opp_created_at: new Date(),
+                            chain: finalChain,
+                            exchange: exchange,
+                            base: targetAsset,
+                            side1: finalChain.symbols[0].side,
+                            side2: finalChain.symbols[1].side,
+                            side3: finalChain.symbols[2].side,
+                            symbol1: finalChain.symbols[0].symbol,
+                            symbol2: finalChain.symbols[1].symbol,
+                            symbol3: finalChain.symbols[2].symbol,
+                            profit: Number(finalChain.triagePercentage.toFixed(4))
+                        };
+
+                        await db.upsertOpportunity(opportunity);
+
+                        ////
+                        ////
+
+                        quality.checkOpportunity(opportunity);
+
+                        ////
+                        ////
+
+                        console.log(
+                            colors.green("S >>"),
+                            exchange,
+                            "|",
+                            targetAsset,
+                            "|",
+                            finalChain.symbols[0].symbol,
+                            ">",
+                            finalChain.symbols[1].symbol,
+                            ">",
                             finalChain.symbols[2].symbol,
-                        type: "TR",
-                        opp_created_at: new Date(),
-                        chain: finalChain,
-                        exchange: exchange,
-                        base: finalChain.targetAsset,
-                        side1: finalChain.symbols[0].side,
-                        side2: finalChain.symbols[1].side,
-                        side3: finalChain.symbols[2].side,
-                        symbol1: finalChain.symbols[0].symbol,
-                        symbol2: finalChain.symbols[1].symbol,
-                        symbol3: finalChain.symbols[2].symbol,
-                        profit: Number(finalChain.triagePercentage.toFixed(4))
-                    };
-
-                    await db.upsertOpportunity(opportunity);
-
-                    ////
-                    ////
-
-                    quality.checkOpportunity(opportunity);
-
-                    ////
-                    ////
-
-                    console.log(
-                        colors.green("S >>"),
-                        exchange,
-                        "|",
-                        finalChain.targetAsset,
-                        "|",
-                        finalChain.symbols[0].symbol,
-                        ">",
-                        finalChain.symbols[1].symbol,
-                        ">",
-                        finalChain.symbols[2].symbol,
-                        "|",
-                        "profit:",
-                        colorProfit(finalChain.triagePercentage) + " %"
-                    );
-                } catch (error) {
-                    console.error(colors.red("S >> Error4:"), error.message);
-                    //return false;
+                            "|",
+                            "profit:",
+                            colorProfit(finalChain.triagePercentage) + " %"
+                        );
+                    } catch (error) {
+                        console.error(colors.red("S >> Error4:"), error.message);
+                        //return false;
+                    }
                 }
-            }
 
-            //console.log(
-            //    z(13, exchange, " "),
-            //    z(40, chainResult, " "),
-            //    " triage: ",
-            //    chainResult.triagePercentage + " %"
-            //);
-        } catch (error) {
-            console.error(
-                colors.red("S >> Error on:"),
-                colors.magenta(targetAsset),
-                colors.cyan(exchange)
-            );
-            console.error(colors.red("S >> Error3"), error.message);
-            //console.error(colors.red("Error3"), error);
-            //return false
+                //console.log(
+                //    z(13, exchange, " "),
+                //    z(40, chainResult, " "),
+                //    " triage: ",
+                //    chainResult.triagePercentage + " %"
+                //);
+            } catch (error) {
+                console.error(
+                    colors.red("S >> Error on:"),
+                    colors.magenta(targetAsset),
+                    colors.cyan(exchange)
+                );
+                console.error(colors.red("S >> Error3"), error.message);
+                //console.error(colors.red("Error3"), error);
+                //return false
+            }
         }
+        //return true;
+        //    resolve(true);
+        //});
     }
-    //return true;
-    //    resolve(true);
-    //});
 }
 
 function prepareChains(targetAsset, markets) {
