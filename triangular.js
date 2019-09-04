@@ -53,6 +53,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         "S >> Scan " + searchCounter + " >",
         moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     );
+    return;
     search.findOpportunities(exchanges, markets, targetAssets, searchCounter);
 
     // loop every x seconds
