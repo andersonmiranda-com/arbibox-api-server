@@ -7,7 +7,7 @@ const configs = require("../../config/settings-arbitrage");
 
 const getWithdrawalFee = (exchange, currency) => {
     let wd = withdrawalFees.find(fee => fee.exchange === exchange).withdraw[currency];
-    return wd ? wd.withdrawalFee : 0;
+    return wd ? wd : 0;
 };
 
 const getPercentage = (bestAsk, bestBid) => {
