@@ -1,7 +1,7 @@
 const ccxt = require("ccxt");
 const axios = require("axios");
 
-const configs = require("./config/settings");
+const configs = require("./config/settings-arbitrage");
 var moment = require("moment");
 
 async function test(name, symbol) {
@@ -21,7 +21,7 @@ async function test(name, symbol) {
         });
     }
 
-    await _instance.loadMarkets;
+    await _instance.loadMarkets();
 
     //console.log(_instance);
     //console.log(await _instance.loadMarkets());
@@ -88,9 +88,9 @@ async function test(name, symbol) {
     var start1a = new Date();
     console.info("Start 1a", start1a);
 
-    let exc_tickers = await _instance.fetchTickers();
+    let response = await _instance.fetchFundingFees();
     //let endtickers = chain.map(symbol => exc_tickers[symbol]);
-    console.log("exc_tickers", exc_tickers);
+    console.log("response", response);
 
     var end1a = new Date() - start1a;
     console.info("Execution time1a: %dms", end1a);
@@ -180,6 +180,6 @@ async function test(name, symbol) {
     */
 }
 
-test("bitstamp", "ETH/BTC");
+test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
 //test("cointiger", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);
