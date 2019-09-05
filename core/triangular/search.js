@@ -219,7 +219,7 @@ async function checkChains(exchangeData) {
                         symbol1: finalChain.symbols[0].symbol,
                         symbol2: finalChain.symbols[1].symbol,
                         symbol3: finalChain.symbols[2].symbol,
-                        profit: Number(finalChain.triagePercentage.toFixed(4))
+                        profit_percent: Number(finalChain.triagePercentage.toFixed(4))
                     };
 
                     await db.upsertOpportunity(opportunity);

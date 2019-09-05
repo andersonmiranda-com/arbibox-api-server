@@ -245,31 +245,52 @@ function checkOrderBook(opportunity) {
         console.log("profit1", opportunity.id, profit1);
 
         if (profit1 >= configs.search.minimumProfit) {
-            opportunity.profit = profit1;
+            opportunity.profit_percent = profit1;
             opportunity.approved = true;
             opportunity.quality = { note: "row1", checked_at: moment().toDate() };
             opportunity.quality.score = 5;
             // min
             let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
-            opportunity.invest.min = { base: minBase, quote: minQuote };
-            opportunity.invest.max = { base: amount1, quote: amount1 * bestAsk1.ask };
+
+            opportunity.invest.min = {
+                base: minBase,
+                quote: minQuote,
+                profit_percent: configs.search.minimumProfitInvest,
+                profit: minQuote * (configs.search.minimumProfitInvest / 100)
+            };
+            opportunity.invest.max = {
+                base: amount1,
+                quote: amount1 * bestAsk1.ask,
+                profit_percent: profit1,
+                profit: amount1 * bestAsk1.ask * (profit1 / 100)
+            };
+
             console.log("Q >> Invest Min", opportunity.invest.min);
-            console.log("Q >> Amount 1", amount1);
-            console.log("Q >> Profit Row 1", profit1);
+            console.log("Q >> Profit Row 1", profit1, "%");
             console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);
         } else if (profit2 >= configs.search.minimumProfit) {
-            opportunity.profit = profit2;
+            opportunity.profit_percent = profit2;
             opportunity.approved = true;
             opportunity.quality = { note: "row2", checked_at: moment().toDate() };
             opportunity.quality.score = 4;
             // min
             let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
-            opportunity.invest.min = { base: minBase, quote: minQuote };
-            opportunity.invest.max = { base: amount2, quote: amount2 * bestAsk2.ask };
+            opportunity.invest.min = {
+                base: minBase,
+                quote: minQuote,
+                profit_percent: configs.search.minimumProfitInvest,
+                profit: minQuote * (configs.search.minimumProfitInvest / 100)
+            };
+            opportunity.invest.max = {
+                base: amount2,
+                quote: amount2 * bestAsk2.ask,
+                profit_percent: profit2,
+                profit: amount2 * bestAsk2.ask * (profit2 / 100)
+            };
             console.log("Q >> Invest Min", opportunity.invest.min);
-            console.log("Q >> Profit Row 2", profit2);
+            console.log("Q >> Profit Row 2", profit2, "%");
             console.log(colors.green("Q >> Aproved Row 2"), colors.magenta(opportunity.id));
             // call execution
             execution.initialize(opportunity);

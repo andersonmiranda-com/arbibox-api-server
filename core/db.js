@@ -71,7 +71,7 @@ exports.upsertOpportunity = function(data) {
                     $addToSet: {
                         lastest: {
                             created_at: data.opp_created_at,
-                            profit: data.profit
+                            profit_percent: data.profit_percent
                         }
                     }
                 },
@@ -262,7 +262,7 @@ exports.upsertTriangularOpportunity = function(data) {
                 $addToSet: {
                     lastest: {
                         created_at: data.created_at,
-                        profit: data.profit
+                        profit_percent: data.profit_percent
                     }
                 }
             },

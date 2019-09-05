@@ -88,7 +88,7 @@
         "quoteCurrencies": true
     },
     "search": {
-        "checkInterval": 5,
+        "checkInterval": 10,
         "minimumProfit": 0.05,
         "targetAssets": ["BTC", "ETH", "USDT"]
     },

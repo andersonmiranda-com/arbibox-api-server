@@ -87,7 +87,7 @@
 
     "loop": true,
     "search": {
-        "checkInterval": 10,
+        "checkInterval": 15,
         "minimumProfit": 0.1,
         "minimumProfitInvest": 0.1,
         "quoteCurrencyFunds": {

@@ -220,14 +220,14 @@ function checkOrderBook(opportunity) {
             return false;
         }
 
-        opportunity.profit1 = calculateProfit(opportunity.chain, response, 0);
-        opportunity.profit2 = calculateProfit(opportunity.chain, response, 1);
+        let profit1 = calculateProfit(opportunity.chain, response, 0);
+        let profit2 = calculateProfit(opportunity.chain, response, 1);
 
         console.log("Q >>", "Profit Row 1", opportunity.profit1);
         console.log("Q >>", "Profit Row 2", opportunity.profit2);
 
-        if (opportunity.profit1 >= configs.search.minimumProfit) {
-            opportunity.profit = opportunity.profit1;
+        if (profit1 >= configs.search.minimumProfit) {
+            opportunity.profit_percent = profit1;
             opportunity.approved = true;
             opportunity.quality = {
                 score: 5,

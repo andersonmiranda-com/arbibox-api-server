@@ -378,9 +378,11 @@ function filterOpportunities(prices) {
                     symbol: bestAsk.symbol,
                     buy_at: bestAsk.name,
                     sell_at: bestBid.name,
-                    profit: Number(percentageAfterWdFees1.toFixed(4)),
+                    profit_percent: Number(percentageAfterWdFees1.toFixed(4)),
                     bestAsk: bestAsk,
                     bestBid: bestBid,
+                    base: baseCurrency,
+                    quote: quoteCurrency,
                     invest: {
                         //calc: configs.search.quoteCurrencyFunds[quoteCurrency],
                         min: {
