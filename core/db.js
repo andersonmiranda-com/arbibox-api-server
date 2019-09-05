@@ -351,7 +351,7 @@ exports.addToQueue = function(data) {
 /// Orders
 ///
 
-exports.createOrder = function(data) {
+exports.addOrder = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");

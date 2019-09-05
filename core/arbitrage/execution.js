@@ -1,7 +1,9 @@
+const ccxt = require("ccxt");
 var moment = require("moment");
 const configs = require("../../config/settings-arbitrage");
 const colors = require("colors");
 
+const { createOrder } = require("../exchange");
 const db = require("../db");
 
 let opportunity_test = {
@@ -14,8 +16,8 @@ let opportunity_test = {
     sell_at: "kraken",
     profit_percent: 0.849181954999907,
     bestAsk: {
-        bid: 0.040697,
-        ask: 0.040791,
+        bid: 0.040674,
+        ask: 0.040705,
         baseVolume: 34838.03,
         quoteVolume: 1397.20583903,
         name: "binance",
@@ -25,8 +27,8 @@ let opportunity_test = {
         baseWithdrawalFee: 0.01
     },
     bestBid: {
-        bid: 0.041608,
-        ask: 0.042049,
+        bid: 0.041334,
+        ask: 0.041844,
         baseVolume: 429.53092574,
         quoteVolume: 17.5345605784952,
         name: "kraken",
@@ -103,45 +105,95 @@ const prepareOrder = opportunity => {
 /// Prepara Order To be executed
 ///
 
-const executeOrder = opportunity => {
-    // remove from opportunities
+const executeOrder = async opportunity => {
+    /////////////////////////////////////////////////////////
+    //
+    // get Wallets Balances
+    //
 
-    let buy_amount = opportunity.invest.max.quote / opportunity.bestAsk.ask;
-    let buy_balance = buy_amount * (1 + opportunity.bestAsk.tradeFee);
-    let buy_wd = buy_amount;
+    // check limits
 
-    let buy_order = {
+    /////////////////////////////////////////////////////////
+    //
+    // buy order data
+    //
+
+    //let investQuote = opportunity.invest.min.quote;
+    let investQuote = 0.3;
+
+    let buyAmount = investQuote / opportunity.bestAsk.ask;
+    let buyBalance = buyAmount * (1 + opportunity.bestAsk.tradeFee);
+
+    ////check Balance
+    let buyWdAmount = buyAmount;
+
+    let buyOrderData = {
         exchange: opportunity.buy_at,
         side: "buy",
         type: "market",
         symbol: opportunity.symbol,
-        amount: buy_amount
+        amount: buyAmount,
+        price: opportunity.bestAsk.ask
     };
 
-    let sell_balance = buy_amount - opportunity.bestAsk.baseWithdrawalFee;
-    let sell_amount = sell_balance / (1 + opportunity.bestbid.tradeFee);
-    let sell_wd = sell_amount * opportunity.bestbid.bid;
+    /////////////////////////////////////////////////////////
+    //
+    // sell order data
+    //
 
-    let sell_order = {
+    let sellBalance = buyAmount - opportunity.bestAsk.baseWithdrawalFee;
+    let sellAmount = sellBalance / (1 + opportunity.bestBid.tradeFee);
+    let sellWdAmount = sellAmount * opportunity.bestBid.bid;
+
+    let sellOrderData = {
         exchange: opportunity.sell_at,
         side: "sell",
         type: "market",
         symbol: opportunity.symbol,
-        amount: sell_amount
+        amount: sellAmount,
+        price: opportunity.bestBid.bid
     };
+
+    ////////////////////////
+    // Check
+
+    ////////////////////////
+    //execute buy order
+
+    //buyOrderResult = {};
+    //sellOrderResult = {};
+
+    let buyOrderResult = await createOrder(buyOrderData);
+    db.addOrder({ opp_id: opportunity._id, buyOrderData, buyOrderResult });
+
+    ////////////////////////
+    //execute sell order
+
+    let sellOrderResult = await createOrder(sellOrderData);
+    db.addOrder({ opp_id: opportunity._id, sellOrderData, sellOrderResult });
 
     //
 
-    //let buy_wd_address = fetchDepositAddress(opportunity.buy_at, opportunity.quote);
-    let buy_wd_address = {
+    /////////////////////////////////////////////////////////
+    //
+    // buy order data
+    //
+
+    //let buyWdAddress = fetchDepositAddress(opportunity.buy_at, opportunity.quote);
+    let buyWdAddress = {
         currency: opportunity.quote,
         address: "abc",
         tag: "tag",
         info: "info"
     };
 
-    //let sell_wd_address = fetchDepositAddress(opportunity.sell_at, opportunity.base);
-    let sell_wd_address = {
+    /////////////////////////////////////////////////////////
+    //
+    // buy order data
+    //
+
+    //let sellWdAddress = fetchDepositAddress(opportunity.sell_at, opportunity.base);
+    let sellWdAddress = {
         currency: opportunity.base,
         address: "def",
         tag: "tag",
@@ -149,28 +201,63 @@ const executeOrder = opportunity => {
     };
 
     //withdrawal from buy side
-    let buy_wd = {
+    let buyWdData = {
         exchange: opportunity.buy_at,
-        code: sell_wd_code,
-        address: sell_wd_address.address,
-        symbol: opportunity.symbol,
-        amount: buy_wd
+        code: opportunity.base,
+        amount: buyWdAmount,
+        address: sellWdAddress
     };
 
     //withdrawal from buy side
-    let sell_wd = {
+    let sellWdData = {
         exchange: opportunity.sell_at,
-        side: "sell",
-        type: "market",
-        symbol: opportunity.symbol,
-        amount: sell_wd
+        code: opportunity.quote,
+        amount: sellWdAmount,
+        address: buyWdAddress
     };
 
-    console.log(colors.green("E >> Executing..."), order);
+    //console.log(colors.green("E >> Executing..."), order);
+};
+
+const testOrder = async opportunity => {
+    global.api = {};
+    var _instance;
+
+    let name = "binance";
+
+    if (configs.keys[name]) {
+        _instance = new ccxt[name]({
+            apiKey: configs.keys[name].apiKey,
+            secret: configs.keys[name].secret,
+            timeout: configs.apiTimeout * 1000,
+            enableRateLimit: true
+        });
+    }
+
+    await _instance.loadMarkets();
+
+    api[name] = _instance;
+
+    name = "kraken";
+
+    if (configs.keys[name]) {
+        _instance = new ccxt[name]({
+            apiKey: configs.keys[name].apiKey,
+            secret: configs.keys[name].secret,
+            timeout: configs.apiTimeout * 1000,
+            enableRateLimit: true
+        });
+    }
+
+    await _instance.loadMarkets();
+
+    api[name] = _instance;
+
+    executeOrder(opportunity);
 };
 
 module.exports = {
     initialize
 };
 
-executeOrder(opportunity_test);
+testOrder(opportunity_test);

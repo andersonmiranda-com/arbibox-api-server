@@ -69,6 +69,29 @@ async function fetchTrades(exchange, symbol) {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Orders
+///
+
+const createOrder = async ({ exchange, side, type, symbol, amount, price }) => {
+    let orderResult = {};
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (type === "market" && api[exchange].has["createMarketOrder"]) {
+                orderResult = await api[exchange].createOrder(symbol, type, side, amount);
+            } else {
+                type = type === "market" ? "limit" : type;
+                orderResult = await api[exchange].createOrder(symbol, type, side, amount, price);
+            }
+            resolve(orderResult);
+        } catch (error) {
+            console.error(colors.red("X >> Error createOrder:"), error.message);
+            resolve(orderResult);
+        }
+    });
+};
+
 ///////////////
 
 const fetchBalance = async exchange => {
@@ -101,6 +124,7 @@ const fetchBalance = async exchange => {
 module.exports = {
     fetchTickers,
     fetchTrades,
+    createOrder,
     fetchOrderBook,
     fetchBalance
 };
