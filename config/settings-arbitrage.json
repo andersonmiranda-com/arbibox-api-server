@@ -88,13 +88,13 @@
     "loopWithdraw": false,
     "search": {
         "checkInterval": 15,
-        "minimumProfit": 0.5,
-        "minimumProfitInvest": 0.5,
+        "minimumProfit": 0.1,
+        "minimumProfitInvest": 0.1,
         "quoteCurrencyFunds": {
-            "BTC": 0.01,
-            "USD": 100,
-            "USDT": 100,
-            "ETH": 0.5
+            "BTC": 0.1,
+            "USD": 1000,
+            "USDT": 1000,
+            "ETH": 5
         }
     },
 

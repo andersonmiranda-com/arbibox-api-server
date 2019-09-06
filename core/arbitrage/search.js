@@ -364,7 +364,7 @@ function filterOpportunities(prices) {
             );
 
             let percentReference = configs.loopWithdraw ? profitPercentAfterWdFees : profitPercent;
-            //console.log("S >>", bestAsk.symbol, bestAsk.name, bestBid.name, percentageAfterWdFees1);
+            //console.log("S >>", bestAsk.symbol, bestAsk.name, bestBid.name, profitPercentAfterWdFees);
 
             if (
                 percentReference >= configs.search.minimumProfit &&
