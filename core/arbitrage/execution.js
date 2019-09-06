@@ -3,7 +3,7 @@ var moment = require("moment");
 const configs = require("../../config/settings-arbitrage");
 const colors = require("colors");
 
-const { createOrder } = require("../exchange");
+const { createOrder, fetchBalance } = require("../exchange");
 const db = require("../db");
 
 let opportunity_test = {
@@ -81,7 +81,7 @@ let opportunity_test = {
 ///
 
 const initialize = async function(opportunity) {
-    console.log(colors.green("E >> Executing..."), colors.cyan(opportunity.id));
+    //console.log(colors.green("E >> Executing..."), colors.cyan(opportunity.id));
     prepareOrder(opportunity);
 };
 
@@ -90,14 +90,128 @@ const initialize = async function(opportunity) {
 /// Prepara Order To be executed
 ///
 
-const prepareOrder = opportunity => {
+const prepareOrder = async opportunity => {
     // remove from opportunities
     //db.removeOpportunities({ id: order.id });
-    delete opportunity._id;
+    //delete opportunity._id;
     opportunity.ord_created_at = moment().toDate();
     // add to orders collection
-    db.addToQueue(opportunity);
-    console.log(colors.green("E >> Created..."), colors.cyan(opportunity.id));
+    opportunity._id = await db.addToQueue(opportunity);
+    console.log(colors.green("E >> Executing..."), colors.cyan(opportunity._id));
+    let hasFunds = await checkWallets(opportunity);
+    //executeOrder(opportunity);
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Prepara Order To be executed
+///
+
+const checkWallets = async opportunity => {
+    /////////////////////////////////////////////////////////
+    //
+    // get Wallets Balances
+    //
+
+    let buyWallets = await fetchBalance(opportunity.buy_at);
+    let sellWallets = await fetchBalance(opportunity.sell_at);
+
+    opportunity.wallets = {
+        buy: {
+            [opportunity.base]: buyWallets[opportunity.base],
+            [opportunity.quote]: buyWallets[opportunity.quote]
+        },
+        sell: {
+            [opportunity.base]: sellWallets[opportunity.base],
+            [opportunity.quote]: sellWallets[opportunity.quote]
+        }
+    };
+
+    /////////////////////////////////////////////////////////
+    //
+    // Check funds
+    //
+
+    let buyInsuficientFunds = false;
+    let sellInsuficientFunds = false;
+
+    //
+    //
+    //
+    //
+
+    // TODO: refazer tudo!!!!
+
+    let buyRatio = opportunity.wallets.buy[opportunity.quote] / opportunity.invest.max.quote;
+    let sellRatio = opportunity.wallets.sell[opportunity.base] / opportunity.invest.max.base;
+
+    if (buyRatio < sellRatio) {
+        // buy side quote is smaller value
+        // make all calculations from buy side
+
+        let buyAmountQuote = opportunity.invest.max.quote;
+        let buyBalance = buyAmountQuote * (1 + opportunity.bestAsk.tradeFee);
+
+        if (buyBalance > opportunity.wallets.buy[opportunity.quote]) {
+            buyAmountQuote =
+                opportunity.wallets.buy[opportunity.quote] * (1 - opportunity.bestAsk.tradeFee);
+        }
+
+        let buyAmountBase = buyAmountQuote / opportunity.bestAsk.ask;
+        //
+    } else {
+        // sell side base is smaller value
+        // make all calculatios from sell side
+        let sellBalance = X;
+    }
+
+    let buyAmountBase = buyAmountQuote / opportunity.bestAsk.ask;
+
+    //let sellBalance = buyAmount - opportunity.bestAsk.baseWithdrawalFee;
+    let sellBalance = buyAmountBase;
+    let sellAmountBase = sellBalance / (1 + opportunity.bestBid.tradeFee);
+
+    if (sellBalance <= opportunity.wallets.sell[opportunitybase]) {
+        buyAmountQuote =
+            opportunity.wallets.buy[opportunity.quote] * (1 - opportunity.bestAsk.tradeFee);
+    }
+
+    let sellWdAmount = sellAmount * opportunity.bestBid.bid;
+
+    if (buyAmountQuote < opportunity.invest.min.quote) {
+        buyInsuficientFunds = true;
+    }
+
+    ////check Balance
+    let buyWdAmount = buyAmount;
+
+    let buyOrderData = {
+        exchange: opportunity.buy_at,
+        side: "buy",
+        type: "market",
+        symbol: opportunity.symbol,
+        amount: buyAmount,
+        price: opportunity.bestAsk.ask
+    };
+
+    /////////////////////////////////////////////////////////
+    //
+    // sell order data
+    //
+
+    let sellOrderData = {
+        exchange: opportunity.sell_at,
+        side: "sell",
+        type: "market",
+        symbol: opportunity.symbol,
+        amount: sellAmount,
+        price: opportunity.bestBid.bid
+    };
+
+    opportunity.sufficientFunds = true;
+
+    return opportunity;
+    // check limits
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,18 +222,14 @@ const prepareOrder = opportunity => {
 const executeOrder = async opportunity => {
     /////////////////////////////////////////////////////////
     //
-    // get Wallets Balances
-    //
-
-    // check limits
-
-    /////////////////////////////////////////////////////////
-    //
     // buy order data
     //
 
-    //let investQuote = opportunity.invest.min.quote;
-    let investQuote = 0.3;
+    let investQuote = opportunity.invest.max.quote;
+
+    if (investQuote > 0.1) {
+        investQuote = 0.1;
+    }
 
     let buyAmount = investQuote / opportunity.bestAsk.ask;
     let buyBalance = buyAmount * (1 + opportunity.bestAsk.tradeFee);
@@ -141,7 +251,8 @@ const executeOrder = async opportunity => {
     // sell order data
     //
 
-    let sellBalance = buyAmount - opportunity.bestAsk.baseWithdrawalFee;
+    //let sellBalance = buyAmount - opportunity.bestAsk.baseWithdrawalFee;
+    let sellBalance = buyAmount;
     let sellAmount = sellBalance / (1 + opportunity.bestBid.tradeFee);
     let sellWdAmount = sellAmount * opportunity.bestBid.bid;
 
@@ -164,13 +275,47 @@ const executeOrder = async opportunity => {
     //sellOrderResult = {};
 
     let buyOrderResult = await createOrder(buyOrderData);
-    db.addOrder({ opp_id: opportunity._id, buyOrderData, buyOrderResult });
+    db.addOrder({
+        created_at: moment().toDate(),
+        queue_id: opportunity._id,
+        exchange: buyOrderData.exchange,
+        side: buyOrderData.side,
+        type: buyOrderData.type,
+        symbol: buyOrderData.symbol,
+        amount: buyOrderData.amount,
+        price: buyOrderData.price,
+        buyOrderResult
+    });
+
+    console.log(
+        colors.green("E >> Buy order created..."),
+        colors.cyan(buyOrderData.exchange),
+        buyOrderData.symbol,
+        buyOrderData.amount
+    );
 
     ////////////////////////
     //execute sell order
 
     let sellOrderResult = await createOrder(sellOrderData);
-    db.addOrder({ opp_id: opportunity._id, sellOrderData, sellOrderResult });
+    db.addOrder({
+        created_at: moment().toDate(),
+        queue_id: opportunity._id,
+        exchange: sellOrderData.exchange,
+        side: sellOrderData.side,
+        type: sellOrderData.type,
+        symbol: sellOrderData.symbol,
+        amount: sellOrderData.amount,
+        price: sellOrderData.price,
+        sellOrderResult
+    });
+
+    console.log(
+        colors.green("E >> Sell order created..."),
+        colors.cyan(sellOrderData.exchange),
+        sellOrderData.symbol,
+        sellOrderData.amount
+    );
 
     //
 
@@ -257,7 +402,8 @@ const testOrder = async opportunity => {
 };
 
 module.exports = {
-    initialize
+    initialize,
+    executeOrder
 };
 
 //testOrder(opportunity_test);

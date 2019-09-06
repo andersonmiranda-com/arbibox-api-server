@@ -335,13 +335,15 @@ exports.insertTriangularCrossOpportunity = function(data) {
 ///
 
 exports.addToQueue = function(data) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        var db = client.db("arbibox");
-        db.collection("orders_queue").insertOne(data, function(err, res) {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
             if (err) throw err;
-            //console.log(res.result);
-            client.close();
+            var db = client.db("arbibox");
+            db.collection("orders_queue").insertOne(data, function(err, res) {
+                if (err) throw err;
+                resolve(res.insertedId);
+                client.close();
+            });
         });
     });
 };
