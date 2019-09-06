@@ -1,55 +1,10 @@
 {
     "apiTimeout": 20,
-    "exchanges": [
-        "bittrex",
-        "kraken",
-        "bitfinex",
-        "poloniex",
-        "binance",
-        "ethfinex",
-        "bibox",
-        "kucoin",
-        "gateio",
-        "livecoin",
-        "exmo"
-    ],
+    "exchanges": ["kraken", "binance"],
     "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
-    "baseCurrencies": [
-        "BTC",
-        "ETH",
-        "XRP",
-        "BCH",
-        "LTC",
-        "BNB",
-        "USDT",
-        "EOS",
-        "BSV",
-        "XMR",
-        "XLM",
-        "LEO",
-        "ADA",
-        "TRX",
-        "LINK",
-        "DASH",
-        "XTZ",
-        "NEO",
-        "MIOTA",
-        "ETC",
-        "ATOM",
-        "XEM",
-        "MKR",
-        "ONT",
-        "CRO",
-        "USDC",
-        "ZEC",
-        "VSYS",
-        "DOGE",
-        "DCR",
-        "VET",
-        "QTUM"
-    ],
+    "baseCurrencies": ["ETC"],
 
-    "quoteCurrencies": ["BTC", "ETH", "USDT"],
+    "quoteCurrencies": ["ETH"],
 
     "currenciesBlacklist": ["VIA"],
 
@@ -65,6 +20,10 @@
         "kraken": {
             "apiKey": "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
             "secret": "csjYywPe8c51zBvDrYV96iiZVwokozSpmCP+pdOGOzWQ1FwStEpRZnIEhujxx9Hxb2XK7oipi5k7ZU/jrCKdPw=="
+        },
+        "hitbtc": {
+            "apiKey": "0P+2ik5JXiB4kjbnuQtU/cw0oIlXmHf9",
+            "secret": "d2wzFWYM0dm437YxZZ6TiCK+E3NLmGFO"
         },
         "bitfinex": {
             "apiKey": "gfuxiWVe33k0dX46Ug3XiOy3U6z6r9KUgoOYhQCh0gM",

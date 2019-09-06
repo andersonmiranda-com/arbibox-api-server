@@ -1,0 +1,30 @@
+
+ { info:
+   { XXBT: '0.0230074470',
+     XETH: '0.3049774600',
+     XETC: '2.4489474400',
+     BCH: '0.0000000500',
+     ADA: '0.00000000' },
+  BTC: { free: undefined, used: undefined, total: 0.023007447 },
+  ETH: { free: undefined, used: undefined, total: 0.30497746 },
+  ETC: { free: undefined, used: undefined, total: 2.44894744 },
+  BCH: { free: undefined, used: undefined, total: 5e-8 },
+  ADA: { free: undefined, used: undefined, total: 0 },
+  free:
+   { BTC: undefined,
+     ETH: undefined,
+     ETC: undefined,
+     BCH: undefined,
+     ADA: undefined },
+  used:
+   { BTC: undefined,
+     ETH: undefined,
+     ETC: undefined,
+     BCH: undefined,
+     ADA: undefined },
+  total:
+   { BTC: 0.023007447,
+     ETH: 0.30497746,
+     ETC: 2.44894744,
+     BCH: 5e-8,
+     ADA: 0 } }

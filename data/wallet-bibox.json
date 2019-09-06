@@ -1,0 +1,9 @@
+
+ { info:
+   { total_btc: '0.00000000',
+     total_cny: '0.00',
+     total_usd: '0.00',
+     assets_list: [] },
+  free: {},
+  used: {},
+  total: {} }
