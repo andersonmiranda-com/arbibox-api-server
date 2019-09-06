@@ -88,9 +88,9 @@ async function test(name, symbol) {
     var start1a = new Date();
     console.info("Start 1a", start1a);
 
-    let response = await _instance.fetchFundingFees();
+    //let response = await _instance.fetchFundingFees();
     //let endtickers = chain.map(symbol => exc_tickers[symbol]);
-    console.log("response", response);
+    console.log("response", _instance.markets);
 
     var end1a = new Date() - start1a;
     console.info("Execution time1a: %dms", end1a);

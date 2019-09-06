@@ -4,7 +4,7 @@ const colors = require("colors");
 const configs = require("../../config/settings-arbitrage");
 const execution = require("./execution");
 
-const { getPercentageAfterWdFees, getMinimunInversion } = require("./common");
+const { getPercentage, getPercentageAfterWdFees, getMinimunInversion } = require("./common");
 const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
 const db = require("../db");
 
@@ -216,9 +216,6 @@ function checkOrderBook(opportunity) {
         if (bestAsk1.amount > bestBid1.amount) {
             amount1 = bestBid1.amount;
         }
-
-        let profit1 = getPercentageAfterWdFees(amount1 * bestAsk1.ask, bestAsk1, bestBid1);
-
         // Row 2
         let amount2 = bestAsk2.amount;
 
@@ -226,7 +223,16 @@ function checkOrderBook(opportunity) {
             amount2 = bestBid2.amount;
         }
 
-        let profit2 = getPercentageAfterWdFees(amount2 * bestAsk2.ask, bestAsk2, bestBid2);
+        let profit1 = 0;
+        let profit2 = 0;
+
+        if (configs.loopWithdraw) {
+            profit1 = getPercentageAfterWdFees(amount1 * bestAsk1.ask, bestAsk1, bestBid1);
+            profit2 = getPercentageAfterWdFees(amount2 * bestAsk2.ask, bestAsk2, bestBid2);
+        } else {
+            profit1 = getPercentage(bestAsk1, bestBid1);
+            profit2 = getPercentage(bestAsk2, bestBid2);
+        }
 
         opportunity.ordersBook = {
             cheched_at: moment().toDate(),
@@ -242,7 +248,26 @@ function checkOrderBook(opportunity) {
             }
         };
 
-        console.log("profit1", opportunity.id, profit1);
+        if (
+            amount1 * bestAsk1.ask < opportunity.bestAsk.minAmount &&
+            amount2 * bestAsk2.ask < opportunity.bestAsk.minAmount
+        ) {
+            opportunity.quality = {
+                note: "Volume in orderBook < minimun allowed",
+                checked_at: moment().toDate()
+            };
+            opportunity.quality.score = 0;
+            opportunity.approved = false;
+            console.log(
+                colors.red("Q >>"),
+                "Not approved - Volume in orderBook < minimun allowed",
+                opportunity.id
+            );
+            db.updateOpportunity(opportunity);
+            return;
+        }
+
+        //console.log("profit1", opportunity.id, profit1);
 
         if (profit1 >= configs.search.minimumProfit) {
             opportunity.profit_percent = profit1;
@@ -250,14 +275,24 @@ function checkOrderBook(opportunity) {
             opportunity.quality = { note: "row1", checked_at: moment().toDate() };
             opportunity.quality.score = 5;
             // min
-            let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
+            if (configs.loopWithdraw) {
+                let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
 
-            opportunity.invest.min = {
-                base: minBase,
-                quote: minQuote,
-                profit_percent: configs.search.minimumProfitInvest,
-                profit: minQuote * (configs.search.minimumProfitInvest / 100)
-            };
+                opportunity.invest.min = {
+                    base: minBase,
+                    quote: minQuote,
+                    profit_percent: configs.search.minimumProfitInvest,
+                    profit: minQuote * (configs.search.minimumProfitInvest / 100)
+                };
+            } else {
+                opportunity.invest.min = {
+                    base: bestAsk1.minAmount / bestAsk1.ask,
+                    quote: bestAsk1.minAmount,
+                    profit_percent: configs.search.minimumProfitInvest,
+                    profit: bestAsk1.minAmount * (configs.search.minimumProfitInvest / 100)
+                };
+            }
+
             opportunity.invest.max = {
                 base: amount1,
                 quote: amount1 * bestAsk1.ask,
@@ -265,7 +300,7 @@ function checkOrderBook(opportunity) {
                 profit: amount1 * bestAsk1.ask * (profit1 / 100)
             };
 
-            console.log("Q >> Invest Min", opportunity.invest.min);
+            configs.loopWithdraw && console.log("Q >> Invest Min", opportunity.invest.min);
             console.log("Q >> Profit Row 1", profit1, "%");
             console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(opportunity.id));
             // call execution
@@ -275,20 +310,32 @@ function checkOrderBook(opportunity) {
             opportunity.approved = true;
             opportunity.quality = { note: "row2", checked_at: moment().toDate() };
             opportunity.quality.score = 4;
-            // min
-            let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
-            opportunity.invest.min = {
-                base: minBase,
-                quote: minQuote,
-                profit_percent: configs.search.minimumProfitInvest,
-                profit: minQuote * (configs.search.minimumProfitInvest / 100)
-            };
+
+            if (configs.loopWithdraw) {
+                // min
+                let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
+                opportunity.invest.min = {
+                    base: minBase,
+                    quote: minQuote,
+                    profit_percent: configs.search.minimumProfitInvest,
+                    profit: minQuote * (configs.search.minimumProfitInvest / 100)
+                };
+            } else {
+                opportunity.invest.min = {
+                    base: bestAsk2.minAmount / bestAsk2.ask,
+                    quote: bestAsk2.minAmount,
+                    profit_percent: configs.search.minimumProfitInvest,
+                    profit: bestAsk2.minAmount * (configs.search.minimumProfitInvest / 100)
+                };
+            }
+
             opportunity.invest.max = {
                 base: amount2,
                 quote: amount2 * bestAsk2.ask,
                 profit_percent: profit2,
                 profit: amount2 * bestAsk2.ask * (profit2 / 100)
             };
+
             console.log("Q >> Invest Min", opportunity.invest.min);
             console.log("Q >> Profit Row 2", profit2, "%");
             console.log(colors.green("Q >> Aproved Row 2"), colors.magenta(opportunity.id));
@@ -301,7 +348,11 @@ function checkOrderBook(opportunity) {
             };
             opportunity.quality.score = 0;
             opportunity.approved = false;
-            console.log(colors.red("Q >>"), "Not approved", opportunity.id);
+            console.log(
+                colors.red("Q >>"),
+                "Not approved - Insuficient volume in orderBook",
+                opportunity.id
+            );
             db.updateOpportunity(opportunity);
         }
 

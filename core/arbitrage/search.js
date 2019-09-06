@@ -238,6 +238,7 @@ async function findOpportunities(tickets, exchangesSymbols, markets, searchCount
                             price.name = exchange;
                             price.symbol = ticket.symbol;
                             price.tradeFee = exchangeMarkets[ticket.symbol].taker || 0.0026; // catchall if taker fee is not found
+                            price.minAmount = exchangeMarkets[ticket.symbol].limits.amount.min;
                             prices.push(price);
                             /* verbose && console.log(
                                 z(5, counter, " "),
@@ -370,13 +371,6 @@ function filterOpportunities(prices) {
                 percentReference < 100 &&
                 percentReference !== Infinity
             ) {
-                let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
-
-                let profitPercentAfterWdFeesMin = getPercentageAfterWdFees(
-                    minQuote,
-                    bestAsk,
-                    bestBid
-                );
                 let opportunity = {
                     id: bestAsk.symbol.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
                     opp_created_at: new Date(),
@@ -389,16 +383,28 @@ function filterOpportunities(prices) {
                     bestAsk: bestAsk,
                     bestBid: bestBid,
                     base: baseCurrency,
-                    quote: quoteCurrency,
-                    invest: {
-                        //calc: configs.search.quoteCurrencyFunds[quoteCurrency],
+                    quote: quoteCurrency
+                };
+
+                if (configs.loopWithdraw) {
+                    let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
+
+                    let profitPercentAfterWdFeesMin = getPercentageAfterWdFees(
+                        minQuote,
+                        bestAsk,
+                        bestBid
+                    );
+
+                    opportunity.invest = {
                         min: {
                             base: minBase,
                             quote: minQuote,
                             profit_min: Number(profitPercentAfterWdFeesMin.toFixed(4))
                         }
-                    }
-                };
+                    };
+                } else {
+                    opportunity.invest = {};
+                }
 
                 verbose &&
                     console.info(
@@ -417,6 +423,7 @@ function filterOpportunities(prices) {
                 //             colors: true
                 //         })
                 //     );
+
                 db.upsertOpportunity(opportunity);
 
                 quality.checkOpportunity(opportunity);
