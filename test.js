@@ -190,6 +190,6 @@ async function test(name, symbol) {
     */
 }
 
-test("bitfinex", "ETH/BTC");
+test("hitbtc", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
 //test("cointiger", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);
