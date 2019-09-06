@@ -351,26 +351,32 @@ function filterOpportunities(prices) {
         for (let op of opportunities) {
             let { bestAsk, bestBid } = op;
 
-            let percentage = getPercentage(bestAsk, bestBid);
+            let profitPercent = getPercentage(bestAsk, bestBid);
 
             bestAsk.baseWithdrawalFee = getWithdrawalFee(bestAsk.name, baseCurrency);
             bestBid.quoteWithdrawalFee = getWithdrawalFee(bestBid.name, quoteCurrency);
 
-            let percentageAfterWdFees1 = getPercentageAfterWdFees(
+            let profitPercentAfterWdFees = getPercentageAfterWdFees(
                 configs.search.quoteCurrencyFunds[quoteCurrency],
                 bestAsk,
                 bestBid
             );
 
+            let percentReference = configs.loopWithdraw ? profitPercentAfterWdFees : profitPercent;
             //console.log("S >>", bestAsk.symbol, bestAsk.name, bestBid.name, percentageAfterWdFees1);
 
             if (
-                percentageAfterWdFees1 >= configs.search.minimumProfit &&
-                percentageAfterWdFees1 < 100 &&
-                percentageAfterWdFees1 !== Infinity
+                percentReference >= configs.search.minimumProfit &&
+                percentReference < 100 &&
+                percentReference !== Infinity
             ) {
                 let { minQuote, minBase } = getMinimunInversion(bestAsk, bestBid);
-                let percentageAfterWdFees2 = getPercentageAfterWdFees(minQuote, bestAsk, bestBid);
+
+                let profitPercentAfterWdFeesMin = getPercentageAfterWdFees(
+                    minQuote,
+                    bestAsk,
+                    bestBid
+                );
                 let opportunity = {
                     id: bestAsk.symbol.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
                     opp_created_at: new Date(),
@@ -378,7 +384,8 @@ function filterOpportunities(prices) {
                     symbol: bestAsk.symbol,
                     buy_at: bestAsk.name,
                     sell_at: bestBid.name,
-                    profit_percent: Number(percentageAfterWdFees1.toFixed(4)),
+                    profit_loop_percent: Number(profitPercentAfterWdFees.toFixed(4)),
+                    profit_percent: Number(profitPercent.toFixed(4)),
                     bestAsk: bestAsk,
                     bestBid: bestBid,
                     base: baseCurrency,
@@ -388,7 +395,7 @@ function filterOpportunities(prices) {
                         min: {
                             base: minBase,
                             quote: minQuote,
-                            profit_min: Number(percentageAfterWdFees2.toFixed(4))
+                            profit_min: Number(profitPercentAfterWdFeesMin.toFixed(4))
                         }
                     }
                 };
@@ -396,7 +403,7 @@ function filterOpportunities(prices) {
                 verbose &&
                     console.info(
                         "S >>",
-                        colors.green(percentageAfterWdFees1.toFixed(4)),
+                        colors.green(percentReference.toFixed(4)),
                         "% ",
                         z(9, opportunity.symbol, " "),
                         z(10, opportunity.buy_at, " "),

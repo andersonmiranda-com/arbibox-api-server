@@ -85,7 +85,7 @@
         "quoteCurrencies": true
     },
 
-    "loop": true,
+    "loopWithdraw": true,
     "search": {
         "checkInterval": 15,
         "minimumProfit": 0.1,
