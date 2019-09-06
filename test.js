@@ -4,6 +4,10 @@ const axios = require("axios");
 const util = require("util");
 
 const configs = require("./config/settings-arbitrage");
+<<<<<<< HEAD
+=======
+var moment = require("moment");
+>>>>>>> master
 
 async function test(name, symbol) {
     var _instance;
@@ -89,6 +93,7 @@ async function test(name, symbol) {
     var start1a = new Date();
     //console.info("Start 1a", start1a);
 
+<<<<<<< HEAD
     //let response = await _instance.fetchDepositAddress("XLM");
     let response = await _instance.fetchBalance();
     //let endtickers = chain.map(symbol => exc_tickers[symbol]);
@@ -101,6 +106,11 @@ async function test(name, symbol) {
             depth: null
         })
     );
+=======
+    //let response = await _instance.fetchFundingFees();
+    //let endtickers = chain.map(symbol => exc_tickers[symbol]);
+    console.log("response", _instance.markets);
+>>>>>>> master
 
     var end1a = new Date() - start1a;
     //console.info("Execution time1a: %dms", end1a);
@@ -190,6 +200,6 @@ async function test(name, symbol) {
     */
 }
 
-test("hitbtc", "ETH/BTC");
+test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
 //test("cointiger", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);
