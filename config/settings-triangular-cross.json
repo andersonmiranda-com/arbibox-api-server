@@ -2,7 +2,6 @@
     "apiTimeout": 20,
     "exchanges": [
         "bittrex",
-        "kraken",
         "bitfinex",
         "poloniex",
         "binance",
@@ -21,6 +20,7 @@
         "BCH",
         "LTC",
         "BNB",
+        "PAX",
         "USDT",
         "EOS",
         "BSV",
@@ -45,8 +45,7 @@
         "VSYS",
         "DOGE",
         "DCR",
-        "VET",
-        "QTUM"
+        "VET"
     ],
 
     "currenciesBlacklist": ["VIA"],
@@ -78,8 +77,8 @@
     },
     "search": {
         "checkInterval": 5,
-        "minimumProfit": 0.05,
-        "targetAssets": ["BTC", "ETH", "USDT"]
+        "minimumProfit": 0.1,
+        "targetAssets": ["BTC", "ETH", "USDT", "BNB", "PAX"]
     },
     "quality": {
         "checkInterval": 30,
