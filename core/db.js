@@ -1,9 +1,10 @@
 "use strict";
 
-var moment = require("moment");
-var lodash = require("lodash");
-var MongoClient = require("mongodb").MongoClient;
-var url = "mongodb://localhost:27017/";
+const moment = require("moment");
+const lodash = require("lodash");
+const MongoClient = require("mongodb").MongoClient;
+const ObjectID = require("mongodb").ObjectID;
+const url = "mongodb://localhost:27017/";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -345,6 +346,25 @@ exports.addToQueue = function(data) {
                 client.close();
             });
         });
+    });
+};
+
+exports.updateQueue = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        // avoid update different _id
+        var db = client.db("arbibox");
+        db.collection("orders_queue").updateOne(
+            { _id: data._id },
+            {
+                $set: data
+            },
+            function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                client.close();
+            }
+        );
     });
 };
 

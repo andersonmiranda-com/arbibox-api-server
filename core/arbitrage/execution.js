@@ -1,5 +1,7 @@
 const ccxt = require("ccxt");
-var moment = require("moment");
+const moment = require("moment");
+const lodash = require("lodash");
+
 const configs = require("../../config/settings-arbitrage");
 const colors = require("colors");
 
@@ -98,16 +100,9 @@ const prepareOrder = async opportunity => {
     // add to orders collection
     opportunity._id = await db.addToQueue(opportunity);
     console.log(colors.green("E >> Executing..."), colors.cyan(opportunity._id));
-    let hasFunds = await checkWallets(opportunity);
+
     //executeOrder(opportunity);
-};
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-/// Prepara Order To be executed
-///
-
-const checkWallets = async opportunity => {
     /////////////////////////////////////////////////////////
     //
     // get Wallets Balances
@@ -118,12 +113,12 @@ const checkWallets = async opportunity => {
 
     opportunity.wallets = {
         buy: {
-            [opportunity.base]: buyWallets[opportunity.base],
-            [opportunity.quote]: buyWallets[opportunity.quote]
+            [opportunity.base]: buyWallets[opportunity.base] || 0,
+            [opportunity.quote]: buyWallets[opportunity.quote] || 0
         },
         sell: {
-            [opportunity.base]: sellWallets[opportunity.base],
-            [opportunity.quote]: sellWallets[opportunity.quote]
+            [opportunity.base]: sellWallets[opportunity.base] || 0,
+            [opportunity.quote]: sellWallets[opportunity.quote] || 0
         }
     };
 
@@ -132,60 +127,33 @@ const checkWallets = async opportunity => {
     // Check funds
     //
 
-    let buyInsuficientFunds = false;
-    let sellInsuficientFunds = false;
+    let buyAmount = lodash.min([
+        opportunity.wallets.buy[opportunity.quote] / opportunity.bestAsk.ask,
+        opportunity.wallets.sell[opportunity.base],
+        opportunity.invest.max.base
+    ]);
 
-    //
-    //
-    //
-    //
+    if (buyAmount < opportunity.invest.min.base) {
+        insuficientFunds = true;
+        console.log(colors.red("E >>"), "Insuficient funds");
+        opportunity.approved = false;
+        opportunity.quality.execution_note = "Insuficient Funds";
+        db.updateQueue(opportunity);
+        return;
 
-    // TODO: refazer tudo!!!!
-
-    let buyRatio = opportunity.wallets.buy[opportunity.quote] / opportunity.invest.max.quote;
-    let sellRatio = opportunity.wallets.sell[opportunity.base] / opportunity.invest.max.base;
-
-    if (buyRatio < sellRatio) {
-        // buy side quote is smaller value
-        // make all calculations from buy side
-
-        let buyAmountQuote = opportunity.invest.max.quote;
-        let buyBalance = buyAmountQuote * (1 + opportunity.bestAsk.tradeFee);
-
-        if (buyBalance > opportunity.wallets.buy[opportunity.quote]) {
-            buyAmountQuote =
-                opportunity.wallets.buy[opportunity.quote] * (1 - opportunity.bestAsk.tradeFee);
-        }
-
-        let buyAmountBase = buyAmountQuote / opportunity.bestAsk.ask;
-        //
-    } else {
-        // sell side base is smaller value
-        // make all calculatios from sell side
-        let sellBalance = X;
+        //prepare to withdraw
     }
-
-    let buyAmountBase = buyAmountQuote / opportunity.bestAsk.ask;
 
     //let sellBalance = buyAmount - opportunity.bestAsk.baseWithdrawalFee;
-    let sellBalance = buyAmountBase;
-    let sellAmountBase = sellBalance / (1 + opportunity.bestBid.tradeFee);
+    let sellBalance = buyAmount;
+    let sellAmount = sellBalance / (1 + opportunity.bestBid.tradeFee);
 
-    if (sellBalance <= opportunity.wallets.sell[opportunitybase]) {
-        buyAmountQuote =
-            opportunity.wallets.buy[opportunity.quote] * (1 - opportunity.bestAsk.tradeFee);
-    }
+    /////////////////////////////////////////////////////////
+    //
+    // buy & sell order data
+    //
 
-    let sellWdAmount = sellAmount * opportunity.bestBid.bid;
-
-    if (buyAmountQuote < opportunity.invest.min.quote) {
-        buyInsuficientFunds = true;
-    }
-
-    ////check Balance
-    let buyWdAmount = buyAmount;
-
-    let buyOrderData = {
+    opportunity.buyOrderData = {
         exchange: opportunity.buy_at,
         side: "buy",
         type: "market",
@@ -194,12 +162,7 @@ const checkWallets = async opportunity => {
         price: opportunity.bestAsk.ask
     };
 
-    /////////////////////////////////////////////////////////
-    //
-    // sell order data
-    //
-
-    let sellOrderData = {
+    opportunity.sellOrderData = {
         exchange: opportunity.sell_at,
         side: "sell",
         type: "market",
@@ -208,9 +171,8 @@ const checkWallets = async opportunity => {
         price: opportunity.bestBid.bid
     };
 
-    opportunity.sufficientFunds = true;
-
-    return opportunity;
+    db.updateQueue(opportunity);
+    !configs.simulationMode && executeOrder(opportunity);
     // check limits
 };
 
@@ -220,60 +182,7 @@ const checkWallets = async opportunity => {
 ///
 
 const executeOrder = async opportunity => {
-    /////////////////////////////////////////////////////////
-    //
-    // buy order data
-    //
-
-    let investQuote = opportunity.invest.max.quote;
-
-    if (investQuote > 0.1) {
-        investQuote = 0.1;
-    }
-
-    let buyAmount = investQuote / opportunity.bestAsk.ask;
-    let buyBalance = buyAmount * (1 + opportunity.bestAsk.tradeFee);
-
-    ////check Balance
-    let buyWdAmount = buyAmount;
-
-    let buyOrderData = {
-        exchange: opportunity.buy_at,
-        side: "buy",
-        type: "market",
-        symbol: opportunity.symbol,
-        amount: buyAmount,
-        price: opportunity.bestAsk.ask
-    };
-
-    /////////////////////////////////////////////////////////
-    //
-    // sell order data
-    //
-
-    //let sellBalance = buyAmount - opportunity.bestAsk.baseWithdrawalFee;
-    let sellBalance = buyAmount;
-    let sellAmount = sellBalance / (1 + opportunity.bestBid.tradeFee);
-    let sellWdAmount = sellAmount * opportunity.bestBid.bid;
-
-    let sellOrderData = {
-        exchange: opportunity.sell_at,
-        side: "sell",
-        type: "market",
-        symbol: opportunity.symbol,
-        amount: sellAmount,
-        price: opportunity.bestBid.bid
-    };
-
-    ////////////////////////
-    // Check
-
-    ////////////////////////
-    //execute buy order
-
-    //buyOrderResult = {};
-    //sellOrderResult = {};
-
+    let { buyOrderData, sellOrderData } = opportunity;
     let buyOrderResult = await createOrder(buyOrderData);
     db.addOrder({
         created_at: moment().toDate(),
@@ -324,42 +233,42 @@ const executeOrder = async opportunity => {
     // buy order data
     //
 
-    //let buyWdAddress = fetchDepositAddress(opportunity.buy_at, opportunity.quote);
-    let buyWdAddress = {
-        currency: opportunity.quote,
-        address: "abc",
-        tag: "tag",
-        info: "info"
-    };
+    // //let buyWdAddress = fetchDepositAddress(opportunity.buy_at, opportunity.quote);
+    // let buyWdAddress = {
+    //     currency: opportunity.quote,
+    //     address: "abc",
+    //     tag: "tag",
+    //     info: "info"
+    // };
 
-    /////////////////////////////////////////////////////////
-    //
-    // buy order data
-    //
+    // /////////////////////////////////////////////////////////
+    // //
+    // // buy order data
+    // //
 
-    //let sellWdAddress = fetchDepositAddress(opportunity.sell_at, opportunity.base);
-    let sellWdAddress = {
-        currency: opportunity.base,
-        address: "def",
-        tag: "tag",
-        info: "info"
-    };
+    // //let sellWdAddress = fetchDepositAddress(opportunity.sell_at, opportunity.base);
+    // let sellWdAddress = {
+    //     currency: opportunity.base,
+    //     address: "def",
+    //     tag: "tag",
+    //     info: "info"
+    // };
 
-    //withdrawal from buy side
-    let buyWdData = {
-        exchange: opportunity.buy_at,
-        code: opportunity.base,
-        amount: buyWdAmount,
-        address: sellWdAddress
-    };
+    // //withdrawal from buy side
+    // let buyWdData = {
+    //     exchange: opportunity.buy_at,
+    //     code: opportunity.base,
+    //     amount: buyWdAmount,
+    //     address: sellWdAddress
+    // };
 
-    //withdrawal from buy side
-    let sellWdData = {
-        exchange: opportunity.sell_at,
-        code: opportunity.quote,
-        amount: sellWdAmount,
-        address: buyWdAddress
-    };
+    // //withdrawal from buy side
+    // let sellWdData = {
+    //     exchange: opportunity.sell_at,
+    //     code: opportunity.quote,
+    //     amount: sellWdAmount,
+    //     address: buyWdAddress
+    // };
 
     //console.log(colors.green("E >> Executing..."), order);
 };

@@ -1,10 +1,53 @@
 {
     "apiTimeout": 20,
-    "exchanges": ["kraken", "binance"],
+    "exchanges": [
+        "bittrex",
+        "kraken",
+        "bitfinex",
+        "poloniex",
+        "binance",
+        "ethfinex",
+        "bibox",
+        "kucoin",
+        "gateio",
+        "livecoin",
+        "exmo"
+    ],
     "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
-    "baseCurrencies": ["ETC"],
+    "baseCurrencies": [
+        "BTC",
+        "ETH",
+        "XRP",
+        "BCH",
+        "LTC",
+        "BNB",
+        "USDT",
+        "EOS",
+        "BSV",
+        "XMR",
+        "XLM",
+        "LEO",
+        "ADA",
+        "TRX",
+        "LINK",
+        "DASH",
+        "XTZ",
+        "NEO",
+        "MIOTA",
+        "ATOM",
+        "XEM",
+        "MKR",
+        "ONT",
+        "CRO",
+        "USDC",
+        "ZEC",
+        "VSYS",
+        "DOGE",
+        "DCR",
+        "VET"
+    ],
 
-    "quoteCurrencies": ["ETH"],
+    "quoteCurrencies": ["BTC", "ETH", "USDT", "USD", "EUR"],
 
     "currenciesBlacklist": ["VIA"],
 
@@ -46,7 +89,7 @@
     "autoWithdraw": true,
 
     "search": {
-        "checkInterval": 10,
+        "checkInterval": 5,
         "minimumProfit": 0.1,
         "minimumProfitInvest": 0.1,
         "quoteCurrencyFunds": {
@@ -75,10 +118,11 @@
         },
         "lastTradeTimeLimit": 10,
         "removeAfterMinutesOff": 2,
-        "removeAfterIterations": 5
+        "removeAfterIterations": 10
     },
 
     "execution": {
+        "simulationMode": true,
         "checkInterval": 10
     }
 }
