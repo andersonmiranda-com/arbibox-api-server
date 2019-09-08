@@ -1,8 +1,9 @@
 const ccxt = require("ccxt");
+var moment = require("moment");
 const axios = require("axios");
+const util = require("util");
 
 const configs = require("./config/settings-arbitrage");
-var moment = require("moment");
 
 async function test(name, symbol) {
     var _instance;
@@ -86,14 +87,25 @@ async function test(name, symbol) {
         }); */
 
     var start1a = new Date();
-    console.info("Start 1a", start1a);
+    //console.info("Start 1a", start1a);
 
-    //let response = await _instance.fetchFundingFees();
+    //let response = await _instance.fetchDepositAddress("USD");
+    let response = await _instance.fetchBalance();
+
+    //console.log(name, "ETC", response.total["ETC"], "ETH", response.total["ETH"]);
     //let endtickers = chain.map(symbol => exc_tickers[symbol]);
-    console.log("response", _instance.markets);
+    console.log("response", response);
+
+    // console.info(
+    //     "\n",
+    //     util.inspect(response, {
+    //         colors: false,
+    //         depth: null
+    //     })
+    // );
 
     var end1a = new Date() - start1a;
-    console.info("Execution time1a: %dms", end1a);
+    //console.info("Execution time1a: %dms", end1a);
 
     /*
     

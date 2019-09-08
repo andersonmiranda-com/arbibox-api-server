@@ -100,6 +100,18 @@ const initialize = async function() {
             } else if (!_instance.has["fetchTrades"]) {
                 verbose && console.error(colors.red("Error: Exchange has no fetchTrades:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            } else if (
+                !_instance.has["fetchDepositAddress"] &&
+                !_instance.has["createDepositAddress"]
+            ) {
+                verbose &&
+                    console.error(
+                        colors.red(
+                            "Error: Exchange has no fetchDepositAddress / createDepositAddress:"
+                        ),
+                        name
+                    );
+                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else if (!_instance.has["withdraw"]) {
                 verbose && console.error(colors.red("Error: Exchange has no withdraw:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);

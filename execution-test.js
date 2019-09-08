@@ -1,6 +1,6 @@
 "use strict";
 
-const execution = require("./core/triangular/execution");
+const execution = require("./core/arbitrage/execution");
 
 (async function() {
     console.log("");

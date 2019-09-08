@@ -2,7 +2,7 @@
 
 const colors = require("colors");
 
-const configs = require("../config/settings-triangular");
+const configs = require("../config/settings-arbitrage");
 ///////////////
 
 const fetchTickers = async exchange => {
@@ -69,38 +69,57 @@ async function fetchTrades(exchange, symbol) {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Orders
+///
+
+const createOrder = async ({ exchange, side, type, symbol, amount, price }) => {
+    let orderResult = {};
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (type === "market" && api[exchange].has["createMarketOrder"]) {
+                orderResult = await api[exchange].createOrder(symbol, type, side, amount);
+            } else {
+                type = type === "market" ? "limit" : type;
+                orderResult = await api[exchange].createOrder(symbol, type, side, amount, price);
+            }
+            resolve(orderResult);
+        } catch (error) {
+            console.error(colors.red("X >> Error createOrder:"), error.message);
+            resolve(orderResult);
+        }
+    });
+};
+
 ///////////////
 
 const fetchBalance = async exchange => {
-    var exchangeInfo = {
-        id: exchange,
-        wallets: []
-    };
+    let total = {};
 
     try {
         if (configs.keys[exchange]) {
-            exchangeInfo.wallets = await api[exchange].fetchBalance();
+            let balance = await api[exchange].fetchBalance();
+            total = balance.total;
             //db.saveWallets(exchangeTickets.id, {
             //    id: exchangeTickets.id,
             //    free: exchangeTickets.wallets.free,
             //    total: exchangeTickets.wallets.total
             //});
-        } else {
-            exchangeInfo.wallets = [];
         }
-
         //tickets.map(ticket => verbose && console.log(ticket));
     } catch (error) {
         console.error(colors.red("E >> Error fetchBalance:"), error.message);
-        return exchangeInfo;
+        return total;
     } finally {
-        return exchangeInfo;
+        return total;
     }
 };
 
 module.exports = {
     fetchTickers,
     fetchTrades,
+    createOrder,
     fetchOrderBook,
     fetchBalance
 };

@@ -18,10 +18,8 @@
         "livecoin",
         "exmo",
         "cointiger",
-        "bibox",
         "bitlish",
         "coss",
-        "liquid",
         "cex"
     ],
     "exchangesBlacklist": ["coinmarketcap", "dx", "crex24"],
@@ -32,6 +30,7 @@
         "BCH",
         "LTC",
         "BNB",
+        "PAX",
         "USDT",
         "EOS",
         "BSV",
@@ -56,8 +55,7 @@
         "VSYS",
         "DOGE",
         "DCR",
-        "VET",
-        "QTUM"
+        "VET"
     ],
 
     "currenciesBlacklist": ["VIA"],
@@ -88,16 +86,16 @@
         "quoteCurrencies": true
     },
     "search": {
-        "checkInterval": 10,
+        "checkInterval": 5,
         "minimumProfit": 0.05,
-        "targetAssets": ["BTC", "ETH", "USDT"]
+        "targetAssets": ["BTC", "ETH", "USDT", "BNB", "PAX"]
     },
     "quality": {
         "checkInterval": 30,
         "filter": {
             "tradeActivity": false,
             "orderBookVolume": true,
-            "tickerVolume": true,
+            "tickerVolume": false,
             "tickerLowVolumeLimit": {
                 "base": 0.01,
                 "quote": {
@@ -110,7 +108,7 @@
         },
         "lastTradeTimeLimit": 10,
         "removeAfterMinutesOff": 2,
-        "removeAfterIterations": 10
+        "removeAfterIterations": 5
     },
     "execution": {
         "checkInterval": 6
