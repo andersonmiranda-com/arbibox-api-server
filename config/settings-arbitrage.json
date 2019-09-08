@@ -47,7 +47,7 @@
         "VET"
     ],
 
-    "quoteCurrencies": ["BTC", "ETH", "USDT", "USD", "EUR"],
+    "quoteCurrencies": ["BTC", "ETH", "USDT"],
 
     "currenciesBlacklist": ["VIA"],
 

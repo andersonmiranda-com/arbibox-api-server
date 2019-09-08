@@ -89,8 +89,8 @@ async function test(name, symbol) {
     var start1a = new Date();
     //console.info("Start 1a", start1a);
 
-    let response = await _instance.fetchDepositAddress("USD");
-    //let response = await _instance.fetchBalance();
+    //let response = await _instance.fetchDepositAddress("USD");
+    let response = await _instance.fetchBalance();
 
     //console.log(name, "ETC", response.total["ETC"], "ETH", response.total["ETH"]);
     //let endtickers = chain.map(symbol => exc_tickers[symbol]);
