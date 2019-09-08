@@ -82,13 +82,13 @@
     "marketFilter": {
         "exchanges": true,
         "exchangesBlacklist": true,
-        "baseCurrencies": false,
+        "baseCurrencies": true,
         "quoteCurrencies": true
     },
     "search": {
-        "checkInterval": 10,
+        "checkInterval": 5,
         "minimumProfit": 0.05,
-        "targetAssets": ["BTC", "ETH"]
+        "targetAssets": ["BTC", "ETH", "USDT"]
     },
     "quality": {
         "checkInterval": 30,
