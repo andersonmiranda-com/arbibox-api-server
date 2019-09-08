@@ -42,7 +42,7 @@ class Chain {
 const initialize = async function() {
     var exchangesChainData = [];
     //initialize oppotunities table
-    db.removeOpportunities({ type: "TR" });
+    db.removeSignals({ type: "TR" });
 
     let { exchanges, markets } = await prepareExchanges();
     let targetAssets = configs.search.targetAssets;
@@ -54,7 +54,7 @@ const initialize = async function() {
         })
     );
 
-    //findOpportunities(exchangesChainData, 1);
+    //findSignals(exchangesChainData, 1);
     return exchangesChainData;
 };
 
@@ -139,7 +139,7 @@ async function prepareExchanges() {
 ///
 /// Build a Queue
 ///
-function findOpportunities(exchangesChainData, searchCounter) {
+function findSignals(exchangesChainData, searchCounter) {
     let promises = exchangesChainData.map(exchangeData =>
         Promise.resolve(checkChains(exchangeData))
     );
@@ -197,7 +197,7 @@ async function checkChains(exchangeData) {
                 try {
                     let finalChain = getSides(chainResult);
 
-                    let opportunity = {
+                    let signal = {
                         id:
                             exchange.toLowerCase() +
                             "_" +
@@ -222,12 +222,12 @@ async function checkChains(exchangeData) {
                         profit_percent: Number(finalChain.triagePercentage.toFixed(4))
                     };
 
-                    await db.upsertOpportunity(opportunity);
+                    await db.upsertSignal(signal);
 
                     ////
                     ////
 
-                    quality.checkOpportunity(opportunity);
+                    quality.checkSignal(signal);
 
                     ////
                     ////
@@ -393,5 +393,5 @@ function matchSymbol(targetAsset, symbol1, symbol2, symbol3) {
 
 module.exports = {
     initialize,
-    findOpportunities
+    findSignals
 };

@@ -12,22 +12,22 @@ const db = require("../db");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// Qualifies all parallel opportunities on "opportunites" mongoDB collection
+/// Qualifies all parallel signals on "opportunites" mongoDB collection
 ///
 const initialize = async function() {
     ////////
-    // remove opportunities created some time ago - wich does not have upadates
+    // remove signals created some time ago - wich does not have upadates
     ////////
     const minutesAgo = moment()
         .subtract(configs.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
-    db.removeOpportunities({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "TR" }] });
+    db.removeSignals({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "TR" }] });
 
     ////////
     // remove poportunities with more than X iterractions and approved = false
     ////////
-    db.removeOpportunities({
+    db.removeSignals({
         $and: [
             // { approved: false },
             { type: "TR" },
@@ -35,35 +35,35 @@ const initialize = async function() {
         ]
     });
 
-    let opportunities = await db.readOpportunities({
+    let signals = await db.readSignals({
         $and: [{ type: "TR", qualified: { $exists: false } }]
     });
 
-    for (let opportunity of opportunities) {
-        await callCheck(opportunity);
-        //checkOpportunity(opportunity);
+    for (let signal of signals) {
+        await callCheck(signal);
+        //checkSignal(signal);
     }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// Remove old and stucked opportunities
+/// Remove old and stucked signals
 ///
 
 const cleanup = async function() {
     ////////
-    // remove opportunities created some time ago - wich does not have upadates
+    // remove signals created some time ago - wich does not have upadates
     ////////
     const minutesAgo = moment()
         .subtract(configs.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
-    db.removeOpportunities({ $and: [{ opp_created_at: { $lt: minutesAgo } }, { type: "TR" }] });
+    db.removeSignals({ $and: [{ opp_created_at: { $lt: minutesAgo } }, { type: "TR" }] });
 
     ////////
     // remove poportunities with more than X iterractions and approved = false
     ////////
-    db.removeOpportunities({
+    db.removeSignals({
         $and: [
             // { approved: false },
             { type: "TR" },
@@ -77,11 +77,11 @@ const cleanup = async function() {
 /// Delays execution 300ms to avoid reject Access Denied (Too many requests)
 ///
 
-function callCheck(opportunity) {
+function callCheck(signal) {
     return new Promise((resolve, reject) => {
         setTimeout(function() {
-            //console.log("run", opportunity.id);
-            checkOpportunity(opportunity);
+            //console.log("run", signal.id);
+            checkSignal(signal);
             resolve(true);
         }, 500);
     });
@@ -92,37 +92,37 @@ function callCheck(opportunity) {
 ///
 ///
 
-async function checkOpportunity(opportunity) {
-    let checkedOpportunity = await db.readOpportunities({
-        $and: [{ id: opportunity.id, qualified: { $exists: false } }]
+async function checkSignal(signal) {
+    let checkedSignal = await db.readSignals({
+        $and: [{ id: signal.id, qualified: { $exists: false } }]
     });
-    if (checkedOpportunity.length === 0) return false;
+    if (checkedSignal.length === 0) return false;
 
-    opportunity.qualified = true;
-    db.updateOpportunity(opportunity);
+    signal.qualified = true;
+    db.updateSignal(signal);
 
     if (!configs.quality.filter.tradeActivity) {
-        checkOrderBook(opportunity);
+        checkOrderBook(signal);
         return;
     }
 
-    let promises = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3].map(
-        async symbol => Promise.resolve(fetchTrades(opportunity.exchange, symbol))
+    let promises = [signal.symbol1, signal.symbol2, signal.symbol3].map(async symbol =>
+        Promise.resolve(fetchTrades(signal.exchange, symbol))
     );
 
     Promise.all(promises).then(response => {
-        //console.log(opportunity);
+        //console.log(signal);
         //console.log(response);
-        //console.log(opportunity.symbol);
+        //console.log(signal.symbol);
 
         let quality = {};
 
         let activity = {};
-        opportunity.approved = false;
+        signal.approved = false;
 
         console.log("");
 
-        console.log(colors.yellow("Q >>"), opportunity.id);
+        console.log(colors.yellow("Q >>"), signal.id);
 
         let symbolsOk = 0;
 
@@ -143,15 +143,15 @@ async function checkOpportunity(opportunity) {
             }
         }
 
-        opportunity.quality.activity = activity;
+        signal.quality.activity = activity;
 
         if (symbolsOk === 3) {
             // Approved on trading Activity, lets check orderBook
-            checkOrderBook(opportunity);
+            checkOrderBook(signal);
         } else {
-            opportunity.approved = false;
-            db.updateOpportunity(opportunity);
-            console.log(colors.red("Q >>"), colors.red(opportunity.id));
+            signal.approved = false;
+            db.updateSignal(signal);
+            console.log(colors.red("Q >>"), colors.red(signal.id));
         }
         // })
         // .catch(error => {
@@ -164,95 +164,95 @@ async function checkOpportunity(opportunity) {
 ///
 ///
 
-function checkOrderBook(opportunity) {
+function checkOrderBook(signal) {
     //let wallets = await fetchBalance(order.exchange);
     //console.log("wallets", wallets);
 
-    console.log(colors.yellow("Q >>"), "Checking orderBook...", opportunity.id);
+    console.log(colors.yellow("Q >>"), "Checking orderBook...", signal.id);
     let limit = 3;
 
-    let coinChain = [opportunity.symbol1, opportunity.symbol2, opportunity.symbol3];
+    let coinChain = [signal.symbol1, signal.symbol2, signal.symbol3];
 
     let promises = coinChain.map(symbol =>
-        Promise.resolve(fetchOrderBook(opportunity.exchange, symbol))
+        Promise.resolve(fetchOrderBook(signal.exchange, symbol))
     );
 
     Promise.all(promises).then(response => {
         //console.log(response);
 
-        opportunity.qualified = true;
+        signal.qualified = true;
 
-        opportunity.ordersBook = {
+        signal.ordersBook = {
             cheched_at: moment().toDate(),
             1: {
-                symbol: opportunity.symbol1,
-                side: opportunity.side1,
+                symbol: signal.symbol1,
+                side: signal.side1,
                 ask: response[0].asks[0],
                 bid: response[0].bids[0]
             },
             2: {
-                symbol: opportunity.symbol2,
-                side: opportunity.side2,
+                symbol: signal.symbol2,
+                side: signal.side2,
                 ask: response[1].asks[0],
                 bid: response[1].bids[0]
             },
             3: {
-                symbol: opportunity.symbol3,
-                side: opportunity.side3,
+                symbol: signal.symbol3,
+                side: signal.side3,
                 ask: response[2].asks[0],
                 bid: response[2].bids[0]
             }
         };
 
-        let maxInvest = calcMaxInvest(opportunity.ordersBook);
+        let maxInvest = calcMaxInvest(signal.ordersBook);
 
-        if (maxInvest < opportunity.chain.symbols[0].limits.amount.min) {
-            opportunity.qualified = true;
-            opportunity.approved = false;
-            opportunity.quality = {
+        if (maxInvest < signal.chain.symbols[0].limits.amount.min) {
+            signal.qualified = true;
+            signal.approved = false;
+            signal.quality = {
                 score: 0,
                 note: "Max invest is too low",
                 checked_at: moment().toDate()
             };
 
-            console.log(colors.red("Q >>"), "Not approved - Max invest is too low", opportunity.id);
-            db.updateOpportunity(opportunity);
+            console.log(colors.red("Q >>"), "Not approved - Max invest is too low", signal.id);
+            db.updateSignal(signal);
             return false;
         }
 
-        let profit1 = calculateProfit(opportunity.chain, response, 0);
-        let profit2 = calculateProfit(opportunity.chain, response, 1);
+        let profit1 = calculateProfit(signal.chain, response, 0);
+        let profit2 = calculateProfit(signal.chain, response, 1);
 
-        console.log("Q >>", "Profit Row 1", opportunity.profit1);
-        console.log("Q >>", "Profit Row 2", opportunity.profit2);
+        console.log("Q >>", "Profit Row 1", signal.profit1);
+        console.log("Q >>", "Profit Row 2", signal.profit2);
 
         if (profit1 >= configs.search.minimumProfit) {
-            opportunity.profit_percent = profit1;
-            opportunity.approved = true;
-            opportunity.quality = {
+            signal.profit_percent = profit1;
+            signal.approved = true;
+            signal.quality = {
                 score: 5,
                 checked_at: moment().toDate()
             };
-            console.log(colors.green("Q >> Aproved"), colors.magenta(opportunity.id));
-            opportunity.invest = { max: { quote: maxInvest } };
+            console.log(colors.green("Q >> Aproved"), colors.magenta(signal.id));
+            signal.invest = { max: { quote: maxInvest } };
             // call execution
-            execution.initialize(opportunity);
+            execution.initialize(signal);
         } else {
-            opportunity.quality = {
+            signal.quality = {
                 score: 0,
                 note: "Insuficient volume in orderBook",
                 checked_at: moment().toDate()
             };
-            opportunity.approved = false;
+            signal.approved = false;
             console.log(
                 colors.red("Q >>"),
                 "Not approved - Insuficient volume in orderBook",
-                colors.red(opportunity.id)
+                colors.red(signal.id)
             );
-            db.updateOpportunity(opportunity);
+            db.updateSignal(signal);
         }
 
-        //arbitrage.checkOpportunity(response);
+        //arbitrage.checkSignal(response);
     });
 }
 
@@ -337,5 +337,5 @@ function calcMaxInvest(ordersBook) {
 module.exports = {
     initialize,
     cleanup,
-    checkOpportunity
+    checkSignal
 };

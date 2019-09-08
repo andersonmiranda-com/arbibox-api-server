@@ -28,14 +28,14 @@ exports.saveExchange = function(id, data) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// Opportunities
+/// Signal
 ///
 
-exports.createOpportunity = function(data) {
+exports.createSignal = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
-        db.collection("opportunities").insertOne(data, function(err, res) {
+        db.collection("signals").insertOne(data, function(err, res) {
             if (err) throw err;
             //console.log(res.result);
             client.close();
@@ -43,12 +43,12 @@ exports.createOpportunity = function(data) {
     });
 };
 
-exports.readOpportunities = function(query) {
+exports.readSignals = function(query) {
     return new Promise(async (resolve, reject) => {
         MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
             if (err) throw err;
             var db = client.db("arbibox");
-            db.collection("opportunities")
+            db.collection("signals")
                 .find(query)
                 .toArray(function(err, res) {
                     if (err) throw err;
@@ -59,13 +59,13 @@ exports.readOpportunities = function(query) {
     });
 };
 
-exports.upsertOpportunity = function(data) {
+exports.upsertSignal = function(data) {
     return new Promise(async (resolve, reject) => {
         MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
             if (err) throw err;
             // avoid update different _id
             var db = client.db("arbibox");
-            db.collection("opportunities").updateOne(
+            db.collection("signals").updateOne(
                 { id: data.id },
                 {
                     $set: data,
@@ -88,13 +88,13 @@ exports.upsertOpportunity = function(data) {
     });
 };
 
-exports.updateOpportunity = function(data) {
+exports.updateSignal = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         // avoid update different _id
         delete data._id;
         var db = client.db("arbibox");
-        db.collection("opportunities").updateOne(
+        db.collection("signals").updateOne(
             { id: data.id },
             {
                 $set: data
@@ -108,11 +108,11 @@ exports.updateOpportunity = function(data) {
     });
 };
 
-exports.removeOpportunities = function(query) {
+exports.removeSignals = function(query) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
-        db.collection("opportunities").deleteMany(query, function(err, res) {
+        db.collection("signals").deleteMany(query, function(err, res) {
             if (err) throw err;
             //console.log(res.result);
             client.close();
@@ -120,11 +120,11 @@ exports.removeOpportunities = function(query) {
     });
 };
 
-exports.removeAllOpportunities = function() {
+exports.removeAllSignals = function() {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
-        db.collection("opportunities").deleteMany({}, function(err, res) {
+        db.collection("signals").deleteMany({}, function(err, res) {
             if (err) throw err;
             //console.log(res.result);
             client.close();
@@ -214,133 +214,18 @@ exports.upsertFees = function(data) {
         });
     });
 };
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-/// Triangular
-///
-
-exports.insertTriangularOpportunity = function(data) {
-    return new Promise(async (resolve, reject) => {
-        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-            if (err) throw err;
-
-            var db = client.db("arbibox");
-            db.collection("-opportunities-triangular").insertOne(data, function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                resolve(true);
-                client.close();
-            });
-        });
-    });
-};
-
-exports.readTriangularOpportunities = function(query) {
-    return new Promise(async (resolve, reject) => {
-        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-            if (err) throw err;
-            var db = client.db("arbibox");
-            db.collection("opportunities-triangular")
-                .find(query)
-                .toArray(function(err, res) {
-                    if (err) throw err;
-                    resolve(res);
-                    client.close();
-                });
-        });
-    });
-};
-
-exports.upsertTriangularOpportunity = function(data) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        // avoid update different _id
-        var db = client.db("arbibox");
-        db.collection("opportunities-triangular").updateOne(
-            { id: data.id },
-            {
-                $set: data,
-                $addToSet: {
-                    lastest: {
-                        created_at: data.created_at,
-                        profit_percent: data.profit_percent
-                    }
-                }
-            },
-            { upsert: true },
-            function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                client.close();
-            }
-        );
-    });
-};
-
-exports.updateTriangularOpportunity = function(data) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        // avoid update different _id
-        delete data._id;
-        var db = client.db("arbibox");
-        db.collection("opportunities-triangular").updateOne(
-            { id: data.id },
-            {
-                $set: data
-            },
-            function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                client.close();
-            }
-        );
-    });
-};
-
-exports.removeTriangularOpportunity = function(query) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        var db = client.db("arbibox");
-        db.collection("opportunities-triangular").deleteMany(query, function(err, res) {
-            if (err) throw err;
-            //console.log(res.result);
-            client.close();
-        });
-    });
-};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// Triangular
+/// Opportunity
 ///
 
-exports.insertTriangularCrossOpportunity = function(data) {
-    return new Promise(async (resolve, reject) => {
-        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-            if (err) throw err;
-
-            var db = client.db("arbibox");
-            db.collection("triangular-cross").insertOne(data, function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                resolve(true);
-                client.close();
-            });
-        });
-    });
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-/// Order Queue
-///
-
-exports.addToQueue = function(data) {
+exports.addOpportunity = function(data) {
     return new Promise(async (resolve, reject) => {
         MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
             if (err) throw err;
             var db = client.db("arbibox");
-            db.collection("orders_queue").insertOne(data, function(err, res) {
+            db.collection("opportunity").insertOne(data, function(err, res) {
                 if (err) throw err;
                 resolve(res.insertedId);
                 client.close();
@@ -349,12 +234,12 @@ exports.addToQueue = function(data) {
     });
 };
 
-exports.updateQueue = function(data) {
+exports.updateOpportunity = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         // avoid update different _id
         var db = client.db("arbibox");
-        db.collection("orders_queue").updateOne(
+        db.collection("opportunity").updateOne(
             { _id: data._id },
             {
                 $set: data
