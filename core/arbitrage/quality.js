@@ -302,7 +302,7 @@ function checkOrderBook(signal) {
 
             configs.loopWithdraw && console.log("Q >> Invest Min", signal.invest.min);
             console.log("Q >> Profit Row 1", profit1, "%");
-            console.log(colors.green("Q >> Aproved Row 1"), colors.magenta(signal.id));
+            console.log(colors.green("Q >> Signal Approved Row 1"), colors.magenta(signal.id));
             // call execution
             execution.initialize(signal);
         } else if (profit2 >= configs.search.minimumProfit) {
@@ -338,7 +338,7 @@ function checkOrderBook(signal) {
 
             console.log("Q >> Invest Min", signal.invest.min);
             console.log("Q >> Profit Row 2", profit2, "%");
-            console.log(colors.green("Q >> Aproved Row 2"), colors.magenta(signal.id));
+            console.log(colors.green("Q >> Signal Approved Row 2"), colors.magenta(signal.id));
             // call execution
             execution.initialize(signal);
         } else {

@@ -233,7 +233,7 @@ function checkOrderBook(signal) {
                 score: 5,
                 checked_at: moment().toDate()
             };
-            console.log(colors.green("Q >> Aproved"), colors.magenta(signal.id));
+            console.log(colors.green("Q >> Signal Aproved"), colors.magenta(signal.id));
             signal.invest = { max: { quote: maxInvest } };
             // call execution
             execution.initialize(signal);

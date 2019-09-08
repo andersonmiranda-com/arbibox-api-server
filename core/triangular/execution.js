@@ -13,7 +13,7 @@ const { fetchBalance, fetchOrderBook } = require("../exchange");
 ///
 
 const initialize = async function(opportunity) {
-    console.log(colors.green("E >> Executing..."), colors.cyan(opportunity.id));
+    console.log(colors.green("E >> Opportunity created..."), colors.cyan(opportunity.id));
     prepareOrder(opportunity);
 };
 
@@ -48,7 +48,6 @@ const prepareOrder = opportunity => {
     opportunity.opp_created_at = moment().toDate();
     // add to orders collection
     db.addOpportunity(opportunity);
-    console.log(colors.green("E >> Created..."), colors.cyan(opportunity.id));
 };
 
 module.exports = {

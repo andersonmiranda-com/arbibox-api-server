@@ -99,7 +99,7 @@ const prepareOrder = async opportunity => {
     opportunity.opp_created_at = moment().toDate();
     // add to orders collection
     opportunity._id = await db.addOpportunity(opportunity);
-    console.log(colors.green("E >> Executing..."), colors.cyan(opportunity._id));
+    console.log(colors.green("E >> Opportunity created..."), colors.cyan(opportunity.id));
 
     //executeOrder(opportunity);
 
@@ -182,6 +182,8 @@ const prepareOrder = async opportunity => {
 ///
 
 const executeOrder = async opportunity => {
+    console.log(colors.green("E >> Executing..."), colors.cyan(opportunity.id));
+
     let { buyOrderData, sellOrderData } = opportunity;
     let buyOrderResult = await createOrder(buyOrderData);
     db.addOrder({
