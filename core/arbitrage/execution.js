@@ -74,12 +74,12 @@ let opportunity_test = {
         checked_at: new Date("2019-09-05T10:18:32.856Z"),
         score: 5
     },
-    ord_created_at: new Date("2019-09-05T10:18:32.856Z")
+    opp_created_at: new Date("2019-09-05T10:18:32.856Z")
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// Qualifies all parallel opportunities on "opportunites" mongoDB collection
+/// Executes
 ///
 
 const initialize = async function(opportunity) {
@@ -89,16 +89,16 @@ const initialize = async function(opportunity) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// Prepara Order To be executed
+/// Prepare Order To be executed
 ///
 
 const prepareOrder = async opportunity => {
     // remove from opportunities
-    //db.removeOpportunities({ id: order.id });
+    //db.removeSignals({ id: order.id });
     //delete opportunity._id;
-    opportunity.ord_created_at = moment().toDate();
+    opportunity.opp_created_at = moment().toDate();
     // add to orders collection
-    opportunity._id = await db.addToQueue(opportunity);
+    opportunity._id = await db.addOpportunity(opportunity);
     console.log(colors.green("E >> Executing..."), colors.cyan(opportunity._id));
 
     //executeOrder(opportunity);
@@ -138,7 +138,7 @@ const prepareOrder = async opportunity => {
         console.log(colors.red("E >>"), "Insuficient funds");
         opportunity.approved = false;
         opportunity.quality.execution_note = "Insuficient Funds";
-        db.updateQueue(opportunity);
+        db.updateOpportunity(opportunity);
         return;
 
         //prepare to withdraw
@@ -171,7 +171,7 @@ const prepareOrder = async opportunity => {
         price: opportunity.bestBid.bid
     };
 
-    db.updateQueue(opportunity);
+    db.updateOpportunity(opportunity);
     !configs.simulationMode && executeOrder(opportunity);
     // check limits
 };
@@ -186,7 +186,7 @@ const executeOrder = async opportunity => {
     let buyOrderResult = await createOrder(buyOrderData);
     db.addOrder({
         created_at: moment().toDate(),
-        queue_id: opportunity._id,
+        opportunity_id: opportunity._id,
         exchange: buyOrderData.exchange,
         side: buyOrderData.side,
         type: buyOrderData.type,
@@ -209,7 +209,7 @@ const executeOrder = async opportunity => {
     let sellOrderResult = await createOrder(sellOrderData);
     db.addOrder({
         created_at: moment().toDate(),
-        queue_id: opportunity._id,
+        opportunity_id: opportunity._id,
         exchange: sellOrderData.exchange,
         side: sellOrderData.side,
         type: sellOrderData.type,

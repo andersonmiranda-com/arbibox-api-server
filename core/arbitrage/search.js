@@ -28,8 +28,8 @@ global.api = {};
 ///
 
 const initialize = async function() {
-    //initialize oppotunities table
-    db.removeOpportunities({ type: "PA" });
+    //initialize signals table
+    db.removeSignals({ type: "PA" });
 
     //get withdrawal fees
     global.withdrawalFees = await db.getWithdrawalFees();
@@ -213,7 +213,7 @@ const initialize = async function() {
 ///
 ///
 
-async function findOpportunities(tickets, exchangesSymbols, markets, searchCounter) {
+async function findSignals(tickets, exchangesSymbols, markets, searchCounter) {
     try {
         let promises = exchangesSymbols.map(async exchange =>
             Promise.resolve(await fetchTickersByExchange(exchange))
@@ -272,7 +272,7 @@ async function findOpportunities(tickets, exchangesSymbols, markets, searchCount
                             ); */
                         }
                         //verbose && console.log(prices);
-                        filterOpportunities(prices);
+                        filterSignals(prices);
                     }
 
                     console.info(
@@ -281,7 +281,7 @@ async function findOpportunities(tickets, exchangesSymbols, markets, searchCount
                     );
                 }
 
-                //arbitrage.checkOpportunity(response);
+                //arbitrage.checkSignal(response);
             )
             .catch(error => {
                 verbose && console.error(colors.red("S >> Error2:"), error.message);
@@ -316,9 +316,9 @@ async function fetchTickersByExchange(exchange) {
 /// Output: saves
 ///
 
-function filterOpportunities(prices) {
+function filterSignals(prices) {
     return new Promise(async (resolve, reject) => {
-        let opportunities = [];
+        let signals = [];
         let { baseCurrency, quoteCurrency } = getCurrencies(prices[0]);
 
         for (let priceAsk of prices) {
@@ -354,14 +354,14 @@ function filterOpportunities(prices) {
                 // );
 
                 if (priceAsk.ask < priceBid.bid) {
-                    opportunities.push({ bestAsk: priceAsk, bestBid: priceBid });
+                    signals.push({ bestAsk: priceAsk, bestBid: priceBid });
                     //verbose && console.log("\n\nbestBid:", priceBid);
                     //verbose && console.log("bestAsk:", priceAsk);
                 }
             }
         }
 
-        for (let op of opportunities) {
+        for (let op of signals) {
             let { bestAsk, bestBid } = op;
 
             let profitPercent = getPercentage(bestAsk, bestBid);
@@ -383,9 +383,9 @@ function filterOpportunities(prices) {
                 percentReference < 100 &&
                 percentReference !== Infinity
             ) {
-                let opportunity = {
+                let signal = {
                     id: bestAsk.symbol.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
-                    opp_created_at: new Date(),
+                    signal_created_at: new Date(),
                     type: "PA",
                     symbol: bestAsk.symbol,
                     buy_at: bestAsk.name,
@@ -407,7 +407,7 @@ function filterOpportunities(prices) {
                         bestBid
                     );
 
-                    opportunity.invest = {
+                    signal.invest = {
                         min: {
                             base: minBase,
                             quote: minQuote,
@@ -415,7 +415,7 @@ function filterOpportunities(prices) {
                         }
                     };
                 } else {
-                    opportunity.invest = {};
+                    signal.invest = {};
                 }
 
                 verbose &&
@@ -423,22 +423,22 @@ function filterOpportunities(prices) {
                         "S >>",
                         colors.green(percentReference.toFixed(4)),
                         "% ",
-                        z(9, opportunity.symbol, " "),
-                        z(10, opportunity.buy_at, " "),
-                        z(10, opportunity.sell_at, " ")
+                        z(9, signal.symbol, " "),
+                        z(10, signal.buy_at, " "),
+                        z(10, signal.sell_at, " ")
                     );
 
                 // verbose &&
                 //     console.info(
                 //         "\n",
-                //         util.inspect(opportunity, {
+                //         util.inspect(signal, {
                 //             colors: true
                 //         })
                 //     );
 
-                db.upsertOpportunity(opportunity);
+                db.upsertSignal(signal);
 
-                quality.checkOpportunity(opportunity);
+                quality.checkSignal(signal);
             }
         }
         resolve();
@@ -447,5 +447,5 @@ function filterOpportunities(prices) {
 
 module.exports = {
     initialize,
-    findOpportunities
+    findSignals
 };

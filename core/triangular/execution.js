@@ -45,9 +45,9 @@ const prepareOrder = opportunity => {
     // remove from opportunities
     //db.removeOpportunities({ id: order.id });
     delete opportunity._id;
-    opportunity.ord_created_at = moment().toDate();
+    opportunity.opp_created_at = moment().toDate();
     // add to orders collection
-    db.addToQueue(opportunity);
+    db.addOpportunity(opportunity);
     console.log(colors.green("E >> Created..."), colors.cyan(opportunity.id));
 };
 

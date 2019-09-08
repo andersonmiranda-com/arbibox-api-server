@@ -48,12 +48,12 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         "S >> Scan " + searchCounter + " >",
         moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     );
-    search.findOpportunities(tickets, exchangesSymbols, markets, searchCounter);
+    search.findSignals(tickets, exchangesSymbols, markets, searchCounter);
 
     // loop every x seconds
     setInterval(function() {
         searchCounter++;
-        search.findOpportunities(tickets, exchangesSymbols, markets, searchCounter);
+        search.findSignals(tickets, exchangesSymbols, markets, searchCounter);
         verbose &&
             console.info(
                 "S >> Scan " + searchCounter + " >",

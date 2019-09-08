@@ -46,7 +46,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Agent 1 - Search
     /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
 
-    //db.removeAllOpportunities();
+    //db.removeAllSignals();
     let targetAssets = configs.search.targetAssets;
     const exchangesChainData = await search.initialize();
     console.info(
@@ -54,12 +54,12 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     );
 
-    search.findOpportunities(exchangesChainData, searchCounter);
+    search.findSignals(exchangesChainData, searchCounter);
 
     // loop every x seconds
     setInterval(function() {
         searchCounter++;
-        search.findOpportunities(exchangesChainData, searchCounter);
+        search.findSignals(exchangesChainData, searchCounter);
         console.info(
             "S >> Scan " + searchCounter + " >",
             moment().format("dddd, MMMM D YYYY, h:mm:ss a")
