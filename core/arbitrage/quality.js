@@ -5,6 +5,7 @@ const configs = require("../../config/settings-arbitrage");
 const execution = require("./execution");
 
 const { getPercentage, getPercentageAfterWdFees, getMinimunInversion } = require("./common");
+const { weightedMean } = require("../util");
 const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
 const db = require("../db");
 
@@ -20,7 +21,7 @@ const initialize = async function() {
         .subtract(configs.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
-    db.removeSignals({ $and: [{ created_at: { $lt: minutesAgo } }, { type: "PA" }] });
+    db.removeSignals({ $and: [{ signal_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
 
     ////////
     // remove poportunities with more than X iterractions and approved = false
@@ -71,7 +72,7 @@ const cleanup = async function() {
         .subtract(configs.quality.removeAfterMinutesOff, "minutes")
         .toDate();
 
-    db.removeSignals({ $and: [{ opp_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
+    db.removeSignals({ $and: [{ signal_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
 
     ////////
     // remove poportunities with more than X iterractions and approved = false
@@ -216,12 +217,9 @@ function checkOrderBook(signal) {
         if (bestAsk1.amount > bestBid1.amount) {
             amount1 = bestBid1.amount;
         }
-        // Row 2
-        let amount2 = bestAsk2.amount;
+        // Mean 2 lines
 
-        if (bestAsk2.amount > bestBid2.amount) {
-            amount2 = bestBid2.amount;
-        }
+        let amount2 = bestAsk2.amount;
 
         let profit1 = 0;
         let profit2 = 0;
