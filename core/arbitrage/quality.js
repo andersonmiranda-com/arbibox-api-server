@@ -1,11 +1,12 @@
-var moment = require("moment");
+const moment = require("moment");
+const lodash = require("lodash");
+
 const colors = require("colors");
 
 const configs = require("../../config/settings-arbitrage");
 const execution = require("./execution");
 
 const { getPercentage, getPercentageAfterWdFees, getMinimunInversion } = require("./common");
-const { weightedMean } = require("../util");
 const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
 const db = require("../db");
 
@@ -194,44 +195,6 @@ function checkOrderBook(signal) {
     Promise.all(promises).then(async response => {
         //console.log(response);
 
-        let bestAsk1 = { ...signal.bestAsk };
-        let bestAsk2 = { ...signal.bestAsk };
-        bestAsk1.ask = response[0].asks[0][0];
-        bestAsk2.ask = response[0].asks[1][0];
-
-        bestAsk1.amount = response[0].asks[0][1];
-        bestAsk2.amount = response[0].asks[1][1];
-
-        let bestBid1 = { ...signal.bestBid };
-        let bestBid2 = { ...signal.bestBid };
-        bestBid1.bid = response[1].bids[0][0];
-        bestBid2.bid = response[1].bids[1][0];
-
-        bestBid1.amount = response[1].bids[0][1];
-        bestBid2.amount = response[1].bids[1][1];
-
-        //get max amount of investiment
-        // Row 1
-        let amount1 = bestAsk1.amount;
-
-        if (bestAsk1.amount > bestBid1.amount) {
-            amount1 = bestBid1.amount;
-        }
-        // Mean 2 lines
-
-        let amount2 = bestAsk2.amount;
-
-        let profit1 = 0;
-        let profit2 = 0;
-
-        if (configs.loopWithdraw) {
-            profit1 = getPercentageAfterWdFees(amount1 * bestAsk1.ask, bestAsk1, bestBid1);
-            profit2 = getPercentageAfterWdFees(amount2 * bestAsk2.ask, bestAsk2, bestBid2);
-        } else {
-            profit1 = getPercentage(bestAsk1, bestBid1);
-            profit2 = getPercentage(bestAsk2, bestBid2);
-        }
-
         signal.ordersBook = {
             cheched_at: moment().toDate(),
             buy: {
@@ -246,10 +209,14 @@ function checkOrderBook(signal) {
             }
         };
 
-        if (
-            amount1 * bestAsk1.ask < signal.bestAsk.minAmount &&
-            amount2 * bestAsk2.ask < signal.bestAsk.minAmount
-        ) {
+        let bestDeal = orderBookProfits(
+            response[0].asks,
+            response[1].bids,
+            signal.bestAsk,
+            signal.bestBid
+        );
+
+        if (bestDeal.amount * bestDeal.ask < signal.bestAsk.minAmount) {
             signal.quality = {
                 note: "Volume in orderBook < minimun allowed",
                 checked_at: moment().toDate()
@@ -267,14 +234,20 @@ function checkOrderBook(signal) {
 
         //console.log("profit1", signal.id, profit1);
 
-        if (profit1 >= configs.search.minimumProfit) {
-            signal.profit_percent = profit1;
+        let thisbestAsk = { ...signal.bestAsk };
+        let thisbestBid = { ...signal.bestBid };
+
+        thisbestAsk.ask = bestDeal.ask;
+        thisbestBid.bid = bestDeal.bid;
+
+        if (bestDeal.profit_percent >= configs.search.minimumProfit) {
+            signal.profit_percent = bestDeal.profit_percent;
             signal.approved = true;
             signal.quality = { note: "row1", checked_at: moment().toDate() };
             signal.quality.score = 5;
             // min
             if (configs.loopWithdraw) {
-                let { minQuote, minBase } = getMinimunInversion(bestAsk1, bestBid1);
+                let { minQuote, minBase } = getMinimunInversion(thisbestAsk, thisbestBid);
 
                 signal.invest.min = {
                     base: minBase,
@@ -284,59 +257,23 @@ function checkOrderBook(signal) {
                 };
             } else {
                 signal.invest.min = {
-                    base: bestAsk1.minAmount / bestAsk1.ask,
-                    quote: bestAsk1.minAmount,
+                    base: thisbestAsk.minAmount / thisbestAsk.ask,
+                    quote: thisbestAsk.minAmount,
                     profit_percent: configs.search.minimumProfitInvest,
-                    profit: bestAsk1.minAmount * (configs.search.minimumProfitInvest / 100)
+                    profit: thisbestAsk.minAmount * (configs.search.minimumProfitInvest / 100)
                 };
             }
 
             signal.invest.max = {
-                base: amount1,
-                quote: amount1 * bestAsk1.ask,
-                profit_percent: profit1,
-                profit: amount1 * bestAsk1.ask * (profit1 / 100)
+                base: bestDeal.amount,
+                quote: bestDeal.amount * thisbestAsk.ask,
+                profit_percent: bestDeal.profit_percent,
+                profit: bestDeal.amount * thisbestAsk.ask * (bestDeal.profit_percent / 100)
             };
 
             configs.loopWithdraw && console.log("Q >> Invest Min", signal.invest.min);
-            console.log("Q >> Profit Row 1", profit1, "%");
-            console.log(colors.green("Q >> Signal Approved Row 1"), colors.magenta(signal.id));
-            // call execution
-            execution.initialize(signal);
-        } else if (profit2 >= configs.search.minimumProfit) {
-            signal.profit_percent = profit2;
-            signal.approved = true;
-            signal.quality = { note: "row2", checked_at: moment().toDate() };
-            signal.quality.score = 4;
-
-            if (configs.loopWithdraw) {
-                // min
-                let { minQuote, minBase } = getMinimunInversion(bestAsk2, bestBid2);
-                signal.invest.min = {
-                    base: minBase,
-                    quote: minQuote,
-                    profit_percent: configs.search.minimumProfitInvest,
-                    profit: minQuote * (configs.search.minimumProfitInvest / 100)
-                };
-            } else {
-                signal.invest.min = {
-                    base: bestAsk2.minAmount / bestAsk2.ask,
-                    quote: bestAsk2.minAmount,
-                    profit_percent: configs.search.minimumProfitInvest,
-                    profit: bestAsk2.minAmount * (configs.search.minimumProfitInvest / 100)
-                };
-            }
-
-            signal.invest.max = {
-                base: amount2,
-                quote: amount2 * bestAsk2.ask,
-                profit_percent: profit2,
-                profit: amount2 * bestAsk2.ask * (profit2 / 100)
-            };
-
-            console.log("Q >> Invest Min", signal.invest.min);
-            console.log("Q >> Profit Row 2", profit2, "%");
-            console.log(colors.green("Q >> Signal Approved Row 2"), colors.magenta(signal.id));
+            console.log("Q >> Profit", bestDeal.profit_percent, "%", signal.invest.max.profit);
+            console.log(colors.green("Q >> Signal Approved"), colors.magenta(signal.id));
             // call execution
             execution.initialize(signal);
         } else {
@@ -356,6 +293,81 @@ function checkOrderBook(signal) {
 
         //arbitrage.checkSignal(response);
     });
+}
+
+function orderBookProfits(asks, bids, bestAsk, bestBid) {
+    let positions = [1, 2, 3, 4, 5];
+    let bestValue = {};
+    let lastProfit = 0;
+
+    let thisbestAsk = { ...bestAsk };
+    let thisbestBid = { ...bestBid };
+
+    positions.map(p => {
+        let ask = weightedMeanOrderBook(asks, p);
+        let bid = weightedMeanOrderBook(bids, p);
+
+        let amount = lodash.min([ask.amount, bid.amount]);
+
+        thisbestAsk.ask = ask.price;
+        thisbestBid.bid = bid.price;
+
+        if (configs.loopWithdraw) {
+            profit_percent = getPercentageAfterWdFees(amount * ask.price, thisbestAsk, thisbestBid);
+        } else {
+            profit_percent = getPercentage(thisbestAsk, thisbestBid);
+        }
+
+        //console.log(profit_perc, profit_perc * amount, lastProfit);
+
+        if (
+            profit_percent >= configs.search.minimumProfit &&
+            profit_percent * amount > lastProfit
+        ) {
+            bestValue = { profit_percent, amount, ask: ask.price, bid: bid.price };
+        }
+        lastProfit = profit_percent * amount;
+    });
+
+    return bestValue;
+}
+
+function weightedMeanOrderBook(orderBook, elements) {
+    let values = [];
+    let volume = [];
+    let sumVolume = 0;
+
+    let initArray = orderBook.slice(0, elements);
+
+    initArray.forEach(line => {
+        values.push(line[0]);
+        volume.push(line[1]);
+        sumVolume = sumVolume + line[1];
+    });
+
+    //console.log(values, volume);
+    return {
+        price: weightedMean(values, volume),
+        amount: sumVolume
+    };
+}
+
+function weightedMean(arrValues, arrWeights) {
+    var result = arrValues
+        .map(function(value, i) {
+            var weight = arrWeights[i];
+            var sum = value * weight;
+
+            return [sum, weight];
+        })
+        .reduce(
+            function(p, c) {
+                return [p[0] + c[0], p[1] + c[1]];
+            },
+            [0, 0]
+        );
+
+    return result[0] / result[1];
 }
 
 module.exports = {
