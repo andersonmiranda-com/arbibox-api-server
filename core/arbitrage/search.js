@@ -17,7 +17,7 @@ const {
     getCurrencies
 } = require("./common");
 
-const { fetchTickers } = require("../exchange");
+const { fetchTickers, getCurrenciesCMC } = require("../exchange");
 const db = require("../db");
 
 global.api = {};
@@ -79,18 +79,20 @@ const initialize = async function() {
             verbose && console.log("Loading markets for", colors.green(name), "-", end1, "ms");
 
             //Exchange withdrawal fees validation
-            let wd = withdrawalFees.find(fee => fee.exchange === name);
-            if (!wd) {
-                verbose &&
-                    console.error(
-                        colors.red("Error: Exchange has no withdrawal fees in database:"),
-                        name
-                    );
-                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
-            }
+            // let wd = withdrawalFees.find(fee => fee.exchange === name);
+            // if (!wd) {
+            //     verbose &&
+            //         console.error(
+            //             colors.red("Error: Exchange has no withdrawal fees in database:"),
+            //             name
+            //         );
+            //     checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            // }
 
             //CCXT API Exchange validation
-            else if (!_instance.has["fetchTickers"]) {
+            // else
+
+            if (!_instance.has["fetchTickers"]) {
                 verbose && console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else if (!_instance.has["fetchOrderBook"]) {
@@ -128,8 +130,35 @@ const initialize = async function() {
     }
 
     exchanges = [...checkedExchanges];
+    let baseCurrencies = [];
+    let filterbaseCurrencies = false;
 
-    let symbols0 = [];
+    if (configs.marketFilter.baseCurrenciesCMC) {
+        try {
+            console.error(
+                "S >>",
+                "Getting top",
+                configs.marketFilter.baseCurrenciesCMCQty,
+                "currencies from CoinMarketCap"
+            );
+            baseCurrencies = await getCurrenciesCMC();
+            filterbaseCurrencies = true;
+        } catch (error) {
+            verbose &&
+                console.error(
+                    colors.red("S >>"),
+                    "Unable to fetch top currencies from CoinMarketCap. Using 'baseCurrenciesFromList' filter"
+                );
+            if (configs.marketFilter.baseCurrenciesFromList) {
+                baseCurrencies = configs.baseCurrencies;
+                filterbaseCurrencies = true;
+            }
+        }
+    } else if (configs.marketFilter.baseCurrenciesFromList) {
+        baseCurrencies = configs.baseCurrencies;
+        filterbaseCurrencies = true;
+    }
+
     let symbols = [];
     ccxt.unique(
         ccxt.flatten(
@@ -143,7 +172,7 @@ const initialize = async function() {
         var is_base = false;
         var is_quote = false;
 
-        is_base = lodash.includes(configs.baseCurrencies, coins[0]);
+        is_base = lodash.includes(baseCurrencies, coins[0]);
         is_quote = lodash.includes(configs.quoteCurrencies, coins[1]);
 
         if (
@@ -151,13 +180,13 @@ const initialize = async function() {
             (lodash.includes(configs.currenciesBlacklist, coins[0]) ||
                 lodash.includes(configs.currenciesBlacklist, coins[1]))
         ) {
-            // do not pudh symbol if in blacklist
-            console.log("blacklist", symbol);
-        } else if (configs.marketFilter.baseCurrencies && configs.marketFilter.quoteCurrencies) {
+            // do not push symbol if in blacklist
+            verbose && console.log("S >>", "Blacklisted coin", colors.magenta(symbol));
+        } else if (filterbaseCurrencies && configs.marketFilter.quoteCurrencies) {
             if (is_base && is_quote) {
                 symbols.push(symbol);
             }
-        } else if (configs.marketFilter.baseCurrencies) {
+        } else if (filterbaseCurrencies) {
             if (is_base) {
                 symbols.push(symbol);
             }

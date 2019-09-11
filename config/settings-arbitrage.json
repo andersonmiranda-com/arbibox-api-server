@@ -56,7 +56,9 @@
         "exchanges": true,
         "exchangesBlacklist": true,
         "currenciesBlacklist": true,
-        "baseCurrencies": false,
+        "baseCurrenciesCMC": true,
+        "baseCurrenciesCMCQty": 100,
+        "baseCurrenciesFromList": true,
         "quoteCurrencies": true
     },
 

@@ -2,6 +2,7 @@ const ccxt = require("ccxt");
 var moment = require("moment");
 const axios = require("axios");
 const util = require("util");
+const https = require("https");
 
 const configs = require("./config/settings-arbitrage");
 
@@ -18,7 +19,8 @@ async function test(name, symbol) {
     } else {
         _instance = new ccxt[name]({
             timeout: configs.apiTimeout * 1000,
-            enableRateLimit: true
+            enableRateLimit: true,
+            verbose: true
         });
     }
 
@@ -26,8 +28,12 @@ async function test(name, symbol) {
 
     //console.log(_instance);
     //console.log(await _instance.loadMarkets());
-    //let markets = await _instance.fetchMarkets();
-    //console.log(markets);
+    let markets = await _instance.fetchCurrencies();
+
+    Object.keys(markets).forEach(function(key) {
+        currency = markets[key];
+        console.log(currency.info.rank, currency.code, currency.info.name);
+    });
 
     // var start0 = new Date();
     // console.info("Start 0", start0);
@@ -154,6 +160,8 @@ async function test(name, symbol) {
     // );
 
     */
+
+    /*
     var start3 = new Date();
     console.info("Start 3", start3);
     let limit = 5;
@@ -195,47 +203,14 @@ async function test(name, symbol) {
     var end3 = new Date() - start3;
 
     console.info("Execution time3: %dms", end3);
+
+    */
 }
 //arbitrage.checkOpportunity(response);
-
-function weightedMeanOrderBook(orderBook, elements) {
-    let values = [];
-    let volume = [];
-    let sumVolume = 0;
-
-    let initArray = orderBook.slice(0, elements);
-
-    initArray.forEach(line => {
-        values.push(line[0]);
-        volume.push(line[1]);
-        sumVolume = sumVolume + line[1];
-    });
-
-    //console.log(values, volume);
-    console.log(weightedMean(values, volume), sumVolume);
-}
-
-function weightedMean(arrValues, arrWeights) {
-    var result = arrValues
-        .map(function(value, i) {
-            var weight = arrWeights[i];
-            var sum = value * weight;
-
-            return [sum, weight];
-        })
-        .reduce(
-            function(p, c) {
-                return [p[0] + c[0], p[1] + c[1]];
-            },
-            [0, 0]
-        );
-
-    return result[0] / result[1];
-}
 
 //console.log(weightedMean([100, 102, 104], [5, 20, 10]));
 
 //test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
-test("kucoin", "XRP/ETH");
-test("livecoin", "XRP/ETH");
+test("coinmarketcap", "XRP/ETH");
+//test("livecoin", "XRP/ETH");

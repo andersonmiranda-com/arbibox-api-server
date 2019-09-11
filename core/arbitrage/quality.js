@@ -216,7 +216,19 @@ function checkOrderBook(signal) {
             signal.bestBid
         );
 
-        if (bestDeal.amount * bestDeal.ask < signal.bestAsk.minAmount) {
+        if (bestDeal.profit_percent < configs.search.minimumProfit) {
+            signal.quality = {
+                note: "Profit smaller then target",
+                checked_at: moment().toDate()
+            };
+            signal.quality.score = 0;
+            signal.approved = false;
+            console.log(colors.red("Q >>"), "Not approved - Profit smaller then target", signal.id);
+            db.updateSignal(signal);
+            return;
+        }
+
+        if (bestDeal.amount < signal.bestAsk.minAmount) {
             signal.quality = {
                 note: "Volume in orderBook < minimun allowed",
                 checked_at: moment().toDate()
@@ -240,56 +252,44 @@ function checkOrderBook(signal) {
         thisbestAsk.ask = bestDeal.ask;
         thisbestBid.bid = bestDeal.bid;
 
-        if (bestDeal.profit_percent >= configs.search.minimumProfit) {
-            signal.profit_percent = bestDeal.profit_percent;
-            signal.approved = true;
-            signal.quality = { note: "row1", checked_at: moment().toDate() };
-            signal.quality.score = 5;
-            // min
-            if (configs.loopWithdraw) {
-                let { minQuote, minBase } = getMinimunInversion(thisbestAsk, thisbestBid);
+        signal.profit_percent = bestDeal.profit_percent;
+        signal.approved = true;
+        signal.quality = { note: "row1", checked_at: moment().toDate() };
+        signal.quality.score = 5;
+        // min
+        if (configs.loopWithdraw) {
+            let { minQuote, minBase } = getMinimunInversion(thisbestAsk, thisbestBid);
 
-                signal.invest.min = {
-                    base: minBase,
-                    quote: minQuote,
-                    profit_percent: configs.search.minimumProfitInvest,
-                    profit: minQuote * (configs.search.minimumProfitInvest / 100)
-                };
-            } else {
-                signal.invest.min = {
-                    base: thisbestAsk.minAmount / thisbestAsk.ask,
-                    quote: thisbestAsk.minAmount,
-                    profit_percent: configs.search.minimumProfitInvest,
-                    profit: thisbestAsk.minAmount * (configs.search.minimumProfitInvest / 100)
-                };
-            }
-
-            signal.invest.max = {
-                base: bestDeal.amount,
-                quote: bestDeal.amount * thisbestAsk.ask,
-                profit_percent: bestDeal.profit_percent,
-                profit: bestDeal.amount * thisbestAsk.ask * (bestDeal.profit_percent / 100)
+            signal.invest.min = {
+                base: minBase,
+                quote: minQuote,
+                profit_percent: configs.search.minimumProfitInvest,
+                profit: minQuote * (configs.search.minimumProfitInvest / 100)
             };
-
-            configs.loopWithdraw && console.log("Q >> Invest Min", signal.invest.min);
-            console.log("Q >> Profit", bestDeal.profit_percent, "%", signal.invest.max.profit);
-            console.log(colors.green("Q >> Signal Approved"), colors.magenta(signal.id));
-            // call execution
-            execution.initialize(signal);
         } else {
-            signal.quality = {
-                note: "Insuficient volume in orderBook",
-                checked_at: moment().toDate()
+            signal.invest.min = {
+                base: thisbestAsk.minAmount,
+                quote: thisbestAsk.minAmount * thisbestAsk.ask,
+                profit_percent: configs.search.minimumProfitInvest,
+                profit:
+                    thisbestAsk.minAmount *
+                    thisbestAsk.ask *
+                    (configs.search.minimumProfitInvest / 100)
             };
-            signal.quality.score = 0;
-            signal.approved = false;
-            console.log(
-                colors.red("Q >>"),
-                "Not approved - Insuficient volume in orderBook",
-                signal.id
-            );
-            db.updateSignal(signal);
         }
+
+        signal.invest.max = {
+            base: bestDeal.amount,
+            quote: bestDeal.amount * thisbestAsk.ask,
+            profit_percent: bestDeal.profit_percent,
+            profit: bestDeal.amount * thisbestAsk.ask * (bestDeal.profit_percent / 100)
+        };
+
+        configs.loopWithdraw && console.log("Q >> Invest Min", signal.invest.min);
+        console.log("Q >> Profit", bestDeal.profit_percent, "%", signal.invest.max.profit);
+        console.log(colors.green("Q >> Signal Approved"), colors.magenta(signal.id));
+        // call execution
+        execution.initialize(signal);
 
         //arbitrage.checkSignal(response);
     });
@@ -297,7 +297,7 @@ function checkOrderBook(signal) {
 
 function orderBookProfits(asks, bids, bestAsk, bestBid) {
     let positions = [1, 2, 3, 4, 5];
-    let bestValue = {};
+    let bestValue = { profit_percent: 0, amount: 0, ask: {}, bid: {} };
     let lastProfit = 0;
 
     let thisbestAsk = { ...bestAsk };
