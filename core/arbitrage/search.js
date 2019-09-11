@@ -146,7 +146,14 @@ const initialize = async function() {
         is_base = lodash.includes(configs.baseCurrencies, coins[0]);
         is_quote = lodash.includes(configs.quoteCurrencies, coins[1]);
 
-        if (configs.marketFilter.baseCurrencies && configs.marketFilter.quoteCurrencies) {
+        if (
+            configs.marketFilter.currenciesBlacklist &&
+            (lodash.includes(configs.currenciesBlacklist, coins[0]) ||
+                lodash.includes(configs.currenciesBlacklist, coins[1]))
+        ) {
+            // do not pudh symbol if in blacklist
+            console.log("blacklist", symbol);
+        } else if (configs.marketFilter.baseCurrencies && configs.marketFilter.quoteCurrencies) {
             if (is_base && is_quote) {
                 symbols.push(symbol);
             }
