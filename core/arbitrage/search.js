@@ -135,8 +135,8 @@ const initialize = async function() {
 
     if (configs.marketFilter.baseCurrenciesCMC) {
         try {
-            console.error(
-                "S >>",
+            console.info(
+                colors.yellow("S >>"),
                 "Getting top",
                 configs.marketFilter.baseCurrenciesCMCQty,
                 "currencies from CoinMarketCap"

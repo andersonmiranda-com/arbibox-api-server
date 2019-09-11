@@ -218,12 +218,12 @@ function checkOrderBook(signal) {
 
         if (bestDeal.profit_percent < configs.search.minimumProfit) {
             signal.quality = {
-                note: "Profit smaller then target",
+                note: "Profit smaller than target",
                 checked_at: moment().toDate()
             };
             signal.quality.score = 0;
             signal.approved = false;
-            console.log(colors.red("Q >>"), "Not approved - Profit smaller then target", signal.id);
+            console.log(colors.red("Q >>"), "Not approved - Profit smaller than target", signal.id);
             db.updateSignal(signal);
             return;
         }
