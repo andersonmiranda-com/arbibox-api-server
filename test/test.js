@@ -4,7 +4,7 @@ const axios = require("axios");
 const util = require("util");
 const https = require("https");
 
-const configs = require("./config/settings-arbitrage");
+const configs = require("../config/settings-arbitrage");
 
 async function test(name, symbol) {
     var _instance;
@@ -26,14 +26,21 @@ async function test(name, symbol) {
 
     await _instance.loadMarkets();
 
-    //console.log(_instance);
-    //console.log(await _instance.loadMarkets());
-    let markets = await _instance.fetchCurrencies();
+    //console.log(_instance.markets);
 
-    Object.keys(markets).forEach(function(key) {
-        currency = markets[key];
-        console.log(currency.info.rank, currency.code, currency.info.name);
-    });
+    console.info(
+        "\n",
+        util.inspect(_instance.markets, {
+            colors: true
+        })
+    );
+
+    //console.log(await _instance.loadMarkets());
+    //let markets = await _instance.fetchCurrencies();
+
+    //    Object.keys(markets).forEach(function(key) {
+    //console.log(markets);
+    //  });
 
     // var start0 = new Date();
     // console.info("Start 0", start0);
@@ -212,5 +219,5 @@ async function test(name, symbol) {
 
 //test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
-test("coinmarketcap", "XRP/ETH");
+test("binance", "ETH/BTC");
 //test("livecoin", "XRP/ETH");
