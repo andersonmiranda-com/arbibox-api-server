@@ -288,8 +288,19 @@ function checkOrderBook(signal) {
         configs.loopWithdraw && console.log("Q >> Invest Min", signal.invest.min);
         console.log("Q >> Profit", bestDeal.profit_percent, "%", signal.invest.max.profit);
         console.log(colors.green("Q >> Signal Approved"), colors.magenta(signal.id));
+
+        // remove from signals
+        //db.removeSignals({ id: order.id });
+
+        let opportunity = { ...signal };
+        delete opportunity._id;
+        opportunity.opp_created_at = moment().toDate();
+        // add to opportunities collection
+        opportunity._id = await db.addOpportunity(opportunity);
+        console.log(colors.green("Q >> Opportunity created..."), colors.cyan(opportunity.id));
+
         // call execution
-        execution.initialize(signal);
+        execution.initialize(opportunity);
 
         //arbitrage.checkSignal(response);
     });

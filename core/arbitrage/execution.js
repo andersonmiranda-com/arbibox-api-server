@@ -93,14 +93,6 @@ const initialize = async function(opportunity) {
 ///
 
 const prepareOrder = async opportunity => {
-    // remove from opportunities
-    //db.removeSignals({ id: order.id });
-    //delete opportunity._id;
-    opportunity.opp_created_at = moment().toDate();
-    // add to orders collection
-    opportunity._id = await db.addOpportunity(opportunity);
-    console.log(colors.green("E >> Opportunity created..."), colors.cyan(opportunity.id));
-
     //executeOrder(opportunity);
 
     /////////////////////////////////////////////////////////
