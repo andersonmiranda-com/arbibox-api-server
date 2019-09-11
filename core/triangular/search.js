@@ -76,10 +76,6 @@ async function prepareExchanges() {
         exchanges = lodash.difference(exchanges, configs.exchangesBlacklist);
     }
 
-    if (configs.marketFilter.exchangesBlacklist) {
-        exchanges = lodash.difference(exchanges, configs.marketFilter.exchangesBlacklist);
-    }
-
     let checkedExchanges = [...exchanges];
 
     for (let i = 0; i < exchanges.length; i++) {

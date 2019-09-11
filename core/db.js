@@ -71,7 +71,7 @@ exports.upsertSignal = function(data) {
                     $set: data,
                     $addToSet: {
                         lastest: {
-                            created_at: data.opp_created_at,
+                            signal_created_at: data.signal_created_at,
                             profit_percent: data.profit_percent
                         }
                     }
@@ -225,7 +225,7 @@ exports.addOpportunity = function(data) {
         MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
             if (err) throw err;
             var db = client.db("arbibox");
-            db.collection("opportunity").insertOne(data, function(err, res) {
+            db.collection("opportunities").insertOne(data, function(err, res) {
                 if (err) throw err;
                 resolve(res.insertedId);
                 client.close();
@@ -239,7 +239,7 @@ exports.updateOpportunity = function(data) {
         if (err) throw err;
         // avoid update different _id
         var db = client.db("arbibox");
-        db.collection("opportunity").updateOne(
+        db.collection("opportunities").updateOne(
             { _id: data._id },
             {
                 $set: data

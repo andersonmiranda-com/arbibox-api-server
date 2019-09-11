@@ -1,5 +1,6 @@
 "use strict";
 
+const axios = require("axios");
 const colors = require("colors");
 
 const configs = require("../config/settings-arbitrage");
@@ -116,10 +117,37 @@ const fetchBalance = async exchange => {
     }
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Cryptos list from Coinmarketcap
+///
+
+const getCurrenciesCMC = async () => {
+    let baseCurrencies = [];
+    return new Promise(async (resolve, reject) => {
+        axios
+            .get("https://api.coinmarketcap.com/v1/ticker/?limit=0")
+            .then(response => {
+                //console.log(response.data);
+
+                response.data.slice(0, configs.marketFilter.baseCurrenciesCMCQty).map(currency => {
+                    baseCurrencies.push(currency.symbol);
+                });
+
+                resolve(baseCurrencies);
+            })
+            .catch(error => {
+                console.log(error);
+                reject(error);
+            });
+    });
+};
+
 module.exports = {
     fetchTickers,
     fetchTrades,
     createOrder,
     fetchOrderBook,
-    fetchBalance
+    fetchBalance,
+    getCurrenciesCMC
 };

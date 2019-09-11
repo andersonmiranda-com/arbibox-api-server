@@ -2,6 +2,7 @@ const ccxt = require("ccxt");
 var moment = require("moment");
 const axios = require("axios");
 const util = require("util");
+const https = require("https");
 
 const configs = require("./config/settings-arbitrage");
 
@@ -18,7 +19,8 @@ async function test(name, symbol) {
     } else {
         _instance = new ccxt[name]({
             timeout: configs.apiTimeout * 1000,
-            enableRateLimit: true
+            enableRateLimit: true,
+            verbose: true
         });
     }
 
@@ -26,8 +28,12 @@ async function test(name, symbol) {
 
     //console.log(_instance);
     //console.log(await _instance.loadMarkets());
-    //let markets = await _instance.fetchMarkets();
-    //console.log(markets);
+    let markets = await _instance.fetchCurrencies();
+
+    Object.keys(markets).forEach(function(key) {
+        currency = markets[key];
+        console.log(currency.info.rank, currency.code, currency.info.name);
+    });
 
     // var start0 = new Date();
     // console.info("Start 0", start0);
@@ -86,25 +92,25 @@ async function test(name, symbol) {
             // always executed
         }); */
 
-    var start1a = new Date();
-    //console.info("Start 1a", start1a);
+    // var start1a = new Date();
+    // //console.info("Start 1a", start1a);
 
-    //let response = await _instance.fetchDepositAddress("USD");
-    let response = await _instance.fetchBalance();
+    // //let response = await _instance.fetchDepositAddress("USD");
+    // let response = await _instance.fetchBalance();
 
-    //console.log(name, "ETC", response.total["ETC"], "ETH", response.total["ETH"]);
-    //let endtickers = chain.map(symbol => exc_tickers[symbol]);
-    console.log("response", response);
+    // //console.log(name, "ETC", response.total["ETC"], "ETH", response.total["ETH"]);
+    // //let endtickers = chain.map(symbol => exc_tickers[symbol]);
+    // console.log("response", response);
 
-    // console.info(
-    //     "\n",
-    //     util.inspect(response, {
-    //         colors: false,
-    //         depth: null
-    //     })
-    // );
+    // // console.info(
+    // //     "\n",
+    // //     util.inspect(response, {
+    // //         colors: false,
+    // //         depth: null
+    // //     })
+    // // );
 
-    var end1a = new Date() - start1a;
+    // var end1a = new Date() - start1a;
     //console.info("Execution time1a: %dms", end1a);
 
     /*
@@ -153,45 +159,58 @@ async function test(name, symbol) {
     //     //arbitrage.checkOpportunity(response);
     // );
 
+    */
+
+    /*
     var start3 = new Date();
     console.info("Start 3", start3);
     let limit = 5;
-    let promises2 = chain.map(async symbol =>
-        Promise.resolve(await _instance.fetchOrderBook(symbol, limit))
-    );
-    Promise.all(promises2).then(
-        response => {
-            //console.log("OrderBook", response);
-            console.log("\n", chain[0]);
-            console.log("ask1", response[0].asks[0]);
-            console.log("bid1", response[0].bids[0]);
+    let response = await _instance.fetchOrderBook(symbol, limit);
 
-            console.log("ask2", response[0].asks[1]);
-            console.log("bid2", response[0].bids[1]);
+    console.log(name);
+    console.log("asks");
+    weightedMeanOrderBook(response.asks, 1);
+    weightedMeanOrderBook(response.asks, 2);
+    weightedMeanOrderBook(response.asks, 3);
+    weightedMeanOrderBook(response.asks, 5);
 
-            console.log("\n", chain[1]);
-            console.log("ask1", response[1].asks[0]);
-            console.log("bid1", response[1].bids[0]);
+    console.log("bids");
+    weightedMeanOrderBook(response.bids, 1);
+    weightedMeanOrderBook(response.bids, 2);
+    weightedMeanOrderBook(response.bids, 3);
+    weightedMeanOrderBook(response.bids, 5);
 
-            console.log("ask2", response[1].asks[1]);
-            console.log("bid2", response[1].bids[1]);
+    // console.log("\n", chain[0]);
+    // console.log("ask1", response[0].asks[0]);
+    // console.log("bid1", response[0].bids[0]);
 
-            console.log("\n", chain[2]);
-            console.log("ask1", response[2].asks[0]);
-            console.log("bid1", response[2].bids[0]);
+    // console.log("ask2", response[0].asks[1]);
+    // console.log("bid2", response[0].bids[1]);
 
-            console.log("ask2", response[2].asks[1]);
-            console.log("bid2", response[2].bids[1]);
-            var end3 = new Date() - start3;
+    // console.log("\n", chain[1]);
+    // console.log("ask1", response[1].asks[0]);
+    // console.log("bid1", response[1].bids[0]);
 
-            console.info("Execution time3: %dms", end3);
-        }
-        //arbitrage.checkOpportunity(response);
-    );
+    // console.log("ask2", response[1].asks[1]);
+    // console.log("bid2", response[1].bids[1]);
+
+    // console.log("\n", chain[2]);
+    // console.log("ask1", response[2].asks[0]);
+    // console.log("bid1", response[2].bids[0]);
+
+    // console.log("ask2", response[2].asks[1]);
+    // console.log("bid2", response[2].bids[1]);
+    var end3 = new Date() - start3;
+
+    console.info("Execution time3: %dms", end3);
 
     */
 }
+//arbitrage.checkOpportunity(response);
 
-test("kraken", "ETH/BTC");
+//console.log(weightedMean([100, 102, 104], [5, 20, 10]));
+
+//test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
-//test("cointiger", ["ETH/BTC", "XLM/ETH", "XLM/BTC"]);
+test("coinmarketcap", "XRP/ETH");
+//test("livecoin", "XRP/ETH");
