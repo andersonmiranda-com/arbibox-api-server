@@ -12,5 +12,5 @@ query="{type:'PA', \$and: [ {opp_created_at :{ \$gt: new Date('${query1}')}}, {o
 
 echo $query
 
-mongoexport -h 94.237.66.87 --db arbibox --collection opportunities --type=csv --fields $fields --out orders-singapore-2019-$2-$1.csv --query "${query}"
+mongoexport -h 94.237.66.87 --db arbibox --collection opportunities --type=csv --fields $fields --out data/orders-singapore-2019-$2-$1.csv --query "${query}"
 
