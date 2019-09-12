@@ -2,7 +2,7 @@
 
 var moment = require("moment");
 const colors = require("colors");
-const configs = require("./config/settings-arbitrage");
+const { configs } = require("./core/arbitrage/settings");
 
 /// agent 1 - opportunities search
 const search = require("./core/arbitrage/search");

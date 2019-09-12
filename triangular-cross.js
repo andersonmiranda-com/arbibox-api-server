@@ -13,7 +13,7 @@
 var moment = require("moment");
 const colors = require("colors");
 
-const configs = require("./config/settings-triangular-cross");
+const { configs } = require("./core/triangular-cross/settings");
 
 const search = require("./core/triangular-cross/search");
 

@@ -146,7 +146,7 @@ const initialize = async function() {
             );
             baseCurrencies = await getCurrenciesCMC();
             filterbaseCurrencies = true;
-            verbose && console.error(colors.green("S >> Coins:"), baseCurrencies);
+            verbose && console.info(colors.green("S >> Coins:"), baseCurrencies);
         } catch (error) {
             verbose &&
                 console.error(
