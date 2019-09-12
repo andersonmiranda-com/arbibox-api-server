@@ -3,7 +3,7 @@
 var moment = require("moment");
 const colors = require("colors");
 
-const configs = require("./config/settings-triangular");
+const { configs } = require("./core/triangular/settings");
 
 const search = require("./core/triangular/search");
 const quality = require("./core/triangular/quality");
