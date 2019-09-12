@@ -5,7 +5,7 @@ const colors = require("colors");
 const z = require("zero-fill");
 const n = require("numbro");
 
-const configs = require("../../config/settings-triangular");
+const { configs } = require("./settings");
 const quality = require("./quality");
 
 const db = require("../db");

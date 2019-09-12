@@ -5,7 +5,7 @@ const lodash = require("lodash");
 const colors = require("colors");
 const z = require("zero-fill");
 
-const configs = require("../../config/settings-arbitrage");
+const { configs } = require("./settings");
 const quality = require("./quality");
 const updateFees = require("./updateFees");
 
@@ -102,6 +102,9 @@ const initialize = async function() {
             } else if (!_instance.has["fetchTrades"]) {
                 verbose && console.error(colors.red("Error: Exchange has no fetchTrades:"), name);
                 checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            } else if (!_instance.has["withdraw"]) {
+                verbose && console.error(colors.red("Error: Exchange has no withdraw:"), name);
+                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else if (
                 !_instance.has["fetchDepositAddress"] &&
                 !_instance.has["createDepositAddress"]
@@ -113,10 +116,7 @@ const initialize = async function() {
                         ),
                         name
                     );
-                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
-            } else if (!_instance.has["withdraw"]) {
-                verbose && console.error(colors.red("Error: Exchange has no withdraw:"), name);
-                checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+                //checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
             } else {
                 markets.push({ id: name, markets: _instance.markets });
                 api[name] = _instance;
@@ -130,6 +130,9 @@ const initialize = async function() {
     }
 
     exchanges = [...checkedExchanges];
+
+    //console.log(exchanges);
+
     let baseCurrencies = [];
     let filterbaseCurrencies = false;
 
@@ -143,6 +146,7 @@ const initialize = async function() {
             );
             baseCurrencies = await getCurrenciesCMC();
             filterbaseCurrencies = true;
+            verbose && console.error(colors.green("S >> Coins:"), baseCurrencies);
         } catch (error) {
             verbose &&
                 console.error(

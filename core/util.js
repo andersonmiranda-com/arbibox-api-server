@@ -1,6 +1,6 @@
 "use strict";
 
-const configs = require("../config/settings-arbitrage");
+const { configs } = require("./arbitrage/settings");
 
 const colors = require("colors");
 

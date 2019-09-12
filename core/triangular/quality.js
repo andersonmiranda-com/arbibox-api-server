@@ -4,7 +4,7 @@ const lodash = require("lodash");
 
 const util = require("util");
 
-const configs = require("../../config/settings-triangular");
+const { configs } = require("./settings");
 const { fetchTrades, fetchBalance, fetchOrderBook } = require("../exchange");
 const execution = require("./execution");
 

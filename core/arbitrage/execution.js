@@ -2,7 +2,7 @@ const ccxt = require("ccxt");
 const moment = require("moment");
 const lodash = require("lodash");
 
-const configs = require("../../config/settings-arbitrage");
+const { configs } = require("./settings");
 const colors = require("colors");
 
 const { createOrder, fetchBalance } = require("../exchange");

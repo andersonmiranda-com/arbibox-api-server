@@ -3,7 +3,7 @@
 const axios = require("axios");
 const colors = require("colors");
 
-const configs = require("../config/settings-arbitrage");
+const { configs } = require("./arbitrage/settings");
 ///////////////
 
 const fetchTickers = async exchange => {

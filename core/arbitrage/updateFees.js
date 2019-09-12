@@ -2,7 +2,7 @@ const ccxt = require("ccxt");
 const lodash = require("lodash");
 const colors = require("colors");
 
-const configs = require("../../config/settings-arbitrage");
+const { configs } = require("./settings");
 const db = require("../db");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

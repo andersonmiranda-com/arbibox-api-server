@@ -3,7 +3,7 @@ const lodash = require("lodash");
 
 const colors = require("colors");
 
-const configs = require("../../config/settings-arbitrage");
+const { configs } = require("./settings");
 const execution = require("./execution");
 
 const { getPercentage, getPercentageAfterWdFees, getMinimunInversion } = require("./common");
