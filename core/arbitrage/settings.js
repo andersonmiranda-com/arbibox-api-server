@@ -61,7 +61,7 @@ const configs = {
         exchangesBlacklist: true,
         currenciesBlacklist: true,
         baseCurrenciesCMC: true,
-        baseCurrenciesCMCQty: 100,
+        baseCurrenciesCMCQty: 50,
         baseCurrenciesFromList: true,
         quoteCurrencies: true
     },
