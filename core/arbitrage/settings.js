@@ -1,9 +1,9 @@
 const configs = {
     apiTimeout: 20,
+    //
     exchanges: [
         "bibox",
         "binance",
-        "zb",
         "bigone",
         "kucoin",
         "kraken",
@@ -16,8 +16,11 @@ const configs = {
         "poloniex",
         "tidebit",
         "ethfinex"
+        //        "zb",
     ],
+
     exchangesBlacklist: ["coinmarketcap", "dx", "crex24"],
+
     baseCurrencies: [
         "BTC",
         "ETH",
@@ -52,28 +55,40 @@ const configs = {
         "ENJ"
     ],
 
-    quoteCurrencies: ["BTC", "ETH", "USDT", "BNB", "PAX", "USDC", "TUSD"],
+    //quoteCurrencies: ["BTC", "ETH", "USDT", "BNB", "PAX", "USDC", "TUSD"],
+    quoteCurrencies: ["BTC", "ETH", "USDT"],
 
-    currenciesBlacklist: ["ETC"],
+    currenciesBlacklist: ["ETC", "MKR"],
 
     marketFilter: {
+        //limit exchanges to the list
         exchanges: true,
+        //filter exchanges against blacklist
         exchangesBlacklist: true,
+        //filter currencies against blacklist
         currenciesBlacklist: true,
+        //get top CMC currencies
         baseCurrenciesCMC: true,
+        //number of top CMC currencies to load
         baseCurrenciesCMCQty: 50,
+        //limit base currencies to the list (disabled if baseCurrenciesCMC id true)
         baseCurrenciesFromList: true,
+        //limit quote currencies to the list
         quoteCurrencies: true
     },
 
     keys: {
-        bibox: {
-            apiKey: "4fd164f9c755a39b6ac35e47f2c9507a0deafd88",
-            secret: "2a308fe5e96918f748db68d2ae0b6acc31adff47"
-        },
         binance: {
             apiKey: "JtTwtetprHSvnk6FHR1Die4JOeguNxHmbsDr4Rm1UCXeZ8kQVC4YmnRMFa9h3h0L",
             secret: "1YwE3eThkxkq8Y4DlbiQG8tWITwsWbKYdWTQF3z1dnUO3vSVirXm3TxdLW0vtUrN"
+        },
+        livecoin: {
+            apiKey: "Ck5n1GAyjwfdV6eK7KgWpkfKyvKQw3SW",
+            secret: "mQ1Ws8WVAQg9sXsu7UzaEB4MgUvmkvEm"
+        },
+        bibox: {
+            apiKey: "4fd164f9c755a39b6ac35e47f2c9507a0deafd88",
+            secret: "2a308fe5e96918f748db68d2ae0b6acc31adff47"
         },
         kraken: {
             apiKey: "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
@@ -95,13 +110,19 @@ const configs = {
         }
     },
 
+    //calculate and execute parallel arbitrage with withdraw on every trade operecion
     loopWithdraw: false,
+
+    //execute loop withdraw only when balance is insuficient
     autoWithdraw: true,
 
+    //searh parameters
     search: {
         checkInterval: 10,
-        minimumProfit: 0.1,
-        minimumProfitInvest: 0.1,
+        minimumProfit: 0.05,
+        minimumProfitInvest: 0.05,
+
+        // quote currencies referneces to calculate profit in parallel loop (used when loopWithdraw is true)
         quoteCurrencyFunds: {
             BTC: 0.1,
             USD: 1000,
@@ -113,8 +134,7 @@ const configs = {
     quality: {
         checkInterval: 30,
         filter: {
-            tradeActivity: false,
-            orderBookVolume: true,
+            //check 24hVolume on tickers
             tickerVolume: true,
             tickerLowVolumeLimit: {
                 base: 0.01,
@@ -124,15 +144,24 @@ const configs = {
                     USDT: 1000,
                     ETH: 5
                 }
-            }
+            },
+
+            //check trade history activity
+            tradeActivity: false
         },
+
+        // time to check las trade transaction (in minutes)
         lastTradeTimeLimit: 10,
+
+        // Remove a inactive signal from list after minutes
         removeAfterMinutesOff: 2,
-        removeAfterIterations: 10
+
+        // Remove a reproved signal from list after minutes
+        removeAfterIterations: 6
     },
 
     execution: {
-        simulationMode: true,
+        simulationMode: false,
         checkInterval: 10
     }
 };
