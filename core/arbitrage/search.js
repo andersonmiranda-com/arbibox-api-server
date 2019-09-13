@@ -185,7 +185,7 @@ const initialize = async function() {
                 lodash.includes(configs.currenciesBlacklist, coins[1]))
         ) {
             // do not push symbol if in blacklist
-            verbose && console.log("S >>", "Blacklisted coin", colors.magenta(symbol));
+            verbose && console.log("S >>", "Blacklisted symbol", colors.magenta(symbol));
         } else if (filterbaseCurrencies && configs.marketFilter.quoteCurrencies) {
             if (is_base && is_quote) {
                 symbols.push(symbol);
