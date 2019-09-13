@@ -105,10 +105,12 @@ const prepareOrder = async opportunity => {
 
     opportunity.wallets = {
         buy: {
+            exchange: opportunity.buy_at,
             [opportunity.base]: buyWallets[opportunity.base] || 0,
             [opportunity.quote]: buyWallets[opportunity.quote] || 0
         },
         sell: {
+            exchange: opportunity.sell_at,
             [opportunity.base]: sellWallets[opportunity.base] || 0,
             [opportunity.quote]: sellWallets[opportunity.quote] || 0
         }
@@ -127,8 +129,20 @@ const prepareOrder = async opportunity => {
 
     if (buyAmount < opportunity.invest.min.base) {
         insuficientFunds = true;
-        console.log(colors.red("E >>"), "Insuficient funds");
         opportunity.approved = false;
+        console.log(colors.red("E >>"), "Insuficient funds");
+
+        if (
+            opportunity.wallets.buy[opportunity.quote] / opportunity.bestAsk.ask <
+            opportunity.invest.min.base
+        ) {
+            opportunity.wallets.buy.status = "Insuficient";
+        }
+
+        if (opportunity.wallets.sell[opportunity.base] < opportunity.invest.min.base) {
+            opportunity.wallets.sell.status = "Insuficient";
+        }
+
         opportunity.quality.execution_note = "Insuficient Funds";
         db.updateOpportunity(opportunity);
         return;

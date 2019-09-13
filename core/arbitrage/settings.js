@@ -70,7 +70,7 @@ const configs = {
         //get top CMC currencies
         baseCurrenciesCMC: true,
         //number of top CMC currencies to load
-        baseCurrenciesCMCQty: 50,
+        baseCurrenciesCMCQty: 20,
         //limit base currencies to the list (disabled if baseCurrenciesCMC id true)
         baseCurrenciesFromList: true,
         //limit quote currencies to the list
@@ -86,18 +86,18 @@ const configs = {
             apiKey: "Ck5n1GAyjwfdV6eK7KgWpkfKyvKQw3SW",
             secret: "mQ1Ws8WVAQg9sXsu7UzaEB4MgUvmkvEm"
         },
-        bibox: {
-            apiKey: "4fd164f9c755a39b6ac35e47f2c9507a0deafd88",
-            secret: "2a308fe5e96918f748db68d2ae0b6acc31adff47"
+        hitbtc: {
+            apiKey: "IPzjWG55fYS48K1J7XtMvVYhhoq0c48B",
+            secret: "5bygkFHq+XjQ9Qpf6HOnhKNfoHiwNmsu+E3NLmGFO"
         },
         kraken: {
             apiKey: "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
             secret:
                 "csjYywPe8c51zBvDrYV96iiZVwokozSpmCP+pdOGOzWQ1FwStEpRZnIEhujxx9Hxb2XK7oipi5k7ZU/jrCKdPw=="
         },
-        hitbtc: {
-            apiKey: "0P+2ik5JXiB4kjbnuQtU/cw0oIlXmHf9",
-            secret: "d2wzFWYM0dm437YxZZ6TiCK+E3NLmGFO"
+        bibox: {
+            apiKey: "4fd164f9c755a39b6ac35e47f2c9507a0deafd88",
+            secret: "2a308fe5e96918f748db68d2ae0b6acc31adff47"
         },
         bitfinex: {
             apiKey: "gfuxiWVe33k0dX46Ug3XiOy3U6z6r9KUgoOYhQCh0gM",
@@ -119,8 +119,8 @@ const configs = {
     //searh parameters
     search: {
         checkInterval: 10,
-        minimumProfit: 0.05,
-        minimumProfitInvest: 0.05,
+        minimumProfit: 0.1,
+        minimumProfitInvest: 0.1,
 
         // quote currencies referneces to calculate profit in parallel loop (used when loopWithdraw is true)
         quoteCurrencyFunds: {
