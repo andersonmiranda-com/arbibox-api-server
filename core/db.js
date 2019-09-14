@@ -66,7 +66,7 @@ exports.upsertSignal = function(data) {
             // avoid update different _id
             var db = client.db("arbibox");
             db.collection("signals").updateOne(
-                { id: data.id },
+                { code: data.code },
                 {
                     $set: data,
                     $addToSet: {

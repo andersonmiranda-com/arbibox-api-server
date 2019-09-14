@@ -126,11 +126,14 @@ const prepareOrder = async opportunity => {
 const executeOrder = async opportunity => {
     console.log(colors.green("E >> Executing..."), colors.cyan(opportunity.id));
 
+    //TODO: check if there is an open order for this opportunity
+
     let { buyOrderData, sellOrderData } = opportunity;
     let buyOrderResult = await createOrder(buyOrderData);
     db.addOrder({
         created_at: moment().toDate(),
         opportunity_id: opportunity._id,
+        code: opportunity.code,
         exchange: buyOrderData.exchange,
         side: buyOrderData.side,
         type: buyOrderData.type,
@@ -155,6 +158,7 @@ const executeOrder = async opportunity => {
     db.addOrder({
         created_at: moment().toDate(),
         opportunity_id: opportunity._id,
+        code: opportunity.code,
         exchange: sellOrderData.exchange,
         side: sellOrderData.side,
         type: sellOrderData.type,
@@ -265,6 +269,9 @@ const checkOrder = async function(order) {
         return;
     }
     let orderResult = await fetchOrder(order.exchange, order.orderResult.id, order.symbol);
+
+    //TODO: update opportunity status as completed
+
     if (orderResult.id) {
         order.orderResult = orderResult;
         order.status = orderResult.status;

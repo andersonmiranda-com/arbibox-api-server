@@ -425,7 +425,7 @@ function filterSignals(prices) {
                 percentReference !== Infinity
             ) {
                 let signal = {
-                    id: bestAsk.symbol.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
+                    code: bestAsk.symbol.toLowerCase() + "-" + bestAsk.name + "-" + bestBid.name,
                     signal_created_at: new Date(),
                     type: "PA",
                     symbol: bestAsk.symbol,

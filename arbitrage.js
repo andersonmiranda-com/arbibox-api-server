@@ -85,5 +85,5 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         execution.checkOrders();
         verbose &&
             console.info("E >> Checking orders >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
-    }, (configs.execution.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
+    }, (configs.execution.checkInterval > 0 ? configs.execution.checkInterval : 120) * 1000);
 })();

@@ -53,7 +53,7 @@ const initialize = async function() {
 function callCheck(signal) {
     return new Promise((resolve, reject) => {
         setTimeout(function() {
-            //console.log("run", signal.id);
+            //console.log("run", signal.code);
             checkSignal(signal);
             resolve(true);
         }, 500);
@@ -94,7 +94,7 @@ const cleanup = async function() {
 
 async function checkSignal(signal) {
     let checkedSignal = await db.readSignals({
-        $and: [{ id: signal.id, qualified: { $exists: false } }]
+        $and: [{ code: signal.code, qualified: { $exists: false } }]
     });
     if (checkedSignal.length === 0) return false;
 
@@ -166,7 +166,7 @@ async function checkSignal(signal) {
             };
             signal.quality.score = 0;
             db.updateSignal(signal);
-            console.log(colors.red("Q >>"), colors.red(signal.id));
+            console.log(colors.red("Q >>"), colors.red(signal.code));
         }
 
         // })
@@ -184,7 +184,7 @@ function checkOrderBook(signal) {
     //let wallets = await fetchBalance(order.exchange);
     //console.log("wallets", wallets);
 
-    console.log(colors.yellow("Q >>"), "Checking orderBook...", signal.id);
+    console.log(colors.yellow("Q >>"), "Checking orderBook...", signal.code);
 
     let limit = 3;
 
@@ -223,7 +223,11 @@ function checkOrderBook(signal) {
             };
             signal.quality.score = 0;
             signal.approved = false;
-            console.log(colors.red("Q >>"), "Not approved - Profit smaller than target", signal.id);
+            console.log(
+                colors.red("Q >>"),
+                "Not approved - Profit smaller than target",
+                signal.code
+            );
             db.updateSignal(signal);
             return;
         }
@@ -238,13 +242,13 @@ function checkOrderBook(signal) {
             console.log(
                 colors.red("Q >>"),
                 "Not approved - Volume in orderBook < minimun allowed",
-                signal.id
+                signal.code
             );
             db.updateSignal(signal);
             return;
         }
 
-        //console.log("profit1", signal.id, profit1);
+        //console.log("profit1", signal.code, profit1);
 
         let thisbestAsk = { ...signal.bestAsk };
         let thisbestBid = { ...signal.bestBid };
@@ -293,7 +297,7 @@ function checkOrderBook(signal) {
 
         configs.loopWithdraw && console.log("Q >> Invest Min", signal.invest.min);
         console.log("Q >> Profit", bestDeal.profit_percent, "%", signal.invest.max.profit);
-        console.log(colors.green("Q >> Signal Approved"), colors.magenta(signal.id));
+        console.log(colors.green("Q >> Signal Approved"), colors.magenta(signal.code));
 
         // remove from signals
         //db.removeSignals({ id: order.id });
@@ -304,7 +308,7 @@ function checkOrderBook(signal) {
         // add to opportunities collection
         opportunity.status = "open";
         opportunity._id = await db.addOpportunity(opportunity);
-        console.log(colors.green("Q >> Opportunity created..."), colors.cyan(opportunity.id));
+        console.log(colors.green("Q >> Opportunity created..."), colors.cyan(opportunity.code));
 
         // call execution
         execution.initialize(opportunity);
