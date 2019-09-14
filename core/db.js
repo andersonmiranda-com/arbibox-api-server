@@ -293,7 +293,7 @@ exports.updateOrder = function(data) {
         var db = client.db("arbibox");
         db.collection("orders").updateOne({ _id: data._id }, { $set: data }, function(err, res) {
             if (err) throw err;
-            console.log(res.result);
+            //console.log(res.result);
             client.close();
         });
     });

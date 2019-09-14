@@ -262,7 +262,7 @@ function callCheckOrder(order) {
 }
 
 const checkOrder = async function(order) {
-    console.log(order.exchange, order.side, order.amount);
+    //console.log(order.exchange, order.side, order.amount);
     if (!order.orderResult.id) {
         order.status = "error";
         await db.updateOrder(order);
