@@ -4,6 +4,8 @@ const axios = require("axios");
 const colors = require("colors");
 
 const { configs } = require("./arbitrage/settings");
+const { apiKeys } = require("./arbitrage/settingsApiKeys");
+
 ///////////////
 
 const fetchTickers = async exchange => {
@@ -93,13 +95,26 @@ const createOrder = async ({ exchange, side, type, symbol, amount, price }) => {
     });
 };
 
+const fetchOrder = async (exchange, orderId, symbol) => {
+    let orderResult = {};
+    return new Promise(async (resolve, reject) => {
+        try {
+            orderResult = await api[exchange].fetchOrder(orderId, symbol);
+            resolve(orderResult);
+        } catch (error) {
+            console.error(colors.red("X >> Error fetchOrder:"), error);
+            resolve(orderResult);
+        }
+    });
+};
+
 ///////////////
 
 const fetchBalance = async exchange => {
     let total = {};
 
     try {
-        if (configs.keys[exchange]) {
+        if (apiKeys[exchange]) {
             let balance = await api[exchange].fetchBalance();
             total = balance.total;
             //db.saveWallets(exchangeTickets.id, {
@@ -147,6 +162,7 @@ module.exports = {
     fetchTickers,
     fetchTrades,
     createOrder,
+    fetchOrder,
     fetchOrderBook,
     fetchBalance,
     getCurrenciesCMC

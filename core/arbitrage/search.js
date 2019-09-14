@@ -6,6 +6,7 @@ const colors = require("colors");
 const z = require("zero-fill");
 
 const { configs } = require("./settings");
+const { apiKeys } = require("./settingsApiKeys");
 const quality = require("./quality");
 const updateFees = require("./updateFees");
 
@@ -59,10 +60,10 @@ const initialize = async function() {
         try {
             var _instance;
 
-            if (configs.keys[name]) {
+            if (apiKeys[name]) {
                 _instance = new ccxt[name]({
-                    apiKey: configs.keys[name].apiKey,
-                    secret: configs.keys[name].secret,
+                    apiKey: apiKeys[name].apiKey,
+                    secret: apiKeys[name].secret,
                     timeout: configs.apiTimeout * 1000,
                     enableRateLimit: true
                 });
