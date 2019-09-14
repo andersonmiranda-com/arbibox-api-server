@@ -15,7 +15,8 @@ const configs = {
         "bittrex",
         "poloniex",
         "tidebit",
-        "ethfinex"
+        "ethfinex",
+        "hitbtc2"
         //        "zb",
     ],
 
@@ -70,51 +71,12 @@ const configs = {
         //get top CMC currencies
         baseCurrenciesCMC: true,
         //number of top CMC currencies to load
-        baseCurrenciesCMCQty: 20,
+        baseCurrenciesCMCQty: 50,
         //limit base currencies to the list (disabled if baseCurrenciesCMC id true)
         baseCurrenciesFromList: true,
         //limit quote currencies to the list
         quoteCurrencies: true
     },
-
-    keys: {
-        binance: {
-            apiKey: "JtTwtetprHSvnk6FHR1Die4JOeguNxHmbsDr4Rm1UCXeZ8kQVC4YmnRMFa9h3h0L",
-            secret: "1YwE3eThkxkq8Y4DlbiQG8tWITwsWbKYdWTQF3z1dnUO3vSVirXm3TxdLW0vtUrN"
-        },
-        livecoin: {
-            apiKey: "Ck5n1GAyjwfdV6eK7KgWpkfKyvKQw3SW",
-            secret: "mQ1Ws8WVAQg9sXsu7UzaEB4MgUvmkvEm"
-        },
-        hitbtc: {
-            apiKey: "IPzjWG55fYS48K1J7XtMvVYhhoq0c48B",
-            secret: "5bygkFHq+XjQ9Qpf6HOnhKNfoHiwNmsu+E3NLmGFO"
-        },
-        kraken: {
-            apiKey: "ZGnU5nmc4/Y+FGYpkwXpaGhYphohkUKkU37Gd3zr6w1XbMuMCJZKQ1RK",
-            secret:
-                "csjYywPe8c51zBvDrYV96iiZVwokozSpmCP+pdOGOzWQ1FwStEpRZnIEhujxx9Hxb2XK7oipi5k7ZU/jrCKdPw=="
-        },
-        bibox: {
-            apiKey: "4fd164f9c755a39b6ac35e47f2c9507a0deafd88",
-            secret: "2a308fe5e96918f748db68d2ae0b6acc31adff47"
-        },
-        bitfinex: {
-            apiKey: "gfuxiWVe33k0dX46Ug3XiOy3U6z6r9KUgoOYhQCh0gM",
-            secret: "zcBrFykqhh6RwUFNlcQRoaATm6nbEh3NLvh1zaXAWx3"
-        },
-        cointiger: {
-            apiKey: "ca3b1ccc-fb62-4c38-bb4a-052fd0989de0",
-            secret:
-                "Yzc1ZjM4MWQzMjk4NjRlOWM5ZjkxY2ViNTRmMGQxNDM3YjJkOTI0MDgwODI0Y2FlNjFjODNiNzE4NDEwNTRiMA=="
-        }
-    },
-
-    //calculate and execute parallel arbitrage with withdraw on every trade operecion
-    loopWithdraw: false,
-
-    //execute loop withdraw only when balance is insuficient
-    autoWithdraw: true,
 
     //searh parameters
     search: {
@@ -130,6 +92,12 @@ const configs = {
             ETH: 5
         }
     },
+
+    //calculate and execute parallel arbitrage with withdraw on every trade operecion
+    loopWithdraw: false,
+
+    //execute loop withdraw only when balance is insuficient
+    autoWithdraw: true,
 
     quality: {
         checkInterval: 30,
@@ -162,7 +130,7 @@ const configs = {
 
     execution: {
         simulationMode: false,
-        checkInterval: 10
+        checkInterval: 60
     }
 };
 

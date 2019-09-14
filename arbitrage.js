@@ -32,6 +32,8 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 (async function() {
     console.log(colors.green(logo));
     console.log(colors.cyan("\nStarting Parallel Arbitrage..."));
+    configs.execution.simulationMode && console.info(colors.magenta("--- Simulation Mode ---"));
+
     verbose && console.info("\nLoading exchanges and tickets...");
 
     /// started
@@ -51,6 +53,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     search.findSignals(tickets, exchangesSymbols, markets, searchCounter);
 
     // loop every x seconds
+
     setInterval(function() {
         searchCounter++;
         search.findSignals(tickets, exchangesSymbols, markets, searchCounter);
@@ -66,6 +69,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Read opportunities from "opportunities" mongoDB collection and check quality. Remove bad ones
 
     // loop every x seconds
+
     setInterval(function() {
         quality.cleanup();
         verbose && console.info("Q >> Cleaning >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
@@ -75,22 +79,11 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Agent 3 - Execution
     ///
 
-    // // loop every x seconds
-    // setInterval(function() {
-    //     verbose &&
-    //         console.info(
-    //             ">>> Execution agent >",
-    //             moment().format("dddd, MMMM D YYYY, h:mm:ss a"))
-    //         );
-    //     execution.initialize();
-    // }, (configs.execution.checkInterval > 0
-    //     ? configs.execution.checkInterval
-    //     : 30) * 1000);
-
-    // /// started
-    // verbose &&
-    //     console.info(
-    //         "\n>>> Bot started at",
-    //         moment().format("dddd, MMMM Do YYYY, h:mm:ss a"))
-    //     );
+    // loop every x seconds
+    execution.checkOrders();
+    setInterval(function() {
+        execution.checkOrders();
+        verbose &&
+            console.info("E >> Checking orders >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
+    }, (configs.execution.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
 })();

@@ -5,77 +5,8 @@ const lodash = require("lodash");
 const { configs } = require("./settings");
 const colors = require("colors");
 
-const { createOrder, fetchBalance } = require("../exchange");
+const { createOrder, fetchBalance, fetchOrder } = require("../exchange");
 const db = require("../db");
-
-let opportunity_test = {
-    _id: "5d70e0f8bffb892ee2e9e740",
-    id: "etc/eth-binance-kraken",
-    opp_created_at: new Date("2019-09-05T10:18:22.917Z"),
-    type: "PA",
-    symbol: "ETC/ETH",
-    buy_at: "binance",
-    sell_at: "kraken",
-    profit_percent: 0.849181954999907,
-    bestAsk: {
-        bid: 0.040674,
-        ask: 0.040705,
-        baseVolume: 34838.03,
-        quoteVolume: 1397.20583903,
-        name: "binance",
-        symbol: "ETC/ETH",
-        tradeFee: 0.001,
-        quoteWithdrawalFee: 0.01,
-        baseWithdrawalFee: 0.01
-    },
-    bestBid: {
-        bid: 0.041334,
-        ask: 0.041844,
-        baseVolume: 429.53092574,
-        quoteVolume: 17.5345605784952,
-        name: "kraken",
-        symbol: "ETC/ETH",
-        tradeFee: 0.0026,
-        quoteWithdrawalFee: 0.005
-    },
-    base: "ETC",
-    quote: "ETH",
-    invest: {
-        min: {
-            base: 8.61044608478991,
-            quote: 0.351979975774355,
-            profit_percent: 0.1,
-            profit: 0.000351979975774355
-        },
-        max: {
-            base: 16.82,
-            quote: 0.6860878,
-            profit_percent: 0.849181954999907,
-            profit: 0.00582613379305585
-        }
-    },
-    qualified: true,
-    ordersBook: {
-        cheched_at: new Date("2019-09-05T10:18:32.856Z"),
-        buy: {
-            exchange: "binance",
-            ask1: [0.04079, 54.57],
-            ask2: [0.040791, 2.4]
-        },
-        sell: {
-            exchange: "kraken",
-            bid1: [0.041608, 16.82],
-            bid2: [0.041483, 61.926]
-        }
-    },
-    approved: true,
-    quality: {
-        note: "row1",
-        checked_at: new Date("2019-09-05T10:18:32.856Z"),
-        score: 5
-    },
-    opp_created_at: new Date("2019-09-05T10:18:32.856Z")
-};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -143,7 +74,9 @@ const prepareOrder = async opportunity => {
             opportunity.wallets.sell.status = "Insuficient";
         }
 
-        opportunity.quality.execution_note = "Insuficient Funds";
+        opportunity.quality.execution_note = "Insuficient funds";
+        opportunity.status = "Insuficient funds";
+
         db.updateOpportunity(opportunity);
         return;
 
@@ -162,7 +95,7 @@ const prepareOrder = async opportunity => {
     opportunity.buyOrderData = {
         exchange: opportunity.buy_at,
         side: "buy",
-        type: "market",
+        type: "limit",
         symbol: opportunity.symbol,
         amount: buyAmount,
         price: opportunity.bestAsk.ask
@@ -171,11 +104,14 @@ const prepareOrder = async opportunity => {
     opportunity.sellOrderData = {
         exchange: opportunity.sell_at,
         side: "sell",
-        type: "market",
+        type: "limit",
         symbol: opportunity.symbol,
         amount: sellAmount,
         price: opportunity.bestBid.bid
     };
+
+    opportunity.status = "executed";
+    db.updateOpportunity(opportunity);
 
     db.updateOpportunity(opportunity);
     !configs.simulationMode && executeOrder(opportunity);
@@ -201,7 +137,8 @@ const executeOrder = async opportunity => {
         symbol: buyOrderData.symbol,
         amount: buyOrderData.amount,
         price: buyOrderData.price,
-        buyOrderResult
+        status: buyOrderResult.status,
+        orderResult: buyOrderResult
     });
 
     console.log(
@@ -224,7 +161,8 @@ const executeOrder = async opportunity => {
         symbol: sellOrderData.symbol,
         amount: sellOrderData.amount,
         price: sellOrderData.price,
-        sellOrderResult
+        status: sellOrderResult.status,
+        orderResult: sellOrderResult
     });
 
     console.log(
@@ -281,46 +219,63 @@ const executeOrder = async opportunity => {
     //console.log(colors.green("E >> Executing..."), order);
 };
 
-const testOrder = async opportunity => {
-    global.api = {};
-    var _instance;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Check Orders
+///
 
-    let name = "binance";
+const checkOrders = async function() {
+    ////////
+    // create a queue with open orders status
+    ////////
+    let openOrders = await db.readOrders({
+        $or: [{ status: "open" }, { status: { $exists: false } }]
+    });
+    if (openOrders.length === 0) return false;
 
-    if (configs.keys[name]) {
-        _instance = new ccxt[name]({
-            apiKey: configs.keys[name].apiKey,
-            secret: configs.keys[name].secret,
-            timeout: configs.apiTimeout * 1000,
-            enableRateLimit: true
-        });
+    console.log("E >> Checking Orders status");
+
+    let promises = openOrders.map(async order => Promise.resolve(await checkOrder(order)));
+
+    Promise.all(promises).then(response => {
+        console.log("E >> Orders checked");
+    });
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Delays execution 300ms to avoid reject Access Denied (Too many requests)
+///
+
+function callCheckOrder(order) {
+    return new Promise((resolve, reject) => {
+        setTimeout(function() {
+            //console.log("run", signal.id);
+            checkOrder(order);
+            resolve(true);
+        }, 2000);
+    });
+}
+
+const checkOrder = async function(order) {
+    console.log(order.exchange, order.side, order.amount);
+    if (!order.orderResult.id) {
+        order.status = "error";
+        await db.updateOrder(order);
+        return;
     }
-
-    await _instance.loadMarkets();
-
-    api[name] = _instance;
-
-    name = "kraken";
-
-    if (configs.keys[name]) {
-        _instance = new ccxt[name]({
-            apiKey: configs.keys[name].apiKey,
-            secret: configs.keys[name].secret,
-            timeout: configs.apiTimeout * 1000,
-            enableRateLimit: true
-        });
+    let orderResult = await fetchOrder(order.exchange, order.orderResult.id, order.symbol);
+    if (orderResult.id) {
+        order.orderResult = orderResult;
+        order.status = orderResult.status;
+        await db.updateOrder(order);
     }
-
-    await _instance.loadMarkets();
-
-    api[name] = _instance;
-
-    executeOrder(opportunity);
 };
 
 module.exports = {
     initialize,
-    executeOrder
+    executeOrder,
+    checkOrders
 };
 
-//testOrder(opportunity_test);
+//checkOrders();

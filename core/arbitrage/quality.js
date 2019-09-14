@@ -267,9 +267,15 @@ function checkOrderBook(signal) {
                 profit: minQuote * (configs.search.minimumProfitInvest / 100)
             };
         } else {
+            let minInvestBase = lodash.max([thisbestAsk.minAmount, thisbestBid.minAmount]);
+            let minInvestQuote = lodash.max([
+                thisbestAsk.minAmount * thisbestAsk.ask,
+                thisbestBid.minAmount * thisbestBid.bid
+            ]);
+
             signal.invest.min = {
-                base: thisbestAsk.minAmount,
-                quote: thisbestAsk.minAmount * thisbestAsk.ask,
+                base: minInvestBase,
+                quote: minInvestQuote,
                 profit_percent: configs.search.minimumProfitInvest,
                 profit:
                     thisbestAsk.minAmount *
@@ -296,6 +302,7 @@ function checkOrderBook(signal) {
         delete opportunity._id;
         opportunity.opp_created_at = moment().toDate();
         // add to opportunities collection
+        opportunity.status = "open";
         opportunity._id = await db.addOpportunity(opportunity);
         console.log(colors.green("Q >> Opportunity created..."), colors.cyan(opportunity.id));
 

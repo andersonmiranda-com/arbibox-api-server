@@ -285,3 +285,16 @@ exports.readOrders = function(query) {
         });
     });
 };
+
+exports.updateOrder = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        // avoid update different _id
+        var db = client.db("arbibox");
+        db.collection("orders").updateOne({ _id: data._id }, { $set: data }, function(err, res) {
+            if (err) throw err;
+            console.log(res.result);
+            client.close();
+        });
+    });
+};

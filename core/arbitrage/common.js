@@ -6,8 +6,14 @@ const { configs } = require("./settings");
 ///
 
 const getWithdrawalFee = (exchange, currency) => {
-    let wd = withdrawalFees.find(fee => fee.exchange === exchange).withdraw[currency];
-    return wd ? wd : 0;
+    let wd = 0;
+    try {
+        wd = withdrawalFees.find(fee => fee.exchange === exchange).withdraw[currency];
+        return wd ? wd : 0;
+    } catch (error) {
+        console.log(exchange, currency);
+        return wd;
+    }
 };
 
 const getPercentage = (bestAsk, bestBid) => {
