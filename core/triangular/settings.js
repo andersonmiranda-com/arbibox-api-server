@@ -96,7 +96,7 @@ const configs = {
         filter: {
             tradeActivity: false,
             orderBookVolume: true,
-            tickerVolume: false,
+            tickerVolume: true,
             tickerLowVolumeLimit: {
                 base: 0.01,
                 quote: {
