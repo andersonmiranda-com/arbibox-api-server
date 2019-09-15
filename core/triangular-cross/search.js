@@ -1,6 +1,6 @@
 const ccxt = require("ccxt");
 const lodash = require("lodash");
-const configs = require("../../config/settings-triangular-cross");
+const { configs } = require("./settings");
 const { getConnectingAsset, getMultiplier } = require("../util");
 const colors = require("colors");
 const { Parser } = require("json2csv");
@@ -137,10 +137,8 @@ async function findChains(targetAssets, tickers, markets) {
                     chain.triagePercentage <= 100 &&
                     chain.triagePercentage !== Infinity
                 ) {
-                    //console.log(chain + "; triage: " + colorProfit(chain.triagePercentage) + " %");
-
                     try {
-                        let opportunity = {
+                        let signal = {
                             type: "TC",
                             base: targetAsset,
                             opp_created_at: new Date(),
@@ -153,7 +151,7 @@ async function findChains(targetAssets, tickers, markets) {
                             profit: Number(chain.triagePercentage.toFixed(4))
                         };
 
-                        db.insertTriangularCrossOpportunity(opportunity);
+                        //await db.upsertSignal(signal);
 
                         console.log(
                             targetAsset,

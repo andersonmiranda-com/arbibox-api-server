@@ -2,15 +2,25 @@ const configs = {
     apiTimeout: 20,
     exchanges: [
         "bittrex",
+        "kraken",
         "bitfinex",
         "poloniex",
+        "hitbtc",
+        "huobipro",
         "binance",
+        "okex",
         "ethfinex",
+        "upbit",
+        "bithumb",
         "bibox",
         "kucoin",
         "gateio",
         "livecoin",
-        "exmo"
+        "exmo",
+        "cointiger",
+        "bitlish",
+        "coss",
+        "cex"
     ],
     exchangesBlacklist: ["coinmarketcap", "dx", "crex24"],
     baseCurrencies: [
@@ -78,7 +88,7 @@ const configs = {
     },
     search: {
         checkInterval: 5,
-        minimumProfit: 0.1,
+        minimumProfit: 0.0,
         targetAssets: ["BTC", "ETH", "USDT", "BNB", "PAX"]
     },
     quality: {

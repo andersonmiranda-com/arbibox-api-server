@@ -343,7 +343,6 @@ async function checkWallet(signal) {
     if (buyAmount < signal.invest.min.base) {
         insuficientFunds = true;
         signal.approved = false;
-        console.log(colors.red("Q >>"), "Insuficient funds");
 
         if (signal.wallets.buy[signal.quote] / signal.bestAsk.ask < signal.invest.min.base) {
             signal.wallets.buy.status = "Insuficient";
@@ -352,6 +351,8 @@ async function checkWallet(signal) {
         if (signal.wallets.sell[signal.base] < signal.invest.min.base) {
             signal.wallets.sell.status = "Insuficient";
         }
+
+        console.log(colors.red("Q >>"), "Insuficient funds", signal.code);
 
         signal.quality.execution_note = "Insuficient funds";
         signal.status = "Insuficient funds";
