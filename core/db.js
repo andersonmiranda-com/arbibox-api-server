@@ -95,7 +95,7 @@ exports.updateSignal = function(data) {
         delete data._id;
         var db = client.db("arbibox");
         db.collection("signals").updateOne(
-            { id: data.id },
+            { code: data.code },
             {
                 $set: data
             },
@@ -250,6 +250,25 @@ exports.updateOpportunity = function(data) {
                 client.close();
             }
         );
+    });
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Lost Opportunities
+///
+
+exports.addLostOpportunity = function(data) {
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            var db = client.db("arbibox");
+            db.collection("lost_opportunities").insertOne(data, function(err, res) {
+                if (err) throw err;
+                resolve(res.insertedId);
+                client.close();
+            });
+        });
     });
 };
 

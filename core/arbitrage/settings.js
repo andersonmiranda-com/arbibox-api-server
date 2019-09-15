@@ -71,7 +71,7 @@ const configs = {
         //get top CMC currencies
         baseCurrenciesCMC: true,
         //number of top CMC currencies to load
-        baseCurrenciesCMCQty: 50,
+        baseCurrenciesCMCQty: 30,
         //limit base currencies to the list (disabled if baseCurrenciesCMC id true)
         baseCurrenciesFromList: true,
         //limit quote currencies to the list

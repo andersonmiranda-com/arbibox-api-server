@@ -26,62 +26,14 @@ const initialize = async function(opportunity) {
 const prepareOrder = async opportunity => {
     //executeOrder(opportunity);
 
-    /////////////////////////////////////////////////////////
-    //
-    // get Wallets Balances
-    //
-
-    let buyWallets = await fetchBalance(opportunity.buy_at);
-    let sellWallets = await fetchBalance(opportunity.sell_at);
-
-    opportunity.wallets = {
-        buy: {
-            exchange: opportunity.buy_at,
-            [opportunity.base]: buyWallets[opportunity.base] || 0,
-            [opportunity.quote]: buyWallets[opportunity.quote] || 0
-        },
-        sell: {
-            exchange: opportunity.sell_at,
-            [opportunity.base]: sellWallets[opportunity.base] || 0,
-            [opportunity.quote]: sellWallets[opportunity.quote] || 0
-        }
-    };
-
-    /////////////////////////////////////////////////////////
-    //
-    // Check funds
-    //
+    //TODO: check if there is an open order for this opportunity
+    //        opportunity.status = "cancel";
 
     let buyAmount = lodash.min([
         opportunity.wallets.buy[opportunity.quote] / opportunity.bestAsk.ask,
         opportunity.wallets.sell[opportunity.base],
         opportunity.invest.max.base
     ]);
-
-    if (buyAmount < opportunity.invest.min.base) {
-        insuficientFunds = true;
-        opportunity.approved = false;
-        console.log(colors.red("E >>"), "Insuficient funds");
-
-        if (
-            opportunity.wallets.buy[opportunity.quote] / opportunity.bestAsk.ask <
-            opportunity.invest.min.base
-        ) {
-            opportunity.wallets.buy.status = "Insuficient";
-        }
-
-        if (opportunity.wallets.sell[opportunity.base] < opportunity.invest.min.base) {
-            opportunity.wallets.sell.status = "Insuficient";
-        }
-
-        opportunity.quality.execution_note = "Insuficient funds";
-        opportunity.status = "Insuficient funds";
-
-        db.updateOpportunity(opportunity);
-        return;
-
-        //prepare to withdraw
-    }
 
     //let sellBalance = buyAmount - opportunity.bestAsk.baseWithdrawalFee;
     let sellBalance = buyAmount;
@@ -110,11 +62,7 @@ const prepareOrder = async opportunity => {
         price: opportunity.bestBid.bid
     };
 
-    opportunity.status = "executed";
-    db.updateOpportunity(opportunity);
-
-    db.updateOpportunity(opportunity);
-    !configs.simulationMode && executeOrder(opportunity);
+    executeOrder(opportunity);
     // check limits
 };
 
@@ -124,12 +72,12 @@ const prepareOrder = async opportunity => {
 ///
 
 const executeOrder = async opportunity => {
-    console.log(colors.green("E >> Executing..."), colors.cyan(opportunity.id));
-
-    //TODO: check if there is an open order for this opportunity
+    console.log(colors.green("E >>"), "Executing...", colors.cyan(opportunity.code));
 
     let { buyOrderData, sellOrderData } = opportunity;
-    let buyOrderResult = await createOrder(buyOrderData);
+
+    //let buyOrderResult = await createOrder(buyOrderData);
+    let buyOrderResult = {};
     db.addOrder({
         created_at: moment().toDate(),
         opportunity_id: opportunity._id,
@@ -154,7 +102,8 @@ const executeOrder = async opportunity => {
     ////////////////////////
     //execute sell order
 
-    let sellOrderResult = await createOrder(sellOrderData);
+    //let sellOrderResult = await createOrder(sellOrderData);
+    let sellOrderResult = {};
     db.addOrder({
         created_at: moment().toDate(),
         opportunity_id: opportunity._id,
@@ -168,6 +117,9 @@ const executeOrder = async opportunity => {
         status: sellOrderResult.status,
         orderResult: sellOrderResult
     });
+
+    opportunity.status = "open";
+    db.updateOpportunity(opportunity);
 
     console.log(
         colors.green("E >> Sell order created..."),
@@ -237,7 +189,7 @@ const checkOrders = async function() {
     });
     if (openOrders.length === 0) return false;
 
-    console.log("E >> Checking Orders status");
+    //console.log("E >> Checking Orders status");
 
     let promises = openOrders.map(async order => Promise.resolve(await checkOrder(order)));
 

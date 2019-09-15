@@ -295,27 +295,90 @@ function checkOrderBook(signal) {
             profit: bestDeal.amount * thisbestAsk.ask * (bestDeal.profit_percent / 100)
         };
 
-        configs.loopWithdraw && console.log("Q >> Invest Min", signal.invest.min);
+        configs.loopWithdraw && console.log("Q >>", "Invest Min", signal.invest.min);
         console.log("Q >> Profit", bestDeal.profit_percent, "%", signal.invest.max.profit);
-        console.log(colors.green("Q >> Signal Approved"), colors.magenta(signal.code));
+        console.log(colors.green("Q >>"), "Signal Approved", signal.code);
 
         // remove from signals
         //db.removeSignals({ id: order.id });
 
-        let opportunity = { ...signal };
-        delete opportunity._id;
-        opportunity.opp_created_at = moment().toDate();
-        // add to opportunities collection
-        opportunity.status = "open";
-        opportunity._id = await db.addOpportunity(opportunity);
-        console.log(colors.green("Q >> Opportunity created..."), colors.cyan(opportunity.code));
-
-        // call execution
-        execution.initialize(opportunity);
-
-        //arbitrage.checkSignal(response);
+        // check wallet
+        checkWallet(signal);
     });
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// check Wallet
+///
+
+async function checkWallet(signal) {
+    // get Wallets Balances
+    //
+    let buyWallets = await fetchBalance(signal.buy_at);
+    let sellWallets = await fetchBalance(signal.sell_at);
+
+    signal.wallets = {
+        buy: {
+            exchange: signal.buy_at,
+            [signal.base]: buyWallets[signal.base] || 0,
+            [signal.quote]: buyWallets[signal.quote] || 0
+        },
+        sell: {
+            exchange: signal.sell_at,
+            [signal.base]: sellWallets[signal.base] || 0,
+            [signal.quote]: sellWallets[signal.quote] || 0
+        }
+    };
+
+    // Check funds
+    //
+
+    let buyAmount = lodash.min([
+        signal.wallets.buy[signal.quote] / signal.bestAsk.ask,
+        signal.wallets.sell[signal.base],
+        signal.invest.max.base
+    ]);
+
+    if (buyAmount < signal.invest.min.base) {
+        insuficientFunds = true;
+        signal.approved = false;
+        console.log(colors.red("Q >>"), "Insuficient funds");
+
+        if (signal.wallets.buy[signal.quote] / signal.bestAsk.ask < signal.invest.min.base) {
+            signal.wallets.buy.status = "Insuficient";
+        }
+
+        if (signal.wallets.sell[signal.base] < signal.invest.min.base) {
+            signal.wallets.sell.status = "Insuficient";
+        }
+
+        signal.quality.execution_note = "Insuficient funds";
+        signal.status = "Insuficient funds";
+
+        db.addLostOpportunity(signal);
+
+        //prepare to withdraw
+        return false;
+    }
+
+    let opportunity = { ...signal };
+    delete opportunity._id;
+
+    opportunity.opp_created_at = moment().toDate();
+
+    // add to opportunities collection
+    opportunity._id = await db.addOpportunity(opportunity);
+    console.log(colors.green("Q >>"), "Opportunity created...", opportunity.code);
+
+    // call execution
+    !configs.execution.simulationMode && execution.initialize(opportunity);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Auxiliay functions
+///
 
 function orderBookProfits(asks, bids, bestAsk, bestBid) {
     let positions = [1, 2, 3, 4, 5];
