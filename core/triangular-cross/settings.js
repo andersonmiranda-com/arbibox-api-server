@@ -44,7 +44,7 @@ const configs = {
         "XTZ",
         "NEO",
         "MIOTA",
-        "ETC",
+
         "ATOM",
         "XEM",
         "MKR",
@@ -58,7 +58,7 @@ const configs = {
         "VET"
     ],
 
-    currenciesBlacklist: ["VIA"],
+    currenciesBlacklist: ["ETC"],
 
     keys: {
         bibox: {

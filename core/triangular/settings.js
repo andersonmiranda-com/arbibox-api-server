@@ -44,7 +44,7 @@ const configs = {
         "XTZ",
         "NEO",
         "MIOTA",
-        "ETC",
+
         "ATOM",
         "XEM",
         "MKR",
@@ -82,13 +82,13 @@ const configs = {
 
     marketFilter: {
         exchanges: true,
-        exchangesBlacklist: true,
+        exchangesBlacklist: false,
         baseCurrencies: true,
         quoteCurrencies: true
     },
     search: {
         checkInterval: 10,
-        minimumProfit: 0.1,
+        minimumProfit: 0.05,
         targetAssets: ["BTC", "ETH", "USDT"]
     },
     quality: {
