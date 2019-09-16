@@ -265,10 +265,10 @@ function checkOrderBook(signal) {
             let { minQuote, minBase } = getMinimunInversion(thisbestAsk, thisbestBid);
 
             signal.invest.min = {
-                base: minBase,
-                quote: minQuote,
-                profit_percent: configs.search.minimumProfitInvest,
-                profit: minQuote * (configs.search.minimumProfitInvest / 100)
+                base: minBase.toFixed(8),
+                quote: minQuote.toFixed(8),
+                profit_percent: configs.search.minimumProfitInvest.toFixed(4),
+                profit: (minQuote * (configs.search.minimumProfitInvest / 100)).toFixed(8)
             };
         } else {
             let minInvestBase = lodash.max([thisbestAsk.minAmount, thisbestBid.minAmount]);
@@ -278,25 +278,31 @@ function checkOrderBook(signal) {
             ]);
 
             signal.invest.min = {
-                base: minInvestBase,
-                quote: minInvestQuote,
-                profit_percent: configs.search.minimumProfitInvest,
-                profit:
+                base: minInvestBase.toFixed(8),
+                quote: minInvestQuote.toFixed(8),
+                profit_percent: configs.search.minimumProfitInvest.toFixed(4),
+                profit: (
                     thisbestAsk.minAmount *
                     thisbestAsk.ask *
                     (configs.search.minimumProfitInvest / 100)
+                ).toFixed(8)
             };
         }
 
         signal.invest.max = {
-            base: bestDeal.amount,
-            quote: bestDeal.amount * thisbestAsk.ask,
-            profit_percent: bestDeal.profit_percent,
-            profit: bestDeal.amount * thisbestAsk.ask * (bestDeal.profit_percent / 100)
+            base: bestDeal.amount.toFixed(8),
+            quote: (bestDeal.amount * thisbestAsk.ask).toFixed(8),
+            profit_percent: bestDeal.profit_percent.toFixed(4),
+            profit: (bestDeal.amount * thisbestAsk.ask * (bestDeal.profit_percent / 100)).toFixed(8)
         };
 
         configs.loopWithdraw && console.log("Q >>", "Invest Min", signal.invest.min);
-        console.log("Q >> Profit", bestDeal.profit_percent, "%", signal.invest.max.profit);
+        console.log(
+            "Q >> Profit",
+            bestDeal.profit_percent.toFixed(4),
+            "%",
+            signal.invest.max.profit
+        );
         console.log(colors.green("Q >>"), "Signal Approved", signal.code);
 
         // remove from signals
@@ -363,17 +369,19 @@ async function checkWallet(signal) {
         return false;
     }
 
-    let opportunity = { ...signal };
-    delete opportunity._id;
+    if (!configs.execution.simulationMode) {
+        let opportunity = { ...signal };
+        delete opportunity._id;
 
-    opportunity.opp_created_at = moment().toDate();
+        opportunity.opp_created_at = moment().toDate();
 
-    // add to opportunities collection
-    opportunity._id = await db.addOpportunity(opportunity);
-    console.log(colors.green("Q >>"), "Opportunity created...", opportunity.code);
+        // add to opportunities collection
+        opportunity._id = await db.addOpportunity(opportunity);
+        console.log(colors.green("Q >>"), "Opportunity created...", opportunity.code);
 
-    // call execution
-    !configs.execution.simulationMode && execution.initialize(opportunity);
+        // call execution
+        execution.initialize(opportunity);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

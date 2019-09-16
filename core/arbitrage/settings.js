@@ -129,7 +129,7 @@ const configs = {
     },
 
     execution: {
-        simulationMode: true,
+        simulationMode: false,
         checkInterval: 120
     }
 };

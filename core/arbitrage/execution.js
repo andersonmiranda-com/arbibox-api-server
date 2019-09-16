@@ -76,8 +76,8 @@ const executeOrder = async opportunity => {
 
     let { buyOrderData, sellOrderData } = opportunity;
 
-    //let buyOrderResult = await createOrder(buyOrderData);
-    let buyOrderResult = {};
+    let buyOrderResult = await createOrder(buyOrderData);
+
     db.addOrder({
         created_at: moment().toDate(),
         opportunity_id: opportunity._id,
@@ -86,8 +86,8 @@ const executeOrder = async opportunity => {
         side: buyOrderData.side,
         type: buyOrderData.type,
         symbol: buyOrderData.symbol,
-        amount: buyOrderData.amount,
-        price: buyOrderData.price,
+        amount: buyOrderData.amount.toFixed(8),
+        price: buyOrderData.price.toFixed(8),
         status: buyOrderResult.status,
         orderResult: buyOrderResult
     });
@@ -102,8 +102,8 @@ const executeOrder = async opportunity => {
     ////////////////////////
     //execute sell order
 
-    //let sellOrderResult = await createOrder(sellOrderData);
-    let sellOrderResult = {};
+    let sellOrderResult = await createOrder(sellOrderData);
+
     db.addOrder({
         created_at: moment().toDate(),
         opportunity_id: opportunity._id,
@@ -112,8 +112,8 @@ const executeOrder = async opportunity => {
         side: sellOrderData.side,
         type: sellOrderData.type,
         symbol: sellOrderData.symbol,
-        amount: sellOrderData.amount,
-        price: sellOrderData.price,
+        amount: sellOrderData.amount.toFixed(8),
+        price: sellOrderData.price.toFixed(8),
         status: sellOrderResult.status,
         orderResult: sellOrderResult
     });

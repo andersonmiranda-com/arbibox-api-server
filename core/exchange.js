@@ -90,7 +90,7 @@ const createOrder = async ({ exchange, side, type, symbol, amount, price }) => {
             resolve(orderResult);
         } catch (error) {
             console.error(colors.red("X >> Error createOrder:"), error.message);
-            resolve(orderResult);
+            resolve({ status: "error", message: error.message });
         }
     });
 };
