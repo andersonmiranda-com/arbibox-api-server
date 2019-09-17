@@ -14,6 +14,7 @@ async function test(name, symbol) {
         _instance = new ccxt[name]({
             apiKey: apiKeys[name].apiKey,
             secret: apiKeys[name].secret,
+            password: apiKeys[name].password || null,
             timeout: configs.apiTimeout * 1000,
             enableRateLimit: true
         });
@@ -221,5 +222,5 @@ async function test(name, symbol) {
 
 //test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
-test("binance", "ETH/BTC");
+test("kucoin", "ETH/BTC");
 //test("livecoin", "XRP/ETH");
