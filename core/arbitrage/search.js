@@ -64,6 +64,7 @@ const initialize = async function() {
                 _instance = new ccxt[name]({
                     apiKey: apiKeys[name].apiKey,
                     secret: apiKeys[name].secret,
+                    password: apiKeys[name].password || null,
                     timeout: configs.apiTimeout * 1000,
                     enableRateLimit: true
                 });
