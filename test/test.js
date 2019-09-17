@@ -112,13 +112,13 @@ async function test(name, symbol) {
 
     console.info(
         "\n",
-        util.inspect(response.free["BTC"], {
+        util.inspect(response.free, {
             colors: true,
             depth: null
         })
     );
 
-    console.info(response.free["BTC"] || response.total["BTC"] || "error");
+    //console.info(response.free["BTC"] || response.total["BTC"] || "error");
     // var end1a = new Date() - start1a;
     //console.info("Execution time1a: %dms", end1a);
 
@@ -221,5 +221,5 @@ async function test(name, symbol) {
 
 //test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
-test("kraken", "ETH/BTC");
+test("binance", "ETH/BTC");
 //test("livecoin", "XRP/ETH");
