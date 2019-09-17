@@ -80,18 +80,18 @@ const initialize = async function() {
             verbose && console.log("Loading markets for", colors.green(name), "-", end1, "ms");
 
             //Exchange withdrawal fees validation
-            // let wd = withdrawalFees.find(fee => fee.exchange === name);
-            // if (!wd) {
-            //     verbose &&
-            //         console.error(
-            //             colors.red("Error: Exchange has no withdrawal fees in database:"),
-            //             name
-            //         );
-            //     checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
-            // }
+            let wd = withdrawalFees.find(fee => fee.exchange === name);
+            if (!wd) {
+                verbose &&
+                    console.error(
+                        colors.yellow("Warning: Exchange has no withdrawal fees in database:"),
+                        name
+                    );
+                //    checkedExchanges.splice(checkedExchanges.indexOf(name), 1);
+            }
+            //else
 
             //CCXT API Exchange validation
-            // else
 
             if (!_instance.has["fetchTickers"]) {
                 verbose && console.error(colors.red("Error: Exchange has no fetchTickers:"), name);
@@ -134,6 +134,9 @@ const initialize = async function() {
 
     //console.log(exchanges);
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Prepare Currencies
+
     let baseCurrencies = [];
     let filterbaseCurrencies = false;
 
@@ -164,45 +167,51 @@ const initialize = async function() {
         filterbaseCurrencies = true;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Prepare Symbols
+
     let symbols = [];
-    ccxt.unique(
-        ccxt.flatten(
-            exchanges.map(name => {
-                if (!api[name]) verbose && console.log(name);
-                return api[name] ? api[name].symbols : [];
-            })
+
+    lodash
+        .uniq(
+            lodash.flatten(
+                exchanges.map(name => {
+                    if (!api[name]) verbose && console.log(name);
+                    return api[name] ? api[name].symbols : [];
+                })
+            )
         )
-    ).filter(symbol => {
-        var coins = symbol.split("/");
-        var is_base = false;
-        var is_quote = false;
+        .filter(symbol => {
+            var coins = symbol.split("/");
+            var is_base = false;
+            var is_quote = false;
 
-        is_base = lodash.includes(baseCurrencies, coins[0]);
-        is_quote = lodash.includes(configs.quoteCurrencies, coins[1]);
+            is_base = lodash.includes(baseCurrencies, coins[0]);
+            is_quote = lodash.includes(configs.quoteCurrencies, coins[1]);
 
-        if (
-            configs.marketFilter.currenciesBlacklist &&
-            (lodash.includes(configs.currenciesBlacklist, coins[0]) ||
-                lodash.includes(configs.currenciesBlacklist, coins[1]))
-        ) {
-            // do not push symbol if in blacklist
-            verbose && console.log("S >>", "Blacklisted symbol", colors.magenta(symbol));
-        } else if (filterbaseCurrencies && configs.marketFilter.quoteCurrencies) {
-            if (is_base && is_quote) {
+            if (
+                configs.marketFilter.currenciesBlacklist &&
+                (lodash.includes(configs.currenciesBlacklist, coins[0]) ||
+                    lodash.includes(configs.currenciesBlacklist, coins[1]))
+            ) {
+                // do not push symbol if in blacklist
+                verbose && console.log("S >>", "Blacklisted symbol", colors.magenta(symbol));
+            } else if (filterbaseCurrencies && configs.marketFilter.quoteCurrencies) {
+                if (is_base && is_quote) {
+                    symbols.push(symbol);
+                }
+            } else if (filterbaseCurrencies) {
+                if (is_base) {
+                    symbols.push(symbol);
+                }
+            } else if (configs.marketFilter.quoteCurrencies) {
+                if (is_quote) {
+                    symbols.push(symbol);
+                }
+            } else {
                 symbols.push(symbol);
             }
-        } else if (filterbaseCurrencies) {
-            if (is_base) {
-                symbols.push(symbol);
-            }
-        } else if (configs.marketFilter.quoteCurrencies) {
-            if (is_quote) {
-                symbols.push(symbol);
-            }
-        } else {
-            symbols.push(symbol);
-        }
-    });
+        });
 
     let arbitrables = symbols
         .filter(
@@ -350,7 +359,7 @@ async function fetchTickersByExchange(exchange) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-/// Find best opportiunities (Calculates profit for each group of tickets
+/// Find best signals (Calculates profit for each group of tickets
 ///
 /// Input: prices: an array of objects with ask/bid of each exchange all with the same ticket
 ///
