@@ -495,7 +495,35 @@ function filterSignals(prices) {
     });
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// Remove old and stucked signals
+///
+
+const cleanup = async function() {
+    ////////
+    // remove signals created some time ago - wich does not have upadates
+    ////////
+    const minutesAgo = moment()
+        .subtract(configs.search.removeAfterMinutesOff, "minutes")
+        .toDate();
+
+    db.removeSignals({ $and: [{ signal_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
+
+    ////////
+    // remove poportunities with more than X iterractions and approved = false
+    ////////
+    db.removeSignals({
+        $and: [
+            // { approved: false },
+            { type: "PA" },
+            { $where: "this.lastest.length >= " + configs.search.removeAfterIterations }
+        ]
+    });
+};
+
 module.exports = {
     initialize,
-    findSignals
+    findSignals,
+    cleanup
 };

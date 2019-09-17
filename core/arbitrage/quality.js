@@ -14,78 +14,6 @@ const db = require("../db");
 ///
 /// Qualifies all parallel signals on "opportunites" mongoDB collection
 ///
-const initialize = async function() {
-    ////////
-    // remove signals created some time ago - wich does not have upadates
-    ////////
-    const minutesAgo = moment()
-        .subtract(configs.quality.removeAfterMinutesOff, "minutes")
-        .toDate();
-
-    db.removeSignals({ $and: [{ signal_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
-
-    ////////
-    // remove poportunities with more than X iterractions and approved = false
-    ////////
-    db.removeSignals({
-        $and: [
-            // { approved: false },
-            { type: "PA" },
-            { $where: "this.lastest.length >= " + configs.quality.removeAfterIterations }
-        ]
-    });
-
-    let signals = await db.readSignals({
-        $and: [{ type: "PA", qualified: { $exists: false } }]
-    });
-
-    for (let signal of signals) {
-        await callCheck(signal);
-        //checkSignal(signal);
-    }
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-/// Delays execution 300ms to avoid reject Access Denied (Too many requests)
-///
-
-function callCheck(signal) {
-    return new Promise((resolve, reject) => {
-        setTimeout(function() {
-            //console.log("run", signal.code);
-            checkSignal(signal);
-            resolve(true);
-        }, 500);
-    });
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-/// Remove old and stucked signals
-///
-
-const cleanup = async function() {
-    ////////
-    // remove signals created some time ago - wich does not have upadates
-    ////////
-    const minutesAgo = moment()
-        .subtract(configs.quality.removeAfterMinutesOff, "minutes")
-        .toDate();
-
-    db.removeSignals({ $and: [{ signal_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
-
-    ////////
-    // remove poportunities with more than X iterractions and approved = false
-    ////////
-    db.removeSignals({
-        $and: [
-            // { approved: false },
-            { type: "PA" },
-            { $where: "this.lastest.length >= " + configs.quality.removeAfterIterations }
-        ]
-    });
-};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -465,7 +393,5 @@ function weightedMean(arrValues, arrWeights) {
 }
 
 module.exports = {
-    initialize,
-    cleanup,
     checkSignal
 };

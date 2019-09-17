@@ -81,6 +81,8 @@ const configs = {
     //searh parameters
     search: {
         checkInterval: 10,
+        cleanUpInterval: 30,
+
         minimumProfit: 0.1,
         minimumProfitInvest: 0.1,
 
@@ -90,7 +92,13 @@ const configs = {
             USD: 1000,
             USDT: 1000,
             ETH: 5
-        }
+        },
+
+        // Remove a inactive signal from list after minutes
+        removeAfterMinutesOff: 2,
+
+        // Remove a reproved signal from list after minutes
+        removeAfterIterations: 10
     },
 
     //calculate and execute parallel arbitrage with withdraw on every trade operecion
@@ -100,7 +108,6 @@ const configs = {
     autoWithdraw: true,
 
     quality: {
-        checkInterval: 30,
         filter: {
             //check 24hVolume on tickers
             tickerVolume: true,
@@ -119,13 +126,7 @@ const configs = {
         },
 
         // time to check las trade transaction (in minutes)
-        lastTradeTimeLimit: 10,
-
-        // Remove a inactive signal from list after minutes
-        removeAfterMinutesOff: 2,
-
-        // Remove a reproved signal from list after minutes
-        removeAfterIterations: 6
+        lastTradeTimeLimit: 10
     },
 
     execution: {

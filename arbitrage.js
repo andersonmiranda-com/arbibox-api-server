@@ -41,8 +41,8 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         console.info("\n>>> Bot started at", moment().format("dddd, MMMM Do YYYY, h:mm:ss a"));
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Agent 1 - search
-    /// Search for arbitrage opportunities and saves it on "opportunities" mongoDB collection
+    /// Search Agent
+    /// Search for arbitrage signals and saves it on "Signals" mongoDB collection
 
     const { tickets, exchangesSymbols, markets } = await search.initialize();
 
@@ -64,19 +64,15 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
             );
     }, (configs.search.checkInterval > 0 ? configs.search.checkInterval : 30) * 1000);
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Agent 2 - Quality
-    /// Read opportunities from "opportunities" mongoDB collection and check quality. Remove bad ones
-
-    // loop every x seconds
+    /// Remove signals older than X minutes / After X repeats
 
     setInterval(function() {
-        quality.cleanup();
-        verbose && console.info("Q >> Cleaning >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
-    }, (configs.quality.checkInterval > 0 ? configs.quality.checkInterval : 30) * 1000);
+        search.cleanup();
+        verbose && console.info("S >> Cleaning >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
+    }, (configs.search.cleanUpInterval > 0 ? configs.search.cleanUpInterval : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Agent 3 - Execution
+    /// Execution Agent
     ///
 
     // loop every x seconds
