@@ -111,21 +111,24 @@ const fetchOrder = async (exchange, orderId, symbol) => {
 ///////////////
 
 const fetchBalance = async exchange => {
-    let balance = {};
+    let balance = { free: {}, total: {} };
 
     try {
         if (apiKeys[exchange]) {
-            let balance = await api[exchange].fetchBalance();
+            balance = await api[exchange].fetchBalance();
             //db.saveWallets(exchangeTickets.id, {
             //    id: exchangeTickets.id,
             //    free: exchangeTickets.wallets.free,
             //    total: exchangeTickets.wallets.total
             //});
         }
-        return balance;
+        //tickets.map(ticket => verbose && console.log(ticket));
     } catch (error) {
         console.error(colors.red("E >> Error fetchBalance:"), error.message);
         return balance;
+    } finally {
+        return balance;
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
