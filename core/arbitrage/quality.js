@@ -327,13 +327,13 @@ async function checkWallet(signal) {
     signal.wallets = {
         buy: {
             exchange: signal.buy_at,
-            [signal.base]: buyWallets[signal.base] || 0,
-            [signal.quote]: buyWallets[signal.quote] || 0
+            [signal.base]: buyWallets.free[signal.base] || buyWallets.total[signal.base] || 0,
+            [signal.quote]: buyWallets.free[signal.quote] || buyWallets.total[signal.quote] || 0
         },
         sell: {
             exchange: signal.sell_at,
-            [signal.base]: sellWallets[signal.base] || 0,
-            [signal.quote]: sellWallets[signal.quote] || 0
+            [signal.base]: sellWallets.free[signal.base] || sellWallets.total[signal.base] || 0,
+            [signal.quote]: sellWallets.free[signal.quote] || sellWallets.total[signal.quote] || 0
         }
     };
 

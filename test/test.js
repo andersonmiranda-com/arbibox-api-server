@@ -4,15 +4,16 @@ const axios = require("axios");
 const util = require("util");
 const https = require("https");
 
-const configs = require("../config/settings-arbitrage");
+const { configs } = require("../core/arbitrage/settings");
+const { apiKeys } = require("../core/arbitrage/settingsApiKeys");
 
 async function test(name, symbol) {
     var _instance;
 
-    if (configs.keys[name]) {
+    if (apiKeys[name]) {
         _instance = new ccxt[name]({
-            apiKey: configs.keys[name].apiKey,
-            secret: configs.keys[name].secret,
+            apiKey: apiKeys[name].apiKey,
+            secret: apiKeys[name].secret,
             timeout: configs.apiTimeout * 1000,
             enableRateLimit: true
         });
@@ -28,12 +29,12 @@ async function test(name, symbol) {
 
     //console.log(_instance.markets);
 
-    console.info(
-        "\n",
-        util.inspect(_instance.markets, {
-            colors: true
-        })
-    );
+    // console.info(
+    //     "\n",
+    //     util.inspect(_instance.markets, {
+    //         colors: true
+    //     })
+    // );
 
     //console.log(await _instance.loadMarkets());
     //let markets = await _instance.fetchCurrencies();
@@ -103,20 +104,21 @@ async function test(name, symbol) {
     // //console.info("Start 1a", start1a);
 
     // //let response = await _instance.fetchDepositAddress("USD");
-    // let response = await _instance.fetchBalance();
+    let response = await _instance.fetchBalance();
 
     // //console.log(name, "ETC", response.total["ETC"], "ETH", response.total["ETH"]);
     // //let endtickers = chain.map(symbol => exc_tickers[symbol]);
     // console.log("response", response);
 
-    // // console.info(
-    // //     "\n",
-    // //     util.inspect(response, {
-    // //         colors: false,
-    // //         depth: null
-    // //     })
-    // // );
+    console.info(
+        "\n",
+        util.inspect(response.free["BTC"], {
+            colors: true,
+            depth: null
+        })
+    );
 
+    console.info(response.free["BTC"] || response.total["BTC"] || "error");
     // var end1a = new Date() - start1a;
     //console.info("Execution time1a: %dms", end1a);
 
@@ -219,5 +221,5 @@ async function test(name, symbol) {
 
 //test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
-test("binance", "ETH/BTC");
+test("kraken", "ETH/BTC");
 //test("livecoin", "XRP/ETH");
