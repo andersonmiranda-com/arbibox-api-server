@@ -47,8 +47,17 @@ async function test(name, symbol) {
     // var start0 = new Date();
     // console.info("Start 0", start0);
 
-    // let exc_tickers = await _instance.fetchTickers();
+    //    let response = await _instance.fetchTicker(symbol);
     // let endtickers = chain.map(symbol => exc_tickers[symbol]);
+
+    console.info(
+        "\n",
+        util.inspect(_instance.markets[symbol], {
+            colors: true,
+            depth: null
+        })
+    );
+
     // //console.log("\nEndtickers", endtickers);
     // console.log("0", endtickers[0].ask);
     // console.log("0", endtickers[0].bid);
@@ -105,19 +114,19 @@ async function test(name, symbol) {
     // //console.info("Start 1a", start1a);
 
     // //let response = await _instance.fetchDepositAddress("USD");
-    let response = await _instance.fetchBalance();
+    //let response = await _instance.fetchBalance();
 
     // //console.log(name, "ETC", response.total["ETC"], "ETH", response.total["ETH"]);
     // //let endtickers = chain.map(symbol => exc_tickers[symbol]);
     // console.log("response", response);
 
-    console.info(
-        "\n",
-        util.inspect(response.free, {
-            colors: true,
-            depth: null
-        })
-    );
+    // console.info(
+    //     "\n",
+    //     util.inspect(response, {
+    //         colors: true,
+    //         depth: null
+    //     })
+    // );
 
     //console.info(response.free["BTC"] || response.total["BTC"] || "error");
     // var end1a = new Date() - start1a;
@@ -222,5 +231,5 @@ async function test(name, symbol) {
 
 //test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
-test("kucoin", "ETH/BTC");
+test("binance", "TRX/BTC");
 //test("livecoin", "XRP/ETH");
