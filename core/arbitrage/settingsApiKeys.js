@@ -7,7 +7,7 @@ const apiKeys = {
         secret: "1YwE3eThkxkq8Y4DlbiQG8tWITwsWbKYdWTQF3z1dnUO3vSVirXm3TxdLW0vtUrN"
     },
 
-    hitbtc: {
+    hitbtc2: {
         apiKey: "IPzjWG55fYS48K1J7XtMvVYhhoq0c48B",
         secret: "5bygkFHq+XjQ9Qpf6HOnhKNfoHiwNmsu+E3NLmGFO"
     },
@@ -38,7 +38,7 @@ const apiKeys = {
         apiKey: "Ck5n1GAyjwfdV6eK7KgWpkfKyvKQw3SW",
         secret: "mQ1Ws8WVAQg9sXsu7UzaEB4MgUvmkvEm"
     }
-    
+
     */
 
     //david

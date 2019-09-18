@@ -157,18 +157,20 @@ exports.saveTickets = function(id, data) {
 /// Wallets
 ///
 
-exports.saveWallets = function(id, data) {
+exports.saveWallet = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;
         var db = client.db("arbibox");
-        db.collection("wallets").updateOne({ id: id }, { $set: data }, { upsert: true }, function(
-            err,
-            res
-        ) {
-            if (err) throw err;
-            //console.log(res.result);
-            client.close();
-        });
+        db.collection("wallets").updateOne(
+            { id: data.id },
+            { $set: data },
+            { upsert: true },
+            function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                client.close();
+            }
+        );
     });
 };
 

@@ -2,9 +2,9 @@ const configs = {
     apiTimeout: 20,
     //
     exchanges: [
-        "bibox",
+        //"bibox",
         "binance",
-        "bigone",
+        //"bigone",
         "kucoin",
         "kraken",
         "upbit",
