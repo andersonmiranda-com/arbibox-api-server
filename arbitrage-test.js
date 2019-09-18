@@ -8,7 +8,7 @@ const { configs } = require("./core/arbitrage/settings");
 const search = require("./core/arbitrage/search");
 const quality = require("./core/arbitrage/quality");
 const execution = require("./core/arbitrage/execution");
-//const regulator = require("./core/arbitrage/execution");
+const regulator = require("./core/arbitrage/regulator");
 
 global.verbose = true;
 global.withdrawalFees = [];
@@ -48,6 +48,7 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 
     const { tickets, exchangesSymbols, markets } = await search.initialize();
 
+    /*
     console.info(
         "S >> Scan " + searchCounter + " >",
         moment().format("dddd, MMMM D YYYY, h:mm:ss a")
@@ -84,4 +85,8 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         verbose &&
             console.info("E >> Checking orders >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
     }, (configs.execution.checkInterval > 0 ? configs.execution.checkInterval : 120) * 1000);
+
+    */
+
+    regulator.getWallets();
 })();

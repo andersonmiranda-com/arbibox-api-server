@@ -1,11 +1,8 @@
-const ccxt = require("ccxt");
 const moment = require("moment");
 const lodash = require("lodash");
-
-const { configs } = require("./settings");
 const colors = require("colors");
 
-const { createOrder, fetchBalance, fetchOrder } = require("../exchange");
+const { createOrder, fetchOrder } = require("../exchange");
 const db = require("../db");
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

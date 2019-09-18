@@ -1,6 +1,5 @@
 const ccxt = require("ccxt");
 var moment = require("moment");
-
 const lodash = require("lodash");
 const colors = require("colors");
 const z = require("zero-fill");
@@ -21,8 +20,6 @@ const {
 const { fetchTickers, getCurrenciesCMC } = require("../exchange");
 const db = require("../db");
 
-global.api = {};
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// Prepare Tickets
@@ -38,7 +35,6 @@ const initialize = async function() {
         updateFees.initialize();
     }
 
-    let exchanges = [];
     let markets = [];
 
     if (configs.marketFilter.exchanges) {
