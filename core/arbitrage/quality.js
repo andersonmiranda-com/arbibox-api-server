@@ -160,7 +160,15 @@ function checkOrderBook(signal) {
             return;
         }
 
-        if (bestDeal.amount < signal.bestAsk.minAmount) {
+        let costBuy = bestDeal.amount * signal.bestAsk.ask;
+        let costSell = bestDeal.amount * signal.bestBid.bid;
+
+        if (
+            bestDeal.amount < signal.bestAsk.minAmount ||
+            bestDeal.amount < signal.bestBid.minAmount ||
+            costBuy < signal.bestAsk.minCost ||
+            costSell < signal.bestBid.minCost
+        ) {
             signal.quality = {
                 note: "Volume in orderBook < minimun allowed",
                 checked_at: moment().toDate()
@@ -184,7 +192,8 @@ function checkOrderBook(signal) {
         thisbestAsk.ask = bestDeal.ask;
         thisbestBid.bid = bestDeal.bid;
 
-        signal.profit_percent = bestDeal.profit_percent;
+        //update original profit
+        //signal.profit_percent = bestDeal.profit_percent;
         signal.approved = true;
         signal.quality = { note: "row1", checked_at: moment().toDate() };
         signal.quality.score = 5;
@@ -200,10 +209,7 @@ function checkOrderBook(signal) {
             };
         } else {
             let minInvestBase = lodash.max([thisbestAsk.minAmount, thisbestBid.minAmount]);
-            let minInvestQuote = lodash.max([
-                thisbestAsk.minAmount * thisbestAsk.ask,
-                thisbestBid.minAmount * thisbestBid.bid
-            ]);
+            let minInvestQuote = lodash.max([thisbestAsk.minCost, thisbestBid.minCost]);
 
             signal.invest.min = {
                 base: minInvestBase.toFixed(8),
@@ -274,16 +280,34 @@ async function checkWallet(signal) {
         signal.invest.max.base
     ]);
 
-    if (buyAmount < signal.invest.min.base) {
+    let costBuy = buyAmount * signal.bestAsk.ask;
+    let costSell = buyAmount * signal.bestBid.bid;
+
+    if (
+        buyAmount < signal.invest.min.base ||
+        costBuy < signal.bestAsk.minCost ||
+        costSell < signal.bestBid.minCost
+    ) {
         insuficientFunds = true;
         signal.approved = false;
 
-        if (signal.wallets.buy[signal.quote] / signal.bestAsk.ask < signal.invest.min.base) {
+        signal.wallets.buy.status = "";
+        signal.wallets.sell.status = "";
+
+        if (signal.wallets.buy[signal.quote] < signal.invest.min.quote) {
             signal.wallets.buy.status = "Insuficient";
         }
 
         if (signal.wallets.sell[signal.base] < signal.invest.min.base) {
             signal.wallets.sell.status = "Insuficient";
+        }
+
+        if (costBuy < signal.bestAsk.minCost) {
+            signal.wallets.buy.status += " - Cost < min allowed - " + signal.bestAsk.minCost;
+        }
+
+        if (costSell < signal.bestBid.minCost) {
+            signal.wallets.sell.status += " - Cost < min allowed - " + signal.bestBid.minCost;
         }
 
         console.log(colors.red("Q >>"), "Insuficient funds", signal.code);

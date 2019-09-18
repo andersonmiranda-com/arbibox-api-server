@@ -177,7 +177,7 @@ const initialize = async function() {
         .uniq(
             lodash.flatten(
                 exchanges.map(name => {
-                    if (!api[name]) verbose && console.log(name);
+                    if (!api[name]) verbose && console.log("API not loaded:", name);
                     return api[name] ? api[name].symbols : [];
                 })
             )
@@ -302,6 +302,8 @@ async function findSignals(tickets, exchangesSymbols, markets, searchCounter) {
                             price.symbol = ticket.symbol;
                             price.tradeFee = exchangeMarkets[ticket.symbol].taker || 0.0026; // catchall if taker fee is not found
                             price.minAmount = exchangeMarkets[ticket.symbol].limits.amount.min;
+                            price.minCost =
+                                exchangeMarkets[ticket.symbol].limits.cost.min || 0.0001;
                             prices.push(price);
                             /* verbose && console.log(
                                 z(5, counter, " "),
