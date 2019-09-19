@@ -432,8 +432,11 @@ function filterSignals(prices) {
                 percentReference < 100 &&
                 percentReference !== Infinity
             ) {
+                let timeBlock = Math.floor(moment().unix() / (configs.search.signalTimeBlock * 60));
+
                 let signal = {
                     code: bestAsk.symbol.toUpperCase() + "-" + bestAsk.name + "-" + bestBid.name,
+                    time_block: timeBlock,
                     signal_created_at: new Date(),
                     type: "PA",
                     symbol: bestAsk.symbol,
@@ -503,22 +506,9 @@ const cleanup = async function() {
     ////////
     // remove signals created some time ago - wich does not have upadates
     ////////
-    const minutesAgo = moment()
-        .subtract(configs.search.removeAfterMinutesOff, "minutes")
-        .toDate();
 
-    db.removeSignals({ $and: [{ signal_created_at: { $lt: minutesAgo } }, { type: "PA" }] });
-
-    ////////
-    // remove poportunities with more than X iterractions and approved = false
-    ////////
-    db.removeSignals({
-        $and: [
-            // { approved: false },
-            { type: "PA" },
-            { $where: "this.lastest.length >= " + configs.search.removeAfterIterations }
-        ]
-    });
+    const timeBlock = Math.floor(moment().unix() / (configs.search.signalTimeBlock * 60));
+    db.removeSignals({ $and: [{ time_block: { $lt: timeBlock } }, { type: "PA" }] });
 };
 
 module.exports = {

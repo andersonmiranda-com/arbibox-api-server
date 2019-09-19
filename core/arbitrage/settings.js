@@ -80,8 +80,8 @@ const configs = {
 
     //searh parameters
     search: {
-        checkInterval: 10,
-        cleanUpInterval: 30,
+        checkInterval: 10, //seconds
+        cleanUpInterval: 60, //seconds
 
         minimumProfit: 0.1,
         minimumProfitInvest: 0.1,
@@ -94,11 +94,8 @@ const configs = {
             ETH: 5
         },
 
-        // Remove a inactive signal from list after minutes
-        removeAfterMinutesOff: 2,
-
-        // Remove a reproved signal from list after minutes
-        removeAfterIterations: 10
+        // Send to qualifier a new signal one time every time block / remove signals older than time block (minutes)
+        signalTimeBlock: 1
     },
 
     //calculate and execute parallel arbitrage with withdraw on every trade operecion
@@ -126,7 +123,10 @@ const configs = {
         },
 
         // time to check las trade transaction (in minutes)
-        lastTradeTimeLimit: 10
+        lastTradeTimeLimit: 10,
+
+        // Saves lost opportunity to table every time block (minutes)
+        lostOpportunitiesTimeBlock: 5
     },
 
     execution: {

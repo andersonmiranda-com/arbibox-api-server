@@ -66,15 +66,9 @@ exports.upsertSignal = function(data) {
             // avoid update different _id
             var db = client.db("arbibox");
             db.collection("signals").updateOne(
-                { code: data.code },
+                { code: data.code, time_block: data.time_block },
                 {
-                    $set: data,
-                    $addToSet: {
-                        lastest: {
-                            signal_created_at: data.signal_created_at,
-                            profit_percent: data.profit_percent
-                        }
-                    }
+                    $set: data
                 },
                 { upsert: true },
                 function(err, res) {
@@ -89,22 +83,24 @@ exports.upsertSignal = function(data) {
 };
 
 exports.updateSignal = function(data) {
-    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-        if (err) throw err;
-        // avoid update different _id
-        delete data._id;
-        var db = client.db("arbibox");
-        db.collection("signals").updateOne(
-            { code: data.code },
-            {
-                $set: data
-            },
-            function(err, res) {
-                if (err) throw err;
-                //console.log(res.result);
-                client.close();
-            }
-        );
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            // avoid update different _id
+            delete data._id;
+            var db = client.db("arbibox");
+            db.collection("signals").updateOne(
+                { code: data.code, time_block: data.time_block },
+                {
+                    $set: data
+                },
+                function(err, res) {
+                    if (err) throw err;
+                    resolve(res);
+                    client.close();
+                }
+            );
+        });
     });
 };
 

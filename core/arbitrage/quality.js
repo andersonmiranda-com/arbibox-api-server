@@ -22,7 +22,7 @@ const db = require("../db");
 
 async function checkSignal(signal) {
     let checkedSignal = await db.readSignals({
-        $and: [{ code: signal.code, qualified: { $exists: false } }]
+        $and: [{ code: signal.code, time_block: signal.time_block, qualified: { $exists: false } }]
     });
     if (checkedSignal.length === 0) return false;
 
@@ -238,9 +238,6 @@ function checkOrderBook(signal) {
             signal.invest.max.profit
         );
         console.log(colors.green("Q >>"), "Signal Approved", signal.code);
-
-        // remove from signals
-        //db.removeSignals({ id: order.id });
 
         // check wallet
         checkWallet(signal);
