@@ -275,7 +275,7 @@ async function checkWallet(signal) {
         signal.quality.execution_note = "No API Keys";
         signal.status = "No API Keys";
 
-        db.addLostOpportunity(signal);
+        db.upsertLostOpportunity(signal);
 
         //prepare to withdraw
         return false;
@@ -342,7 +342,7 @@ async function checkWallet(signal) {
         signal.quality.execution_note = "Insuficient funds";
         signal.status = "Insuficient funds";
 
-        db.addLostOpportunity(signal);
+        db.upsertLostOpportunity(signal);
 
         //prepare to withdraw
         return false;

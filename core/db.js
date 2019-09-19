@@ -274,6 +274,28 @@ exports.addLostOpportunity = function(data) {
     });
 };
 
+exports.upsertLostOpportunity = function(data) {
+    data.time_block = Math.floor(moment().unix() / 300);
+    return new Promise(async (resolve, reject) => {
+        MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+            if (err) throw err;
+            // avoid update different _id
+            var db = client.db("arbibox");
+            db.collection("lost_opportunities").updateOne(
+                { code: data.code, time_block: data.time_block },
+                { $set: data },
+                { upsert: true },
+                function(err, res) {
+                    if (err) throw err;
+                    //console.log(res.result);
+                    client.close();
+                    resolve(true);
+                }
+            );
+        });
+    });
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// Orders
