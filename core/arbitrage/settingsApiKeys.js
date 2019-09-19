@@ -37,7 +37,14 @@ const apiKeys = {
     livecoin: {
         apiKey: "Ck5n1GAyjwfdV6eK7KgWpkfKyvKQw3SW",
         secret: "mQ1Ws8WVAQg9sXsu7UzaEB4MgUvmkvEm"
+    },
+
+    kucoin: {
+        apiKey: "5d8375a40bad456cbe0c7ba9",
+        secret: "2a112742-86ef-4c78-b12f-27e95b3ea6ea",
+        password: "24121977"
     }
+
 
     */
 

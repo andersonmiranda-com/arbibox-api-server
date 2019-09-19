@@ -7,11 +7,10 @@ const https = require("https");
 const { configs } = require("../core/arbitrage/settings");
 const { apiKeys } = require("../core/arbitrage/settingsApiKeys");
 
-async function test(source, destination, currency, amount) {
+async function test(exchange, symbol, side, amount, type = "market", price) {
     var api = [];
 
-    api[source] = await loadInstance(source);
-    api[destination] = await loadInstance(destination);
+    api[exchange] = await loadInstance(exchange);
 
     //
 
@@ -20,70 +19,29 @@ async function test(source, destination, currency, amount) {
     // buy order data
     //
 
-    let wdAddress = {};
-    if (api[destination].has["fetchDepositAddress"]) {
-        // fetching Address
-        console.log("fetchDepositAddress");
-
-        try {
-            wdAddress = await api[destination].fetchDepositAddress(currency);
-        } catch (error) {
-            wdAddress = await api[destination].createDepositAddress(currency);
-        }
-    } else if (api[destination].has["createDepositAddress"]) {
-        // creating Address
-        console.log("createDepositAddress");
-        wdAddress = await api[destination].createDepositAddress(currency);
-    } else {
-        console.error(
-            "Error:",
-            destination,
-            "does not have fetchDepositAddress or createDepositAddress"
-        );
-        return false;
-    }
-
-    console.info(
-        "\n",
-        destination,
-        "address",
-        util.inspect(wdAddress, {
-            colors: true
-        })
-    );
-
-    let wdData = {
-        exchange: source,
-        code: currency,
+    orderData = {
+        exchange: exchange,
+        side: side,
+        type: type,
+        symbol: symbol,
         amount: amount,
-        address: wdAddress.address
+        price: price || undefined
     };
 
-    let tag = wdAddress.tag || null;
-
     console.info(
         "\n",
-        "wdData",
-        util.inspect(wdData, {
+        "orderData",
+        util.inspect(orderData, {
             colors: true
         })
     );
 
-    return;
-    // make withdraw
-
-    let withdraw = await api[source].withdraw(
-        currency,
-        amount,
-        wdAddress.address,
-        wdAddress.tag || undefined,
-        (params = {})
-    );
+    let orderResult = await api[exchange].createOrder(symbol, type, side, amount);
 
     console.info(
         "\n",
-        "withdraw",
-        util.inspect(withdraw, {
+        "orderResult",
+        util.inspect(orderResult, {
             colors: true
         })
     );
@@ -135,8 +93,7 @@ async function loadInstance(name) {
             secret: apiKeys[name].secret,
             password: apiKeys[name].password || null,
             timeout: configs.apiTimeout * 1000,
-            enableRateLimit: true,
-            verbose: false
+            enableRateLimit: true
         });
     } else {
         _instance = new ccxt[name]({
@@ -151,7 +108,5 @@ async function loadInstance(name) {
     return _instance;
 }
 
-//test("kucoin", "binance", "ETH", 0.4);
-//test("kucoin", "binance", "TRX", 4558);
-test("binance", "kucoin", "ETH", 0.2);
-//test("binance", "hitbtc2", "NEO", 1);
+test("kucoin", "ETH/BTC", "buy", 0.5, "market");
+//test("binance", "kucoin", "TRX", 4558);

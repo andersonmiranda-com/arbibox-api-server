@@ -1,0 +1,125 @@
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// test 1 - Trade - Kucoin - ETH/BTC - buy - 0.5 
+
+ orderData { exchange: 'kucoin',
+  side: 'buy',
+  type: 'market',
+  symbol: 'ETH/BTC',
+  amount: 0.5,
+  price: undefined }
+
+ orderResult { id: '5d836415054b467b78ffaa38',
+  symbol: 'ETH/BTC',
+  type: 'market',
+  side: 'buy',
+  status: 'open',
+  clientOid: '638761f2-35d2-4cf5-9d05-8feac08e2beb',
+  info: { orderId: '5d836415054b467b78ffaa38' } }
+
+>>> STATUS - OK
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// test 2 - Withdraw - 0.5 ETH - Kucoin > Binance
+
+InsufficientFunds: kucoin account.noBalance
+
+>>> STATUS - Error
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// test 3 - Withdraw - 0.4 ETH - Kucoin > Binance
+
+InsufficientFunds: kucoin account.noBalance
+
+>>> STATUS - Error
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// test 4 - Withdraw - 1 NEO - Binance > Kucoin
+
+InvalidAddress: kucoin address is undefined
+
+>>> STATUS - Error
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// test 5 - Withdraw - 1 NEO - Binance > HitBTC
+
+ {
+  currency: 'NEO',
+  address: 'AV8xfaC51pm3ELn5ZWP3i3rss6jCs5b9Mn',
+  tag: undefined,
+  info: { address: 'AV8xfaC51pm3ELn5ZWP3i3rss6jCs5b9Mn' }
+
+ wdData {
+  exchange: 'binance',
+  code: 'NEO',
+  amount: 1,
+  address: 'AV8xfaC51pm3ELn5ZWP3i3rss6jCs5b9Mn'
+}
+
+ withdraw {
+  info: { success: true, id: 'dabc39ac5ca74678881cbc743067c6f9' },
+  id: 'dabc39ac5ca74678881cbc743067c6f9'
+}
+
+Time Start: 13:36
+Time End: 
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// test 6 - Withdraw - 0.5 ETH - Binance > HitBTC
+
+
+ {
+  currency: 'ETH',
+  address: '0xed627aa45cddbf0e828ce66b6ea016e56d081654',
+  tag: undefined,
+  info: { address: '0xed627aa45cddbf0e828ce66b6ea016e56d081654' }
+}
+
+ wdData {
+  exchange: 'binance',
+  code: 'ETH',
+  amount: 0.5,
+  address: '0xed627aa45cddbf0e828ce66b6ea016e56d081654'
+}
+
+ withdraw {
+  info: { success: true, id: '85ab79cba3e9465c9f9f1c9bbd4cf40a' },
+  id: '85ab79cba3e9465c9f9f1c9bbd4cf40a'
+}
+
+
+Time Start: 13:43
+Time End: 
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// test 7 - Withdraw - 0.2 ETH - Binance > Kucoin
+
+ kucoin address {
+  info: {
+    code: '200000',
+    data: { address: '0xc7a577e71fc5282d36380cc5041882a334771d41', memo: '' }
+  },
+  currency: 'ETH',
+  address: '0xc7a577e71fc5282d36380cc5041882a334771d41',
+  tag: ''
+}
+
+ wdData {
+  exchange: 'binance',
+  code: 'ETH',
+  amount: 0.2,
+  address: '0xc7a577e71fc5282d36380cc5041882a334771d41'
+}
+
+
