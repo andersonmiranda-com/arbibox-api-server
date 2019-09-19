@@ -3,6 +3,7 @@ const lodash = require("lodash");
 const colors = require("colors");
 
 const { configs } = require("./settings");
+const { apiKeys } = require("./settingsApiKeys");
 const execution = require("./execution");
 
 const { getPercentage, getPercentageAfterWdFees, getMinimunInversion } = require("./common");
@@ -252,23 +253,50 @@ function checkOrderBook(signal) {
 ///
 
 async function checkWallet(signal) {
+    //check API KEYS
+
+    signal.wallets = {
+        buy: { exchange: signal.buy_at },
+        sell: { exchange: signal.sell_at }
+    };
+
+    if (!apiKeys[signal.buy_at] || !apiKeys[signal.sell_at]) {
+        signal.approved = false;
+
+        if (!apiKeys[signal.buy_at]) {
+            signal.wallets.buy.status = "No API Keys";
+        }
+        if (!apiKeys[signal.sell_at]) {
+            signal.wallets.sell.status = "No API Keys";
+        }
+
+        console.log(colors.red("Q >>"), "No API Keys", signal.code);
+
+        signal.quality.execution_note = "No API Keys";
+        signal.status = "No API Keys";
+
+        db.addLostOpportunity(signal);
+
+        //prepare to withdraw
+        return false;
+    }
+
     // get Wallets Balances
     //
     let buyWallets = await fetchBalance(signal.buy_at);
     let sellWallets = await fetchBalance(signal.sell_at);
 
-    signal.wallets = {
-        buy: {
-            exchange: signal.buy_at,
-            [signal.base]: buyWallets.free[signal.base] || buyWallets.total[signal.base] || 0,
-            [signal.quote]: buyWallets.free[signal.quote] || buyWallets.total[signal.quote] || 0
-        },
-        sell: {
-            exchange: signal.sell_at,
-            [signal.base]: sellWallets.free[signal.base] || sellWallets.total[signal.base] || 0,
-            [signal.quote]: sellWallets.free[signal.quote] || sellWallets.total[signal.quote] || 0
-        }
-    };
+    signal.wallets.buy[signal.base] =
+        buyWallets.free[signal.base] || buyWallets.total[signal.base] || 0;
+
+    signal.wallets.buy[signal.quote] =
+        buyWallets.free[signal.quote] || buyWallets.total[signal.quote] || 0;
+
+    signal.wallets.sell[signal.base] =
+        sellWallets.free[signal.base] || sellWallets.total[signal.base] || 0;
+
+    signal.wallets.sell[signal.quote] =
+        sellWallets.free[signal.quote] || sellWallets.total[signal.quote] || 0;
 
     // Check funds
     //
