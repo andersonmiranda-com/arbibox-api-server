@@ -2,21 +2,22 @@ const configs = {
     apiTimeout: 20,
     //
     exchanges: [
-        //"bibox",
         "binance",
-        //"bigone",
+        "hitbtc2",
+        "kraken",
+        "bibox",
+        "bitfinex",
+        "cointiger",
+        "livecoin",
         "kucoin",
-        //"kraken",
+        "poloniex"
+        //"bigone",
         //"upbit",
-        //"bitfinex",
         //"gateio",
         //"exmo",
-        //"livecoin",
         //"bittrex",
-        //"poloniex",
         //"tidebit",
         //"ethfinex",
-        "hitbtc2"
         //        "zb",
     ],
 

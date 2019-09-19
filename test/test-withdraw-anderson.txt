@@ -1,0 +1,15 @@
+ kucoin address { info:
+   { code: '200000',
+     data:
+      { address: '0x6e9dcc4d3a9efe2a6417533c1bdc89949d2aa8aa',
+        memo: '' } },
+  currency: 'ETH',
+  address: '0x6e9dcc4d3a9efe2a6417533c1bdc89949d2aa8aa',
+  tag: '' }
+
+ wdData { exchange: 'binance',
+  code: 'ETH',
+  amount: 0.1,
+  address: '0x6e9dcc4d3a9efe2a6417533c1bdc89949d2aa8aa' }
+
+  Start date: 18:02

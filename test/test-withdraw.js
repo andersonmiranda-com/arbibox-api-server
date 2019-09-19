@@ -69,7 +69,6 @@ async function test(source, destination, currency, amount) {
         })
     );
 
-    return;
     // make withdraw
 
     let withdraw = await api[source].withdraw(
@@ -153,5 +152,5 @@ async function loadInstance(name) {
 
 //test("kucoin", "binance", "ETH", 0.4);
 //test("kucoin", "binance", "TRX", 4558);
-test("binance", "kucoin", "ETH", 0.2);
+test("kucoin", "binance", "ETH", 0.09);
 //test("binance", "hitbtc2", "NEO", 1);

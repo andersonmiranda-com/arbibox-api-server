@@ -47,12 +47,24 @@ async function test(name, symbol) {
     // var start0 = new Date();
     // console.info("Start 0", start0);
 
-    //    let response = await _instance.fetchTicker(symbol);
+    let response = await _instance.fetchBalance();
     // let endtickers = chain.map(symbol => exc_tickers[symbol]);
 
     console.info(
         "\n",
-        util.inspect(_instance.markets[symbol], {
+        util.inspect(response.free, {
+            colors: true,
+            depth: null
+        })
+    );
+
+    response = await _instance.fetchBalance({ type: "main" });
+    // let endtickers = chain.map(symbol => exc_tickers[symbol]);
+
+    console.info(
+        "\n",
+        "account",
+        util.inspect(response.free, {
             colors: true,
             depth: null
         })
@@ -231,5 +243,5 @@ async function test(name, symbol) {
 
 //test("kraken", "ETH/BTC");
 //test("zb", ["XEM/BTC", "XEM/USDT", "BTC/USDT"]);
-test("binance", "TRX/BTC");
+test("kucoin", "TRX/BTC");
 //test("livecoin", "XRP/ETH");
