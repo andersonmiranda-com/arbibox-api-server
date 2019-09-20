@@ -273,6 +273,7 @@ async function findSignals(tickets, exchangesSymbols, markets, searchCounter) {
                     //verbose && console.log(response);
 
                     let counter = 0;
+                    let approvedSignals = [];
 
                     for (let ticket of tickets) {
                         let prices = [];
@@ -321,8 +322,12 @@ async function findSignals(tickets, exchangesSymbols, markets, searchCounter) {
                             ); */
                         }
                         //verbose && console.log(prices);
-                        filterSignals(prices);
+                        signals = await filterSignals(prices);
+                        if (signals.length !== 0) approvedSignals.push(signals);
                     }
+
+                    await db.addSignals(lodash.flatten(approvedSignals));
+                    cleanup();
 
                     console.info(
                         "S >> Scan " + searchCounter + " finished >",
@@ -368,6 +373,8 @@ async function fetchTickersByExchange(exchange) {
 function filterSignals(prices) {
     return new Promise(async (resolve, reject) => {
         let signals = [];
+        let approvedSignals = [];
+
         let { baseCurrency, quoteCurrency } = getCurrencies(prices[0]);
 
         for (let priceAsk of prices) {
@@ -429,7 +436,7 @@ function filterSignals(prices) {
 
             if (
                 percentReference >= configs.search.minimumProfit &&
-                percentReference < 100 &&
+                percentReference < 200 &&
                 percentReference !== Infinity
             ) {
                 let timeBlock = Math.floor(moment().unix() / (configs.search.signalTimeBlock * 60));
@@ -440,14 +447,16 @@ function filterSignals(prices) {
                     signal_created_at: new Date(),
                     type: "PA",
                     symbol: bestAsk.symbol,
+                    base: baseCurrency,
+                    quote: quoteCurrency,
                     buy_at: bestAsk.name,
+                    ask: bestAsk.ask,
                     sell_at: bestBid.name,
-                    profit_loop_percent: Number(profitPercentAfterWdFees.toFixed(4)),
+                    bid: bestBid.bid,
+                    //profit_loop_percent: Number(profitPercentAfterWdFees.toFixed(4)),
                     profit_percent: Number(profitPercent.toFixed(4)),
                     bestAsk: bestAsk,
-                    bestBid: bestBid,
-                    base: baseCurrency,
-                    quote: quoteCurrency
+                    bestBid: bestBid
                 };
 
                 if (configs.loopWithdraw) {
@@ -488,12 +497,12 @@ function filterSignals(prices) {
                 //         })
                 //     );
 
-                db.upsertSignal(signal);
+                //quality.checkSignal(signal);
 
-                quality.checkSignal(signal);
+                approvedSignals.push(signal);
             }
         }
-        resolve();
+        resolve(approvedSignals);
     });
 }
 

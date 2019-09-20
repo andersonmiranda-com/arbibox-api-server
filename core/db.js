@@ -31,6 +31,18 @@ exports.saveExchange = function(id, data) {
 /// Signal
 ///
 
+exports.addSignals = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        var db = client.db("arbibox");
+        db.collection("signals").insertMany(data, { ordered: false }, function(err, res) {
+            if (err) throw err;
+            //console.log(res.result);
+            client.close();
+        });
+    });
+};
+
 exports.createSignal = function(data) {
     MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
         if (err) throw err;

@@ -68,10 +68,10 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
 
     /// Remove signals older than X minutes / After X repeats
 
-    setInterval(function() {
-        search.cleanup();
-        verbose && console.info("S >> Cleaning >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
-    }, (configs.search.cleanUpInterval > 0 ? configs.search.cleanUpInterval : 30) * 1000);
+    // setInterval(function() {
+    //     search.cleanup();
+    //     verbose && console.info("S >> Cleaning >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
+    // }, (configs.search.cleanUpInterval > 0 ? configs.search.cleanUpInterval : 30) * 1000);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Execution Agent
