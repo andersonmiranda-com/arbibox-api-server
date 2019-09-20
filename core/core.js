@@ -2,12 +2,12 @@
 
 var moment = require("moment");
 const colors = require("colors");
-const { configs } = require("./core/arbitrage/settings");
+const { configs } = require("./arbitrage/settings");
 
 /// agent 1 - opportunities search
-const search = require("./core/arbitrage/search");
-const quality = require("./core/arbitrage/quality");
-const execution = require("./core/arbitrage/execution");
+const search = require("./arbitrage/search");
+const quality = require("./arbitrage/quality");
+const execution = require("./arbitrage/execution");
 //const regulator = require("./core/arbitrage/execution");
 
 global.verbose = true;
@@ -17,22 +17,11 @@ global.api = {};
 
 let searchCounter = 1;
 
-const logo = ` 
-----------------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Initailize Arbibox Core
+///
 
- $$$$$$\\            $$\\       $$\\ $$\\                           
-$$  __$$\\           $$ |      \\__|$$ |                          
-$$ /  $$ | $$$$$$\\  $$$$$$$\\  $$\\ $$$$$$$\\   $$$$$$\\  $$\\   $$\\ 
-$$$$$$$$ |$$  __$$\\ $$  __$$\\ $$ |$$  __$$\\ $$  __$$\\ \\$$\\ $$  |
-$$  __$$ |$$ |  \\__|$$ |  $$ |$$ |$$ |  $$ |$$ /  $$ | \\$$$$  / 
-$$ |  $$ |$$ |      $$ |  $$ |$$ |$$ |  $$ |$$ |  $$ | $$  $$/  
-$$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\ 
-\\__|  \\__|\\__|      \\_______/ \\__|\\_______/  \\______/ \\__/  \\__|
-                                                                
-------------------- Crypto  Arbitrage  Bot --------------------- `;
-
-(async function() {
-    console.log(colors.green(logo));
+const initialize = async function() {
     console.log(colors.cyan("\nStarting Parallel Arbitrage..."));
     configs.execution.simulationMode && console.info(colors.magenta("--- Simulation Mode ---"));
 
@@ -84,4 +73,8 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
         verbose &&
             console.info("E >> Checking orders >", moment().format("dddd, MMMM D YYYY, h:mm:ss a"));
     }, (configs.execution.checkInterval > 0 ? configs.execution.checkInterval : 120) * 1000);
-})();
+};
+
+module.exports = {
+    initialize
+};
