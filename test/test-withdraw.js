@@ -152,5 +152,5 @@ async function loadInstance(name) {
 
 //test("kucoin", "binance", "ETH", 0.4);
 //test("kucoin", "binance", "TRX", 4558);
-test("kucoin", "binance", "ETH", 0.09);
+test("kucoin", "binance", "TRX", 4558);
 //test("binance", "hitbtc2", "NEO", 1);

@@ -2,13 +2,13 @@
 
 var moment = require("moment");
 const colors = require("colors");
-const { configs } = require("./core/arbitrage/settings");
+const { configs } = require("../core/arbitrage/settings");
 
 /// agent 1 - opportunities search
-const search = require("./core/arbitrage/search");
-const quality = require("./core/arbitrage/quality");
-const execution = require("./core/arbitrage/execution");
-const regulator = require("./core/arbitrage/regulator");
+const search = require("../core/arbitrage/search");
+const quality = require("../core/arbitrage/quality");
+const execution = require("../core/arbitrage/execution");
+const regulator = require("../core/arbitrage/regulator");
 
 global.verbose = true;
 global.withdrawalFees = [];
