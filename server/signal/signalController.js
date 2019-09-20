@@ -5,7 +5,6 @@ const Signal = require("./signalModel");
 
 // Handle index actions
 exports.index = function(req, res) {
-    console.log("Get signals");
     Signal.find(
         {},
         {

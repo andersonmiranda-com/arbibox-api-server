@@ -10,11 +10,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-/* app.get("/", function(req, res) {
-    res.sendFile(path.join(__dirname + "/static_html/index.html"));
-});
- */
-app.use("/", express.static(path.join(__dirname + "/static_html/")));
+//app.use("/", express.static(path.join(__dirname + "/static_html/")));
 app.use("/api", routes);
 
 module.exports = app;
