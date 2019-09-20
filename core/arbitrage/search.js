@@ -441,6 +441,20 @@ function filterSignals(prices) {
             ) {
                 let timeBlock = Math.floor(moment().unix() / (configs.search.signalTimeBlock * 60));
 
+                let buy_at_low_volume =
+                    !bestAsk.baseVolume ||
+                    !bestAsk.quoteVolume ||
+                    bestAsk.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
+                    bestAsk.quoteVolume <=
+                        configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency];
+
+                let sell_at_low_volume =
+                    !bestBid.baseVolume ||
+                    !bestBid.quoteVolume ||
+                    bestBid.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
+                    bestBid.quoteVolume <=
+                        configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency];
+
                 let signal = {
                     code: bestAsk.symbol.toUpperCase() + "-" + bestAsk.name + "-" + bestBid.name,
                     time_block: timeBlock,
@@ -451,8 +465,10 @@ function filterSignals(prices) {
                     quote: quoteCurrency,
                     buy_at: bestAsk.name,
                     ask: bestAsk.ask,
+                    buy_at_low_volume: buy_at_low_volume,
                     sell_at: bestBid.name,
                     bid: bestBid.bid,
+                    sell_at_low_volume: sell_at_low_volume,
                     //profit_loop_percent: Number(profitPercentAfterWdFees.toFixed(4)),
                     profit_percent: Number(profitPercent.toFixed(4)),
                     bestAsk: bestAsk,
