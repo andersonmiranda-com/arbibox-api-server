@@ -112,9 +112,9 @@ const configs = {
             tickerLowVolumeLimit: {
                 base: 0.01,
                 quote: {
-                    BTC: 0.1,
-                    USD: 1000,
-                    USDT: 1000,
+                    BTC: 0.01,
+                    USD: 100,
+                    USDT: 100,
                     ETH: 0.5
                 }
             },
