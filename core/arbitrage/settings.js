@@ -18,7 +18,8 @@ const configs = {
         "bittrex",
         //"tidebit",
         "ethfinex"
-        //        "zb",
+        //"zb",
+        //"okex"
     ],
 
     exchangesBlacklist: ["coinmarketcap", "dx", "crex24"],
@@ -76,7 +77,7 @@ const configs = {
         //limit base currencies to the list (disabled if baseCurrenciesCMC id true)
         baseCurrenciesFromList: false,
         //limit quote currencies to the list
-        quoteCurrencies: true
+        quoteCurrencies: false
     },
 
     //searh parameters
@@ -110,12 +111,15 @@ const configs = {
             //check 24hVolume on tickers
             tickerVolume: false,
             tickerLowVolumeLimit: {
-                base: 0.01,
                 quote: {
-                    BTC: 0.01,
-                    USD: 100,
-                    USDT: 100,
-                    ETH: 0.5
+                    BTC: 1,
+                    ETH: 50,
+                    USD: 10000,
+                    USDT: 10000,
+                    EUR: 10000,
+                    EUR: 600000,
+                    CAD: 10000,
+                    BNB: 500
                 }
             },
 

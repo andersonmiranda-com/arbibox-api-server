@@ -382,7 +382,6 @@ function filterSignals(prices) {
                 configs.quality.filter.tickerVolume &&
                 (!priceAsk.baseVolume ||
                     !priceAsk.quoteVolume ||
-                    priceAsk.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
                     priceAsk.quoteVolume <=
                         configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
             ) {
@@ -393,7 +392,6 @@ function filterSignals(prices) {
                     configs.quality.filter.tickerVolume &&
                     (!priceBid.baseVolume ||
                         !priceBid.quoteVolume ||
-                        priceBid.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
                         priceBid.quoteVolume <=
                             configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
                 ) {
@@ -442,13 +440,11 @@ function filterSignals(prices) {
                 let timeBlock = Math.floor(moment().unix() / (configs.search.signalTimeBlock * 60));
 
                 let buy_at_low_volume =
-                    !bestAsk.baseVolume ||
                     !bestAsk.quoteVolume ||
                     bestAsk.quoteVolume <=
                         configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency];
 
                 let sell_at_low_volume =
-                    !bestBid.baseVolume ||
                     !bestBid.quoteVolume ||
                     bestBid.quoteVolume <=
                         configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency];
