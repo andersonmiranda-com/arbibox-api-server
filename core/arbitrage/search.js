@@ -379,21 +379,21 @@ function filterSignals(prices) {
 
         for (let priceAsk of prices) {
             if (
-                configs.quality.filter.tickerVolume &&
+                configs.search.filter.tickerVolume &&
                 (!priceAsk.baseVolume ||
                     !priceAsk.quoteVolume ||
                     priceAsk.quoteVolume <=
-                        configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
+                        configs.search.filter.tickerLowVolumeLimit.quote[quoteCurrency])
             ) {
                 continue;
             }
             for (let priceBid of prices) {
                 if (
-                    configs.quality.filter.tickerVolume &&
+                    configs.search.filter.tickerVolume &&
                     (!priceBid.baseVolume ||
                         !priceBid.quoteVolume ||
                         priceBid.quoteVolume <=
-                            configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
+                            configs.search.filter.tickerLowVolumeLimit.quote[quoteCurrency])
                 ) {
                     continue;
                 }
@@ -442,12 +442,12 @@ function filterSignals(prices) {
                 let buy_at_low_volume =
                     !bestAsk.quoteVolume ||
                     bestAsk.quoteVolume <=
-                        configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency];
+                        configs.search.filter.tickerLowVolumeLimit.quote[quoteCurrency];
 
                 let sell_at_low_volume =
                     !bestBid.quoteVolume ||
                     bestBid.quoteVolume <=
-                        configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency];
+                        configs.search.filter.tickerLowVolumeLimit.quote[quoteCurrency];
 
                 let signal = {
                     code: bestAsk.symbol.toUpperCase() + "-" + bestAsk.name + "-" + bestBid.name,

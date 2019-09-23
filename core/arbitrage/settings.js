@@ -24,6 +24,7 @@ const configs = {
 
     exchangesBlacklist: ["coinmarketcap", "dx", "crex24"],
 
+    //default base currencies
     baseCurrencies: [
         "BTC",
         "ETH",
@@ -96,46 +97,55 @@ const configs = {
             ETH: 5
         },
 
-        // Send to qualifier a new signal one time every time block / remove signals older than time block (minutes)
-        signalTimeBlock: 1
-    },
-
-    //calculate and execute parallel arbitrage with withdraw on every trade operecion
-    loopWithdraw: false,
-
-    //execute loop withdraw only when balance is insuficient
-    autoWithdraw: true,
-
-    quality: {
         filter: {
             //check 24hVolume on tickers
             tickerVolume: false,
             tickerLowVolumeLimit: {
+                // equivalent aprox to 1 BTC of minimun volume in 24h
                 quote: {
                     BTC: 1,
                     ETH: 50,
                     USD: 10000,
                     USDT: 10000,
+                    USDS: 10000,
+                    TUSD: 10000,
+                    USDC: 10000,
+                    BUSD: 10000,
                     EUR: 10000,
-                    EUR: 600000,
                     CAD: 10000,
-                    BNB: 500
+                    BNB: 500,
+                    PAX: 10000,
+                    TRX: 600000,
+                    XRP: 40000
                 }
             },
 
-            //check trade history activity
-            tradeActivity: false
+            // Saves a new signal one time every time block / remove signals older than time block (minutes)
+            signalTimeBlock: 1
         },
 
-        // time to check las trade transaction (in minutes)
-        lastTradeTimeLimit: 10,
+        //calculate and execute parallel arbitrage with withdraw on every trade operecion
+        loopWithdraw: false,
+
+        //execute loop withdraw only when balance is insuficient
+        autoWithdraw: true,
 
         // Saves lost opportunity to table every time block (minutes)
         lostOpportunitiesTimeBlock: 5
     },
 
+    quality: {
+        //check trade history activity
+        tradeActivity: false,
+        // time to check las trade transaction (in minutes)
+        lastTradeTimeLimit: 10
+    },
+
     execution: {
+        //does not create orders
         simulationMode: true,
+
+        //intervel to check orders statis on exchanges
         checkInterval: 120
     }
 };

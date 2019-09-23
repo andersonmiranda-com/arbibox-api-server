@@ -44,12 +44,12 @@ const getMultiplier = (symbol, inputTarget, ticker) => {
         //console.log("S >>", symbol.symbol);
 
         if (
-            configs.quality.filter.tickerVolume &&
+            configs.search.filter.tickerVolume &&
             (!ticker.baseVolume ||
                 !ticker.quoteVolume ||
-                ticker.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
+                ticker.baseVolume <= configs.search.filter.tickerLowVolumeLimit.base ||
                 ticker.quoteVolume <=
-                    configs.quality.filter.tickerLowVolumeLimit.quote[getQuote(symbol)])
+                    configs.search.filter.tickerLowVolumeLimit.quote[getQuote(symbol)])
         ) {
             multiplier = 0;
             //console.log(colors.red("S >>"), symbol.symbol, "Low Volume");
