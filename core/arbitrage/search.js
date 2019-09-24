@@ -294,6 +294,8 @@ async function findSignals(tickets, exchangesSymbols, markets, searchCounter) {
                             price.ask = exchangePrices.ask;
                             price.baseVolume = exchangePrices.baseVolume;
                             price.quoteVolume = exchangePrices.quoteVolume;
+                            price.bidVolume = exchangePrices.bidVolume;
+                            price.askVolume = exchangePrices.askVolume;
                             price.name = exchange;
                             price.symbol = ticket.symbol;
                             price.tradeFee = exchangeMarkets[ticket.symbol].taker || 0.0026; // catchall if taker fee is not found

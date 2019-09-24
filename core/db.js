@@ -337,3 +337,28 @@ exports.updateOrder = function(data) {
         });
     });
 };
+<<<<<<< Updated upstream
+=======
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+/// saveCMCTopCoins
+///
+
+exports.saveCMCTopCoins = function(data) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
+        if (err) throw err;
+        var db = client.db("arbibox");
+
+        db.collection("cmc_top_coins").deleteMany({}, function(err, res) {
+            if (err) throw err;
+            //console.log(res.result);
+            db.collection("cmc_top_coins").insertMany(data, { ordered: false }, function(err, res) {
+                if (err) throw err;
+                //console.log(res.result);
+                client.close();
+            });
+        });
+    });
+};
+>>>>>>> Stashed changes

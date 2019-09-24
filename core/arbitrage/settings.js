@@ -59,6 +59,7 @@ const configs = {
 
     //quoteCurrencies: ["BTC", "ETH", "USDT", "BNB", "PAX", "USDC", "TUSD"],
     quoteCurrencies: ["BTC", "ETH", "USDT"],
+    //quoteCurrencies: ["USD"],
 
     currenciesBlacklist: ["ETC", "MKR"],
 
@@ -72,7 +73,7 @@ const configs = {
         //get top CMC currencies
         baseCurrenciesCMC: true,
         //number of top CMC currencies to load
-        baseCurrenciesCMCQty: 30,
+        baseCurrenciesCMCQty: 50,
         //limit base currencies to the list (disabled if baseCurrenciesCMC id true)
         baseCurrenciesFromList: true,
         //limit quote currencies to the list
@@ -84,7 +85,7 @@ const configs = {
         checkInterval: 10, //seconds
         cleanUpInterval: 60, //seconds
 
-        minimumProfit: 0.1,
+        minimumProfit: 0,
         minimumProfitInvest: 0.1,
 
         // quote currencies referneces to calculate profit in parallel loop (used when loopWithdraw is true)
@@ -117,6 +118,7 @@ const configs = {
                     USDT: 1000,
                     ETH: 5
                 }
+<<<<<<< Updated upstream
             },
 
             //check trade history activity
@@ -125,6 +127,19 @@ const configs = {
 
         // time to check las trade transaction (in minutes)
         lastTradeTimeLimit: 10,
+=======
+            }
+        },
+
+        // Saves a new signal one time every time block / remove signals older than time block (minutes)
+        signalTimeBlock: 1,
+
+        //calculate and execute parallel arbitrage with withdraw on every trade operecion
+        loopWithdraw: false,
+
+        //execute loop withdraw only when balance is insuficient
+        autoWithdraw: true,
+>>>>>>> Stashed changes
 
         // Saves lost opportunity to table every time block (minutes)
         lostOpportunitiesTimeBlock: 5
