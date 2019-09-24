@@ -1,1 +1,0 @@
-db.getCollection('opportunities').find({}).sort({approved: -1, profi1: -1})

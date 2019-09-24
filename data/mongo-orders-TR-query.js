@@ -1,1 +1,0 @@
-db.getCollection('orders').find({base: "BTC", profit_row1: {$gt:0.1}, profit_row2: {$gt:-0.1}, }).sort({ord_created_at: -1})
