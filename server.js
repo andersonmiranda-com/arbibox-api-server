@@ -4,7 +4,7 @@ const config = require("./server/config/config");
 const app = require("./server/config/express");
 const socketio = require("./server/config/socket");
 
-const logo = require("./core/logo");
+const logo = require("./server/logo");
 
 // make bluebird default Promise
 Promise = require("bluebird"); // eslint-disable-line no-global-assign
