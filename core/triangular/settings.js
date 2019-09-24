@@ -89,10 +89,7 @@ const configs = {
     search: {
         checkInterval: 10,
         minimumProfit: 0.05,
-        targetAssets: ["BTC", "ETH", "USDT"]
-    },
-    quality: {
-        checkInterval: 30,
+        targetAssets: ["BTC", "ETH", "USDT"],
         filter: {
             tradeActivity: false,
             orderBookVolume: true,
@@ -106,7 +103,11 @@ const configs = {
                     ETH: 5
                 }
             }
-        },
+        }
+    },
+    quality: {
+        checkInterval: 30,
+
         lastTradeTimeLimit: 10,
         removeAfterMinutesOff: 2,
         removeAfterIterations: 5

@@ -5,6 +5,7 @@ const colors = require("colors");
 
 const { configs } = require("./arbitrage/settings");
 const { apiKeys } = require("./arbitrage/settingsApiKeys");
+const db = require("./db");
 
 ///////////////
 
@@ -143,6 +144,8 @@ const getCurrenciesCMC = async () => {
             .get("https://api.coinmarketcap.com/v1/ticker/?limit=0")
             .then(response => {
                 //console.log(response.data);
+
+                db.saveCMCTopCoins(response.data);
 
                 response.data.slice(0, configs.marketFilter.baseCurrenciesCMCQty).map(currency => {
                     baseCurrencies.push(currency.symbol);

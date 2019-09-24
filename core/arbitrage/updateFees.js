@@ -29,7 +29,7 @@ const initialize = async function() {
         let name = exchanges[i];
         var start1 = new Date();
         try {
-            let withdraw = await require("../../wihdrawal_fees/" + name);
+            let withdraw = await require("../wihdrawal_fees/" + name);
 
             let with1 = { ...withdraw };
 

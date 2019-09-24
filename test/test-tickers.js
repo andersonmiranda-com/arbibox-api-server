@@ -41,4 +41,8 @@ async function test(name, symbol) {
     );
 }
 
+<<<<<<< HEAD
 test("hitbtc2", "BTM/USDT");
+=======
+test("binance", "THETA/BTC");
+>>>>>>> backend

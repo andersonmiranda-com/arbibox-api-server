@@ -5,24 +5,26 @@ const configs = {
         "binance",
         "hitbtc2",
         "kraken",
-        "bibox",
+        //"bibox",
         "bitfinex",
-        "cointiger",
+        //"cointiger",
         "livecoin",
         "kucoin",
-        "poloniex"
+        "poloniex",
         //"bigone",
         //"upbit",
-        //"gateio",
-        //"exmo",
-        //"bittrex",
+        "gateio",
+        "exmo",
+        "bittrex",
         //"tidebit",
-        //"ethfinex",
-        //        "zb",
+        "ethfinex"
+        //"zb",
+        //"okex"
     ],
 
     exchangesBlacklist: ["coinmarketcap", "dx", "crex24"],
 
+    //default base currencies
     baseCurrencies: [
         "BTC",
         "ETH",
@@ -69,20 +71,20 @@ const configs = {
         //filter exchanges against blacklist
         exchangesBlacklist: true,
         //filter currencies against blacklist
-        currenciesBlacklist: true,
+        currenciesBlacklist: false,
         //get top CMC currencies
-        baseCurrenciesCMC: true,
+        baseCurrenciesCMC: false,
         //number of top CMC currencies to load
         baseCurrenciesCMCQty: 50,
         //limit base currencies to the list (disabled if baseCurrenciesCMC id true)
-        baseCurrenciesFromList: true,
+        baseCurrenciesFromList: false,
         //limit quote currencies to the list
-        quoteCurrencies: true
+        quoteCurrencies: false
     },
 
     //searh parameters
     search: {
-        checkInterval: 10, //seconds
+        checkInterval: 60, //seconds
         cleanUpInterval: 60, //seconds
 
         minimumProfit: 0,
@@ -96,34 +98,42 @@ const configs = {
             ETH: 5
         },
 
-        // Send to qualifier a new signal one time every time block / remove signals older than time block (minutes)
-        signalTimeBlock: 1
-    },
-
-    //calculate and execute parallel arbitrage with withdraw on every trade operecion
-    loopWithdraw: false,
-
-    //execute loop withdraw only when balance is insuficient
-    autoWithdraw: true,
-
-    quality: {
         filter: {
             //check 24hVolume on tickers
-            tickerVolume: true,
+            tickerVolume: false,
             tickerLowVolumeLimit: {
-                base: 0.01,
+                // equivalent aprox to 1 BTC of minimun volume in 24h
                 quote: {
-                    BTC: 0.1,
-                    USD: 1000,
-                    USDT: 1000,
-                    ETH: 5
+                    BTC: 1,
+                    ETH: 50,
+                    USD: 10000,
+                    USDT: 10000,
+                    USDS: 10000,
+                    TUSD: 10000,
+                    USDC: 10000,
+                    BUSD: 10000,
+                    EUR: 10000,
+                    CAD: 10000,
+                    BNB: 500,
+                    PAX: 10000,
+                    TRX: 600000,
+                    XRP: 40000
                 }
+<<<<<<< HEAD
             }
         },
 
         // Saves a new signal one time every time block / remove signals older than time block (minutes)
         signalTimeBlock: 1,
 
+=======
+            },
+
+            // Saves a new signal one time every time block / remove signals older than time block (minutes)
+            signalTimeBlock: 1
+        },
+
+>>>>>>> backend
         //calculate and execute parallel arbitrage with withdraw on every trade operecion
         loopWithdraw: false,
 
@@ -134,8 +144,18 @@ const configs = {
         lostOpportunitiesTimeBlock: 5
     },
 
+    quality: {
+        //check trade history activity
+        tradeActivity: false,
+        // time to check las trade transaction (in minutes)
+        lastTradeTimeLimit: 10
+    },
+
     execution: {
+        //does not create orders
         simulationMode: true,
+
+        //intervel to check orders statis on exchanges
         checkInterval: 120
     }
 };

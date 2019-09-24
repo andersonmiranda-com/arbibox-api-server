@@ -273,6 +273,7 @@ async function findSignals(tickets, exchangesSymbols, markets, searchCounter) {
                     //verbose && console.log(response);
 
                     let counter = 0;
+                    let approvedSignals = [];
 
                     for (let ticket of tickets) {
                         let prices = [];
@@ -323,8 +324,12 @@ async function findSignals(tickets, exchangesSymbols, markets, searchCounter) {
                             ); */
                         }
                         //verbose && console.log(prices);
-                        filterSignals(prices);
+                        signals = await filterSignals(prices);
+                        if (signals.length !== 0) approvedSignals.push(signals);
                     }
+
+                    await db.addSignals(lodash.flatten(approvedSignals));
+                    cleanup();
 
                     console.info(
                         "S >> Scan " + searchCounter + " finished >",
@@ -370,27 +375,27 @@ async function fetchTickersByExchange(exchange) {
 function filterSignals(prices) {
     return new Promise(async (resolve, reject) => {
         let signals = [];
+        let approvedSignals = [];
+
         let { baseCurrency, quoteCurrency } = getCurrencies(prices[0]);
 
         for (let priceAsk of prices) {
             if (
-                configs.quality.filter.tickerVolume &&
+                configs.search.filter.tickerVolume &&
                 (!priceAsk.baseVolume ||
                     !priceAsk.quoteVolume ||
-                    priceAsk.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
                     priceAsk.quoteVolume <=
-                        configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
+                        configs.search.filter.tickerLowVolumeLimit.quote[quoteCurrency])
             ) {
                 continue;
             }
             for (let priceBid of prices) {
                 if (
-                    configs.quality.filter.tickerVolume &&
+                    configs.search.filter.tickerVolume &&
                     (!priceBid.baseVolume ||
                         !priceBid.quoteVolume ||
-                        priceBid.baseVolume <= configs.quality.filter.tickerLowVolumeLimit.base ||
                         priceBid.quoteVolume <=
-                            configs.quality.filter.tickerLowVolumeLimit.quote[quoteCurrency])
+                            configs.search.filter.tickerLowVolumeLimit.quote[quoteCurrency])
                 ) {
                     continue;
                 }
@@ -431,10 +436,20 @@ function filterSignals(prices) {
 
             if (
                 percentReference >= configs.search.minimumProfit &&
-                percentReference < 100 &&
+                //percentReference < 200 &&
                 percentReference !== Infinity
             ) {
                 let timeBlock = Math.floor(moment().unix() / (configs.search.signalTimeBlock * 60));
+
+                let buy_at_low_volume =
+                    !bestAsk.quoteVolume ||
+                    bestAsk.quoteVolume <=
+                        configs.search.filter.tickerLowVolumeLimit.quote[quoteCurrency];
+
+                let sell_at_low_volume =
+                    !bestBid.quoteVolume ||
+                    bestBid.quoteVolume <=
+                        configs.search.filter.tickerLowVolumeLimit.quote[quoteCurrency];
 
                 let signal = {
                     code: bestAsk.symbol.toUpperCase() + "-" + bestAsk.name + "-" + bestBid.name,
@@ -442,14 +457,18 @@ function filterSignals(prices) {
                     signal_created_at: new Date(),
                     type: "PA",
                     symbol: bestAsk.symbol,
+                    base: baseCurrency,
+                    quote: quoteCurrency,
                     buy_at: bestAsk.name,
+                    ask: bestAsk.ask,
+                    buy_at_low_volume: buy_at_low_volume,
                     sell_at: bestBid.name,
-                    profit_loop_percent: Number(profitPercentAfterWdFees.toFixed(4)),
+                    bid: bestBid.bid,
+                    sell_at_low_volume: sell_at_low_volume,
+                    //profit_loop_percent: Number(profitPercentAfterWdFees.toFixed(4)),
                     profit_percent: Number(profitPercent.toFixed(4)),
                     bestAsk: bestAsk,
-                    bestBid: bestBid,
-                    base: baseCurrency,
-                    quote: quoteCurrency
+                    bestBid: bestBid
                 };
 
                 if (configs.loopWithdraw) {
@@ -490,12 +509,12 @@ function filterSignals(prices) {
                 //         })
                 //     );
 
-                db.upsertSignal(signal);
+                //quality.checkSignal(signal);
 
-                quality.checkSignal(signal);
+                approvedSignals.push(signal);
             }
         }
-        resolve();
+        resolve(approvedSignals);
     });
 }
 

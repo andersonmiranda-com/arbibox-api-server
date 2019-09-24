@@ -56,7 +56,7 @@ async function checkSignal(signal) {
     signal.qualified = true;
     db.updateSignal(signal);
 
-    if (!configs.quality.filter.tradeActivity) {
+    if (!configs.quality.tradeActivity) {
         checkOrderBook(signal);
         return;
     }
