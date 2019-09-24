@@ -118,16 +118,6 @@ const configs = {
                     USDT: 1000,
                     ETH: 5
                 }
-<<<<<<< Updated upstream
-            },
-
-            //check trade history activity
-            tradeActivity: false
-        },
-
-        // time to check las trade transaction (in minutes)
-        lastTradeTimeLimit: 10,
-=======
             }
         },
 
@@ -139,7 +129,6 @@ const configs = {
 
         //execute loop withdraw only when balance is insuficient
         autoWithdraw: true,
->>>>>>> Stashed changes
 
         // Saves lost opportunity to table every time block (minutes)
         lostOpportunitiesTimeBlock: 5

@@ -337,8 +337,6 @@ exports.updateOrder = function(data) {
         });
     });
 };
-<<<<<<< Updated upstream
-=======
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -361,4 +359,3 @@ exports.saveCMCTopCoins = function(data) {
         });
     });
 };
->>>>>>> Stashed changes
