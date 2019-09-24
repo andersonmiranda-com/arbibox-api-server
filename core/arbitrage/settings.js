@@ -119,21 +119,12 @@ const configs = {
                     TRX: 600000,
                     XRP: 40000
                 }
-<<<<<<< HEAD
             }
         },
 
         // Saves a new signal one time every time block / remove signals older than time block (minutes)
         signalTimeBlock: 1,
 
-=======
-            },
-
-            // Saves a new signal one time every time block / remove signals older than time block (minutes)
-            signalTimeBlock: 1
-        },
-
->>>>>>> backend
         //calculate and execute parallel arbitrage with withdraw on every trade operecion
         loopWithdraw: false,
 

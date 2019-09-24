@@ -360,11 +360,7 @@ exports.saveCMCTopCoins = function(data) {
         if (err) throw err;
         var db = client.db("arbibox");
 
-<<<<<<< HEAD
         db.collection("cmc_top_coins").deleteMany({}, function(err, res) {
-=======
-        db.collection("cmc_top_coins").deleteMany({ query }, function(err, res) {
->>>>>>> backend
             if (err) throw err;
             //console.log(res.result);
             db.collection("cmc_top_coins").insertMany(data, { ordered: false }, function(err, res) {
