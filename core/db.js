@@ -62,6 +62,7 @@ exports.readSignals = function(query) {
             var db = client.db("arbibox");
             db.collection("signals")
                 .find(query)
+                .sort({ profit_percent: -1 })
                 .toArray(function(err, res) {
                     if (err) throw err;
                     resolve(res);

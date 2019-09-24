@@ -46,16 +46,16 @@ $$ |  $$ |$$ |      $$$$$$$  |$$ |$$$$$$$  |\\$$$$$$  |$$  /\\$$\\
     /// Search Agent
     /// Search for arbitrage signals and saves it on "Signals" mongoDB collection
 
-    /*
     const { tickets, exchangesSymbols, markets } = await search.initialize();
 
     console.info(
         "S >> Scan " + searchCounter + " >",
         moment().format("dddd, MMMM D YYYY, h:mm:ss a")
     );
-    await search.findSignals(tickets, exchangesSymbols, markets, searchCounter);
+    //await search.findSignals(tickets, exchangesSymbols, markets, searchCounter);
 
-    */
+    /*
+     */
 
     /*
     // loop every x seconds

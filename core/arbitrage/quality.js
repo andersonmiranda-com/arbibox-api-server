@@ -17,14 +17,14 @@ const db = require("../db");
 
 const initialize = async function() {
     let signals = await db.readSignals({
-        type: "AP",
-        buy_at_low_volume: false,
-        sell_at_low_volume: false
+        type: "PA"
+        // buy_at_low_volume: false,
+        // sell_at_low_volume: false
     });
-    await callCheck(signals[0]);
-    // for (let signal of signals) {
-    //     await callCheck(signal);
-    // }
+    //await callCheck(signals[0]);
+    for (let signal of signals) {
+        await callCheck(signal);
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -394,24 +394,96 @@ async function checkWallet(signal) {
 
 function getMaxInversion(asks, bids, bestAsk, bestBid) {
     let positions = 5;
-    let bestValue = { profit_percent: 0, amount: 0, ask: {}, bid: {} };
+    let bestValue = { profit_percent: 0, amount: 0, ask: 0, bid: 0 };
     let lastProfit = 0;
 
     let thisbestAsk = { ...bestAsk };
     let thisbestBid = { ...bestBid };
 
+    let amountAccAsk = 0;
+
+    let possibleProfits = [];
+
     for (var pa = 0; pa < positions; pa++) {
+        let amountAccBid = 0;
+        //console.log("");
+        amountAccAsk += asks[pa][1];
+
         for (var pb = 0; pb < positions; pb++) {
-            console.log(asks[pa], bids[pb]);
+            amountAccBid += bids[pb][1];
+            // console.log(
+            //     "ask:",
+            //     pa,
+            //     asks[pa][0].toFixed(8),
+            //     "am:",
+            //     asks[pa][1].toFixed(4),
+            //     "acc:",
+            //     amountAccAsk.toFixed(4),
+            //     "bid:",
+            //     pb,
+            //     bids[pb][0].toFixed(8),
+            //     "am:",
+            //     bids[pb][1].toFixed(8),
+            //     "acc:",
+            //     amountAccBid.toFixed(4)
+            // );
+
+            thisbestAsk.ask = asks[pa][0];
+            thisbestBid.bid = bids[pb][0];
+
+            let amount = lodash.min([amountAccAsk, amountAccBid]);
+
+            if (configs.loopWithdraw) {
+                profit_percent = getPercentageAfterWdFees(
+                    amount * ask.price,
+                    thisbestAsk,
+                    thisbestBid
+                );
+            } else {
+                profit_percent = getPercentage(thisbestAsk, thisbestBid);
+            }
+
+            // console.log(
+            //     "Profit %:",
+            //     profit_percent.toFixed(2),
+            //     "Amount:",
+            //     amount.toFixed(8),
+            //     "Profit:",
+            //     ((profit_percent * amount) / 100).toFixed(8)
+            // );
+
+            if (
+                profit_percent >= configs.search.minimumProfit &&
+                profit_percent * amount > lastProfit
+            ) {
+                bestValue = { profit_percent, amount, ask: asks[pa][0], bid: bids[pb][0] };
+            }
+            lastProfit = profit_percent * amount;
         }
     }
+
+    //console.log("");
+
+    console.log(
+        //">>>> Max Invest:\n",
+        "Profit %:",
+        bestValue.profit_percent.toFixed(2),
+        "Amount:",
+        bestValue.amount.toFixed(8),
+        "Profit:",
+        ((bestValue.profit_percent * bestValue.amount) / 100).toFixed(8),
+        "ask:",
+        bestValue.ask.toFixed(8),
+        "bid:",
+        bestValue.bid.toFixed(8)
+    );
 
     return bestValue;
 }
 
 function orderBookProfits(asks, bids, bestAsk, bestBid) {
     let positions = [1, 2, 3, 4, 5];
-    let bestValue = { profit_percent: 0, amount: 0, ask: {}, bid: {} };
+    let bestValue = { profit_percent: 0, amount: 0, ask: 0, bid: 0 };
     let lastProfit = 0;
 
     let thisbestAsk = { ...bestAsk };
@@ -442,6 +514,20 @@ function orderBookProfits(asks, bids, bestAsk, bestBid) {
         }
         lastProfit = profit_percent * amount;
     });
+
+    // console.log(
+    //     ">>>> Media Pondereda:\n",
+    //     "Profit %:",
+    //     bestValue.profit_percent.toFixed(2),
+    //     "Amount:",
+    //     bestValue.amount.toFixed(8),
+    //     "Profit:",
+    //     ((bestValue.profit_percent * bestValue.amount) / 100).toFixed(8),
+    //     "ask:",
+    //     bestValue.ask.toFixed(8),
+    //     "bid:",
+    //     bestValue.bid.toFixed(8)
+    // );
 
     return bestValue;
 }
