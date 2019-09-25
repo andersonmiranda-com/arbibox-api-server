@@ -1,30 +1,28 @@
 const mongoose = require("mongoose");
 const moment = require("moment");
 
-const Signal = require("./signalModel");
+const Box = require("./boxModel");
 
 // Handle index actions
 exports.index = function(req, res) {
-    Signal.find(
+    Box.find(
         {},
         {
-            code: 1,
+            userId: 1,
             createdAt: 1,
-            symbol: 1,
-            base: 1,
-            quote: 1,
-            buyAt: 1,
-            ask: 1,
-            buyAtLowVolume: 1,
-            sellAt: 1,
-            bid: 1,
-            sellAtLowVolume: 1,
-            profitPercent: 1
+            name: 1,
+            exchanges: 1,
+            baseCurrencies: 1,
+            quoteCurrencies: 1,
+            minimunProfitPercent: 1,
+            maxAmountPercent: 1,
+            tradeBack: 1,
+            active: 1
         }
     )
-        .sort({ profitPercent: -1 })
-        .then(signals => {
-            res.json(signals); // eslint-disable-line no-param-reassign
+        .sort({ profit_percent: -1 })
+        .then(boxs => {
+            res.json(boxs); // eslint-disable-line no-param-reassign
         })
         .catch(e => res.json(e));
 };

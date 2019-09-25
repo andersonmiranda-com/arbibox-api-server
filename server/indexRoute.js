@@ -2,6 +2,7 @@
 const router = require("express").Router();
 const config = require("./config/config");
 const signalRoutes = require("./signal/signalRoute");
+const boxRoutes = require("./box/boxRoute");
 const topCoinRoutes = require("./topCoin/topCoinRoute");
 
 // Set default API response
@@ -15,6 +16,7 @@ router.get("/", function(req, res) {
 router.get("/env", (req, res) => res.json(config));
 
 router.use("/signals", signalRoutes);
+router.use("/boxes", boxRoutes);
 router.use("/topcoins", topCoinRoutes);
 
 // Export API routes

@@ -1,15 +1,15 @@
 const app = require("./express");
 var server = require("http").Server(app);
-var socketio = require("socket.io")(server);
+//var socketio = require("socket.io")(server);
 const config = require("./config");
-const messageController = require("../message/messageController");
 
-const sockets = {};
+//const sockets = {};
 
 server.listen(config.port, () => {
     console.info(`\nAPI server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
 });
 
+/*
 socketio.on("connection", socket => {
     console.log("socket connection");
 
@@ -42,3 +42,5 @@ socketio.on("connection", socket => {
 });
 
 module.exports = socketio;
+
+*/
