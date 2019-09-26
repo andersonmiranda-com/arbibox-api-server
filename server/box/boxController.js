@@ -49,7 +49,7 @@ exports.new = function(req, res) {
 
 // Handle view contact info
 exports.view = function(req, res) {
-    User.findById(req.params._id)
+    Box.findById(req.params._id)
         .then(result => {
             res.json(result);
         })
@@ -58,7 +58,7 @@ exports.view = function(req, res) {
 
 // Handle update contact info
 exports.update = function(req, res) {
-    User.findById(req.params.contact_id, (err, user) => {
+    Box.findById(req.params.contact_id, (err, user) => {
         if (err) res.send(err);
         user.first_name = req.body.first_name ? req.body.first_name : user.first_name;
         user.last_name = req.body.gender;
@@ -77,7 +77,7 @@ exports.update = function(req, res) {
 
 // Handle delete contact
 exports.delete = function(req, res) {
-    User.remove(
+    Box.remove(
         {
             _id: req.params._id
         },
@@ -100,7 +100,7 @@ exports.save = function(req, res) {
     // console.log(_id, userData, upsert);
 
     // mongoose.connection.db.collection("relations"). acessa o comando nativo do MOngoDB
-    User.updateOne({ _id: _id.toString() }, { $set: userData }, { upsert })
+    Box.updateOne({ _id: _id.toString() }, { $set: userData }, { upsert })
         .then(result => res.json({ status: "ok" }))
         .catch(err => res.json({ status: "error", message: err }));
 };
