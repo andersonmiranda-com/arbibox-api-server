@@ -63,7 +63,6 @@ exports.delete = function(req, res) {
 };
 
 exports.save = function(req, res) {
-    console.log(req.body);
     const _id = req.body._id;
     const data = req.body;
     const upsert = req.body.upsert || false;
