@@ -11,7 +11,7 @@ var boxSchema = mongoose.Schema({
     minimumProfitPercent: Number,
     maxAmountPercent: Number,
     tradeBack: Boolean,
-    qualifyLowVolume: Boolean,
+    acceptLowVolume: Boolean,
     active: Boolean,
     executionActive: Boolean
 });
