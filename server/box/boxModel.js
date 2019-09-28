@@ -8,10 +8,12 @@ var boxSchema = mongoose.Schema({
     exchanges: Array,
     baseCurrencies: Array,
     quoteCurrencies: Array,
-    minimunProfitPercent: Number,
-    axAmountPercent: Number,
+    minimumProfitPercent: Number,
+    maxAmountPercent: Number,
     tradeBack: Boolean,
-    qualifyLowVolume: Boolean
+    qualifyLowVolume: Boolean,
+    active: Boolean,
+    executionActive: Boolean
 });
 
 // Export Contact model

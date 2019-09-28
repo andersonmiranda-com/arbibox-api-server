@@ -4,12 +4,11 @@ const boxController = require("./boxController");
 router
     .route("/")
     .get(boxController.index)
-    .post(boxController.new);
+    .post(boxController.save);
 
 router
     .route("/:_id")
     .get(boxController.view)
-    .patch(boxController.update)
     .put(boxController.update)
     .delete(boxController.delete);
 
