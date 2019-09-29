@@ -5,24 +5,10 @@ const Box = require("./boxModel");
 
 // Handle index actions
 exports.index = function(req, res) {
-    Box.find(
-        {},
-        {
-            userId: 1,
-            createdAt: 1,
-            name: 1,
-            exchanges: 1,
-            baseCurrencies: 1,
-            quoteCurrencies: 1,
-            minimunProfitPercent: 1,
-            maxAmountPercent: 1,
-            tradeBack: 1,
-            active: 1
-        }
-    )
-        .sort({ profit_percent: -1 })
-        .then(boxs => {
-            res.json(boxs); // eslint-disable-line no-param-reassign
+    Box.find({})
+        .then(boxes => {
+            console.log(boxes);
+            res.json(boxes); // eslint-disable-line no-param-reassign
         })
         .catch(e => res.json(e));
 };
@@ -47,16 +33,17 @@ exports.update = function(req, res) {
 
 // Handle delete contact
 exports.delete = function(req, res) {
+    const _id = req.params._id;
     Box.remove(
         {
-            _id: req.params._id
+            _id: mongoose.mongo.ObjectId(_id)
         },
         (err, contact) => {
             if (err) res.send(err);
 
             res.json({
                 status: "success",
-                message: "Contact deleted"
+                message: "Box deleted"
             });
         }
     );
@@ -65,13 +52,15 @@ exports.delete = function(req, res) {
 exports.save = function(req, res) {
     const _id = req.body._id;
     const data = req.body;
-    const upsert = req.body.upsert || false;
+    const upsert = true;
 
     // console.log(_id, userData, upsert);
 
     // mongoose.connection.db.collection("relations"). acessa o comando nativo do MOngoDB
     Box.updateOne({ _id: mongoose.mongo.ObjectId(_id) }, { $set: data }, { upsert })
-        .then(result => res.json({ status: "ok" }))
+        .then(result => {
+            return res.json({ status: "ok", result });
+        })
         .catch(err => {
             console.log(err);
             return res.json({ status: "error", message: err });

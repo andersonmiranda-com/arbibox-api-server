@@ -2,8 +2,8 @@ var mongoose = require("mongoose");
 
 // Box schema
 var boxSchema = mongoose.Schema({
-    user_id: Number,
-    created_at: Date,
+    createdAt: Date,
+    userId: String,
     name: String,
     exchanges: Array,
     baseCurrencies: Array,
@@ -11,6 +11,7 @@ var boxSchema = mongoose.Schema({
     minimumProfitPercent: Number,
     maxAmountPercent: Number,
     tradeBack: Boolean,
+    tradeBackProfit: Number,
     acceptLowVolume: Boolean,
     active: Boolean,
     executionActive: Boolean
