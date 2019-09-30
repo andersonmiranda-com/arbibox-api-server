@@ -10,10 +10,12 @@ exports.index = function(req, res) {
     let match = {};
 
     if (boxId) {
+        if (boxId.length != 12 && boxId.length !== 24) return false;
         match.boxId = mongoose.mongo.ObjectId(boxId);
     }
 
     if (userId) {
+        if (userId.length != 12 && userId.length !== 24) return false;
         match.userId = userId;
     }
 
