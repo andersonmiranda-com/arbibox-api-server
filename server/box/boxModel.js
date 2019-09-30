@@ -16,6 +16,5 @@ var boxSchema = mongoose.Schema({
     active: Boolean,
     executionActive: Boolean
 });
-
 // Export Contact model
 var Box = (module.exports = mongoose.model("box", boxSchema));

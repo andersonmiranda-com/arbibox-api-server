@@ -7,7 +7,6 @@ const Box = require("./boxModel");
 exports.index = function(req, res) {
     Box.find({})
         .then(boxes => {
-            console.log(boxes);
             res.json(boxes); // eslint-disable-line no-param-reassign
         })
         .catch(e => res.json(e));
@@ -50,7 +49,7 @@ exports.delete = function(req, res) {
 };
 
 exports.save = function(req, res) {
-    const _id = req.body._id;
+    let _id = req.body._id;
     const data = req.body;
     const upsert = true;
 
@@ -59,7 +58,10 @@ exports.save = function(req, res) {
     // mongoose.connection.db.collection("relations"). acessa o comando nativo do MOngoDB
     Box.updateOne({ _id: mongoose.mongo.ObjectId(_id) }, { $set: data }, { upsert })
         .then(result => {
-            return res.json({ status: "ok", result });
+            if (result.upserted && result.upserted[0]) {
+                _id = result.upserted[0]._id;
+            }
+            return res.json({ status: "ok", _id: _id });
         })
         .catch(err => {
             console.log(err);
