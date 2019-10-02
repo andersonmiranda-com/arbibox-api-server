@@ -5,7 +5,7 @@ const Box = require("./boxModel");
 
 // Handle index actions
 exports.index = function(req, res) {
-    Box.find({})
+    Box.find({}).sort({createdAt: 1})
         .then(boxes => {
             res.json(boxes); // eslint-disable-line no-param-reassign
         })
