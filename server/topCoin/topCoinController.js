@@ -1,14 +1,20 @@
 const mongoose = require("mongoose");
 const moment = require("moment");
+const _ = require("lodash");
 
 const TopCoin = require("./topCoinModel");
 
 // Handle index actions
 exports.index = function(req, res) {
     TopCoin.find({})
-        .sort({ rank: 1 })
         .then(signals => {
-            res.json(signals); // eslint-disable-line no-param-reassign
+            res.json(
+                _.sortBy(signals, [
+                    function(c) {
+                        return c.rank;
+                    }
+                ])
+            ); // eslint-disable-line no-param-reassign
         })
         .catch(e => res.json(e));
 };
