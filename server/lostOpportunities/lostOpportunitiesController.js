@@ -33,9 +33,10 @@ exports.index = function(req, res) {
                 bid: 1,
                 base: 1,
                 quote: 1,
-                maxInvestBase: "$invest.max.base",
+                invest: 1,
+                wallets: 1,
+                minInvestQuote: "$invest.min.quote",
                 maxInvestQuote: "$invest.max.quote",
-                profitPercent: "$invest.max.profitPercent",
                 profit: "$invest.max.profit",
                 status: 1,
                 statusMessage: 1
