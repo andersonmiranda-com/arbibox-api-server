@@ -4,6 +4,8 @@ const config = require("./config/config");
 const signalRoutes = require("./signal/signalRoute");
 const boxRoutes = require("./box/boxRoute");
 const lostOpportunitiesRoutes = require("./lostOpportunities/lostOpportunitiesRoute");
+const operationsRoutes = require("./operations/operationsRoute");
+const orderRoutes = require("./orders/ordersRoute");
 const topCoinRoutes = require("./topCoin/topCoinRoute");
 
 // Set default API response
@@ -19,6 +21,8 @@ router.get("/env", (req, res) => res.json(config));
 router.use("/signals", signalRoutes);
 router.use("/boxes", boxRoutes);
 router.use("/lostOpportunities", lostOpportunitiesRoutes);
+router.use("/operations", operationsRoutes);
+router.use("/orders", orderRoutes);
 router.use("/topcoins", topCoinRoutes);
 
 // Export API routes
