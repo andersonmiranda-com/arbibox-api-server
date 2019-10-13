@@ -12,6 +12,8 @@ exports.index = async function(req, res) {
   let buyAtFilter = req.body.buyAtFilter;
   let sellAtFilter = req.body.sellAtFilter;
   let currencyFilter = req.body.currencyFilter;
+  let order = req.body.order;
+  let orderBy = req.body.orderBy;
 
   let match = {};
 
@@ -63,7 +65,7 @@ exports.index = async function(req, res) {
         status: 1
       }
     },
-    { $sort: { createdAt: -1 } },
+    { $sort: { [orderBy]: order === "desc" ? -1 : 1 } },
     { $skip: page * rowsPerPage },
     { $limit: rowsPerPage }
   ]);

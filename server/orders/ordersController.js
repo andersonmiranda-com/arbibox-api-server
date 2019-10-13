@@ -12,6 +12,8 @@ exports.index = function(req, res) {
   let sideFilter = req.body.sideFilter;
   let exchangeFilter = req.body.exchangeFilter;
   let currencyFilter = req.body.currencyFilter;
+  let order = req.body.order;
+  let orderBy = req.body.orderBy;
 
   let match = {};
 
@@ -60,7 +62,7 @@ exports.index = function(req, res) {
         statusMessage: "$orderResult.message"
       }
     },
-    { $sort: { createdAt: -1 } },
+    { $sort: { [orderBy]: order === "desc" ? -1 : 1 } },
     { $skip: page * rowsPerPage },
     { $limit: rowsPerPage }
   ])
