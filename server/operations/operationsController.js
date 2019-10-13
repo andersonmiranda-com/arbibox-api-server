@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const moment = require("moment");
+const _ = require("lodash");
 
 const Operations = require("./operationsModel");
 
@@ -12,6 +14,7 @@ exports.index = async function(req, res) {
   let buyAtFilter = req.body.buyAtFilter;
   let sellAtFilter = req.body.sellAtFilter;
   let currencyFilter = req.body.currencyFilter;
+  let periodFilter = req.body.periodFilter;
   let order = req.body.order;
   let orderBy = req.body.orderBy;
 
@@ -41,6 +44,92 @@ exports.index = async function(req, res) {
 
   if (sellAtFilter && sellAtFilter.length > 0) {
     match.sellAt = { $in: sellAtFilter };
+  }
+
+  if (periodFilter !== "All") {
+    switch (periodFilter) {
+      case "today":
+        var start = moment()
+          .startOf("day")
+          .toDate();
+        var end = moment()
+          .endOf("day")
+          .toDate();
+        break;
+
+      case "yesterday":
+        var start = moment()
+          .subtract(1, "days")
+          .startOf("day")
+          .toDate();
+        var end = moment()
+          .subtract(1, "days")
+          .endOf("day")
+          .toDate();
+        break;
+
+      case "thisWeek":
+        var start = moment()
+          .startOf("week")
+          .toDate();
+        var end = moment()
+          .endOf("week")
+          .toDate();
+        break;
+
+      case "lastWeek":
+        var start = moment()
+          .subtract(1, "weeks")
+          .startOf("week")
+          .toDate();
+
+        var end = moment()
+          .subtract(1, "weeks")
+          .endOf("week")
+          .toDate();
+        break;
+
+      case "thisMonth":
+        var start = moment()
+          .startOf("month")
+          .toDate();
+        var end = moment()
+          .endOf("month")
+          .toDate();
+        break;
+
+      case "lastMonth":
+        var start = moment()
+          .subtract(1, "months")
+          .startOf("month")
+          .toDate();
+        var end = moment()
+          .subtract(1, "months")
+          .endOf("month")
+          .toDate();
+        break;
+
+      case "thisYear":
+        var start = moment()
+          .startOf("year")
+          .toDate();
+        var end = moment()
+          .endOf("year")
+          .toDate();
+        break;
+      case "lastYear":
+        var start = moment()
+          .subtract(1, "years")
+          .startOf("year")
+          .toDate();
+        var end = moment()
+          .subtract(1, "years")
+          .endOf("year")
+          .toDate();
+        break;
+    }
+
+    match.createdAt = { $gte: start, $lt: end };
   }
 
   let items = await Operations.aggregate([
@@ -86,6 +175,12 @@ exports.index = async function(req, res) {
           $sum: "$profit"
         }
       }
+    }
+  ]);
+
+  totals = _.sortBy(totals, [
+    function(c) {
+      return c._id;
     }
   ]);
 

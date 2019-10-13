@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const moment = require("moment");
 
 const Orders = require("./ordersModel");
 
@@ -12,6 +13,8 @@ exports.index = function(req, res) {
   let sideFilter = req.body.sideFilter;
   let exchangeFilter = req.body.exchangeFilter;
   let currencyFilter = req.body.currencyFilter;
+  let periodFilter = req.body.periodFilter;
+
   let order = req.body.order;
   let orderBy = req.body.orderBy;
 
@@ -41,6 +44,92 @@ exports.index = function(req, res) {
 
   if (exchangeFilter && exchangeFilter.length > 0) {
     match.exchange = { $in: exchangeFilter };
+  }
+
+  if (periodFilter !== "All") {
+    switch (periodFilter) {
+      case "today":
+        var start = moment()
+          .startOf("day")
+          .toDate();
+        var end = moment()
+          .endOf("day")
+          .toDate();
+        break;
+
+      case "yesterday":
+        var start = moment()
+          .subtract(1, "days")
+          .startOf("day")
+          .toDate();
+        var end = moment()
+          .subtract(1, "days")
+          .endOf("day")
+          .toDate();
+        break;
+
+      case "thisWeek":
+        var start = moment()
+          .startOf("week")
+          .toDate();
+        var end = moment()
+          .endOf("week")
+          .toDate();
+        break;
+
+      case "lastWeek":
+        var start = moment()
+          .subtract(1, "weeks")
+          .startOf("week")
+          .toDate();
+
+        var end = moment()
+          .subtract(1, "weeks")
+          .endOf("week")
+          .toDate();
+        break;
+
+      case "thisMonth":
+        var start = moment()
+          .startOf("month")
+          .toDate();
+        var end = moment()
+          .endOf("month")
+          .toDate();
+        break;
+
+      case "lastMonth":
+        var start = moment()
+          .subtract(1, "months")
+          .startOf("month")
+          .toDate();
+        var end = moment()
+          .subtract(1, "months")
+          .endOf("month")
+          .toDate();
+        break;
+
+      case "thisYear":
+        var start = moment()
+          .startOf("year")
+          .toDate();
+        var end = moment()
+          .endOf("year")
+          .toDate();
+        break;
+      case "lastYear":
+        var start = moment()
+          .subtract(1, "years")
+          .startOf("year")
+          .toDate();
+        var end = moment()
+          .subtract(1, "years")
+          .endOf("year")
+          .toDate();
+        break;
+    }
+
+    match.createdAt = { $gte: start, $lt: end };
   }
 
   Orders.aggregate([
